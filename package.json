@@ -1,6 +1,6 @@
 {
   "name": "mixed-doubles-scoreboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An Electron application with React",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -55,12 +55,29 @@
       "output": "release"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "path/to/icon.ico",
+      "artifactName": "MixedDoublesScoreboardSetup-${version}.exe"
+    },
+    "nsis": {
+    "oneClick": true,         
+    "perMachine": true,        
+    "createDesktopShortcut": true, 
+    "createStartMenuShortcut": true, 
+    "shortcutName": "Mixed Doubles Scoreboard"  
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "path/to/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "path/to/icon.png"
     },
     "publish": {
       "provider": "github",
-      "owner": "GRaganold", 
-      "repo": "mixed-doubles-scoreboard" 
+      "owner": "GRaganold",
+      "repo": "mixed-doubles-scoreboard"
     }
   }
 }
