@@ -1,0 +1,34 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+/dist
+/out
+/release
+/.vite
+/.electron-vite
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files (e.g., VSCode, WebStorm)
+.vscode/
+.idea/
+
+# Electron-specific
+electron-builder.json
+*.asar
+*.app
+*.dmg
+*.exe
+
+# Npm package lock file (if you don't want to push it)
+package-lock.json
