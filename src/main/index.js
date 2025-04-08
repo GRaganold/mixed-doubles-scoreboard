@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { autoUpdater } from 'electron-updater'
 
 function createWindow() {
   // Create the browser window.
@@ -35,9 +36,6 @@ function createWindow() {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
@@ -49,14 +47,34 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // Enable auto updates
+  autoUpdater.checkForUpdatesAndNotify()
+
+  autoUpdater.on('checking-for-update', () => {
+    console.log('Checking for updates...')
+  })
+
+  autoUpdater.on('update-available', (info) => {
+    console.log('Update available:', info)
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    console.log('No update available.')
+  })
+
+  autoUpdater.on('error', (err) => {
+    console.error('Update error:', err)
+  })
+
+  autoUpdater.on('update-downloaded', (info) => {
+    console.log('Update downloaded:', info)
+    // Optionally, you can auto install the update after downloading
+    autoUpdater.quitAndInstall()
+  })
 
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
@@ -70,5 +88,5 @@ app.on('window-all-closed', () => {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// IPC test
+ipcMain.on('ping', () => console.log('pong'))

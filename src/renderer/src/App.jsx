@@ -8,7 +8,7 @@ import BoxScore from './BoxScore'
 export default function App() {
   const [hammerState, setHammerState] = useState('A')
   const [teamAName, setTeamAName] = useState('Spruit/Spruit')
-  const [spielName, setSpielName] = useState('')
+  const [spielName, setSpielName] = useState('Mixed Doubles Championships')
   const [spielGameType, setSpielGameType] = useState('')
   const [teamAScore, setTeamAScore] = useState(0)
   const [teamAColor, setTeamAColor] = useState('red')
@@ -106,7 +106,7 @@ export default function App() {
 
   return (
     <Flex minH="100vh" bg="#00ff00" justifyContent="center" fontFamily={'sans-serif'}>
-      <Box color="white" pb={10} pt={5} px={10} w="full">
+      <Box color="white" p={2} w="full">
         <HStack spacing={50}>
           <VerticalScoreboard
             teamAName={teamAName}

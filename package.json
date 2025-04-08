@@ -1,6 +1,6 @@
 {
   "name": "mixed-doubles-scoreboard",
-  "version": "1.0.0",
+  "version": "1.0.01",
   "description": "An Electron application with React",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -24,7 +24,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "electron-updater": "^6.3.9",
+    "electron-updater": "^6.6.2",
     "framer-motion": "^12.6.3"
   },
   "devDependencies": {
@@ -56,6 +56,11 @@
     },
     "win": {
       "target": "nsis"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "GRaganold", 
+      "repo": "mixed-doubles-scoreboard" 
     }
   }
 }
