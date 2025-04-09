@@ -1,9 +1,9 @@
 {
   "name": "mixed-doubles-scoreboard",
-  "version": "1.0.3",
-  "description": "An Electron application with React",
+  "version": "1.0.4",
+  "description": "A curling scoreboard built on an Electron React vite application using Chakra ui",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "https://github.com/GRaganold",
   "homepage": "https://graganold.github.io/mixed-doubles-scoreboard/",
   "scripts": {
     "format": "prettier --write .",
@@ -17,7 +17,7 @@
     "build:win": "npm run clean && npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
-    "predeploy": "npm run build", 
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d out/renderer"
   },
   "dependencies": {

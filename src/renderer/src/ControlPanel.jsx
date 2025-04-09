@@ -27,7 +27,8 @@ ControlPanel.propTypes = {
   setTeamBColor: PropTypes.func,
   teamBRockCountState: PropTypes.number,
   setTeamBRockCountState: PropTypes.func,
-  gameRockCountState: PropTypes.func,  
+  gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
   end: PropTypes.number,
   setEnd: PropTypes.func,
   teamScores: PropTypes.arrayOf(
@@ -47,7 +48,6 @@ const getColorStyles = (color) => {
     }
   )
 }
-
 
 export default function ControlPanel({
   teamAName,
@@ -73,7 +73,7 @@ export default function ControlPanel({
   setSpielName,
   spielName,
   setSpielGameType,
-  spielGameType, 
+  spielGameType,
   gameRockCountState,
   setGameRockCountState
 }) {
@@ -475,60 +475,61 @@ export default function ControlPanel({
           <VStack color="black" m={1} w="650px">
             <Box w="full">
               <HStack>
-              <Select
-                value={gameRockCountState || 8}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setGameRockCountState(value) // ✅ set main game-level rock count
-                  setTeamARockCountState(value) // optional: sync team A
-                  setTeamBRockCountState(value) // optional: sync team B
-                }}
-                bg="white"
-                w="250px"
-                _focus={{ bg: 'white' }}
-                size="sm"
-                borderRadius={5}
-              >
-                <option value="" disabled>
-                  - stages of competition -
-                </option>
-                <option value={8}>Four person</option>
-                <option value={5}>Mixed Doubles</option>
-                <option value={6}>Triples</option>
-              </Select>
+                <Select
+                  value={gameRockCountState === '' ? '' : gameRockCountState} // Ensure the disabled option is selected when state is ""
+                  onChange={(e) => {
+                    const value = Number(e.target.value)
+                    setGameRockCountState(value) // ✅ set main game-level rock count
+                    setTeamARockCountState(value) // optional: sync team A
+                    setTeamBRockCountState(value) // optional: sync team B
+                  }}
+                  bg="white"
+                  w="250px"
+                  _focus={{ bg: 'white' }}
+                  size="sm"
+                  borderRadius={5}
+                >
+                  <option value="" disabled>
+                    - stages of competition -
+                  </option>
+                  <option value={8}>Four person</option>
+                  <option value={5}>Mixed Doubles</option>
+                  <option value={6}>Triples</option>
+                </Select>
 
-              <Button
-                h="8"
-                w="full"
-                onClick={() => {
-                  handleResetARock()
-                  handleResetBRock()
-                  handleResetEnd()
-                  handleResetAScore()
-                  handleResetBScore()
-                  setTeamAName('Team A Name')
-                  setTeamBName('Team B Name')
-                  setHammerState('A')
-                  setTeamScores([
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 0, score2: 0 },
-                    { score1: 'X', score2: 'X' },
-                    { score1: 'X', score2: 'X' }
-                    // Add more initial entries as needed
-                  ])
-                }}
-                color={nonTeamButtons.color}
-                bg={nonTeamButtons.bg}
-                _hover={nonTeamButtons._hover}
-              >
-                Full Reset
-              </Button></HStack>
+                <Button
+                  h="8"
+                  w="full"
+                  onClick={() => {
+                    handleResetARock()
+                    handleResetBRock()
+                    handleResetEnd()
+                    handleResetAScore()
+                    handleResetBScore()
+                    setTeamAName('Team A Name')
+                    setTeamBName('Team B Name')
+                    setHammerState('A')
+                    setTeamScores([
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 0, score2: 0 },
+                      { score1: 'X', score2: 'X' },
+                      { score1: 'X', score2: 'X' }
+                      // Add more initial entries as needed
+                    ])
+                  }}
+                  color={nonTeamButtons.color}
+                  bg={nonTeamButtons.bg}
+                  _hover={nonTeamButtons._hover}
+                >
+                  Full Reset
+                </Button>
+              </HStack>
               <Flex
                 w="full"
                 justify="center"
@@ -782,7 +783,11 @@ export default function ControlPanel({
                 bg={nonTeamButtons.bg}
                 _hover={nonTeamButtons._hover}
                 onClick={handleResetEnd}
-                isDisabled={end === 1 && teamARockCountState === gameRockCountState && teamBRockCountState === gameRockCountState}
+                isDisabled={
+                  end === 1 &&
+                  teamARockCountState === gameRockCountState &&
+                  teamBRockCountState === gameRockCountState
+                }
               >
                 Reset
               </Button>

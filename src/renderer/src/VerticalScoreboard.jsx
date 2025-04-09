@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import { Box, Text, VStack, Flex } from '@chakra-ui/react'
 import TeamARocks from './components/TeamARocks'
 import TeamBRocks from './components/TeamBRocks'
 import { HammerIcon } from './components/Hammer'
 import colorStyles from './components/ColorStyles'
+import PropTypes from 'prop-types'
 
 const getColorStyles = (color) => {
   return (
@@ -22,7 +22,9 @@ const TeamComponent = ({
   teamScore,
   hammerState,
   Background,
+  /* eslint-disable */
   gameRockCountState
+  /* eslint-enable */
 }) => {
   const textShadowValue =
     teamColor !== 'yellow'
@@ -69,6 +71,63 @@ const TeamComponent = ({
       </Text>
     </Flex>
   )
+}
+VerticalScoreboard.propTypes = {
+  teamAName: PropTypes.string,
+  setTeamAName: PropTypes.func,
+  spielName: PropTypes.string,
+  setSpielName: PropTypes.func,
+  spielGameType: PropTypes.string,
+  setSpielGameType: PropTypes.func,
+  teamBName: PropTypes.string,
+  setTeamBName: PropTypes.func,
+  hammerState: PropTypes.string,
+  setHammerState: PropTypes.func,
+  teamAScore: PropTypes.number,
+  setTeamAScore: PropTypes.func,
+  teamAColor: PropTypes.string,
+  setTeamAColor: PropTypes.func,
+  teamARockCountState: PropTypes.number,
+  setTeamARockCountState: PropTypes.func,
+  teamBScore: PropTypes.number,
+  setTeamBScore: PropTypes.func,
+  teamBColor: PropTypes.string,
+  setTeamBColor: PropTypes.func,
+  teamBRockCountState: PropTypes.number,
+  setTeamBRockCountState: PropTypes.func,
+  gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
+  end: PropTypes.number,
+  setEnd: PropTypes.func,
+  teamScores: PropTypes.arrayOf(
+    PropTypes.shape({
+      score1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      score2: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    })
+  ).isRequired,
+  setTeamScores: PropTypes.func.isRequired,
+  teamAStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamBStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired
+}
+
+TeamComponent.propTypes = {
+  teamLetter: PropTypes.string.isRequired,
+  teamName: PropTypes.string,
+  teamColor: PropTypes.string.isRequired,
+  teamStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamScore: PropTypes.number.isRequired,
+  hammerState: PropTypes.string.isRequired,
+  Background: PropTypes.string.isRequired,
+  gameRockCountState: PropTypes.number // Define this if needed for prop validation
 }
 
 export default function VerticalScoreboard({
