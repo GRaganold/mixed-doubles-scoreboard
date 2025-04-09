@@ -7,18 +7,19 @@ import BoxScore from './BoxScore'
 
 export default function App() {
   const [hammerState, setHammerState] = useState('A')
-  const [teamAName, setTeamAName] = useState('Spruit/Spruit')
+  const [teamAName, setTeamAName] = useState('Team B Name')
   const [spielName, setSpielName] = useState('Mixed Doubles Championships')
   const [spielGameType, setSpielGameType] = useState('')
   const [teamAScore, setTeamAScore] = useState(0)
   const [teamAColor, setTeamAColor] = useState('red')
-  const [teamARockCountState, setTeamARockCountState] = useState(5)
+  const [teamARockCountState, setTeamARockCountState] = useState(1)
 
-  const [teamBName, setTeamBName] = useState('Spruit/Spruit')
+  const [teamBName, setTeamBName] = useState('Team B Name')
   const [teamBScore, setTeamBScore] = useState(0)
   const [teamBColor, setTeamBColor] = useState('yellow')
-  const [teamBRockCountState, setTeamBRockCountState] = useState(5)
+  const [teamBRockCountState, setTeamBRockCountState] = useState(1)
   const [end, setEnd] = useState(1)
+  const [gameRockCountState, setGameRockCountState] = useState(1)
 
   const [loadedFromStorage, setLoadedFromStorage] = useState(false) // 👈
 
@@ -38,6 +39,7 @@ export default function App() {
 
     const storedEnd = localStorage.getItem('end')
     const storedSpielName = localStorage.getItem('spielName')
+    const storedGameRockCountState = localStorage.getItem('gameRockCountState')
 
     if (storedTeamAName) setTeamAName(storedTeamAName)
     if (storedTeamBName) setTeamBName(storedTeamBName)
@@ -53,6 +55,8 @@ export default function App() {
 
     if (storedEnd) setEnd(Number(storedEnd))
     if (storedSpielName) setSpielName(storedSpielName)
+    if (storedGameRockCountState) setGameRockCountState(storedGameRockCountState)
+    
 
     setLoadedFromStorage(true) // ✅ localStorage is now safe to write
   }, [])
@@ -75,6 +79,7 @@ export default function App() {
 
     localStorage.setItem('end', String(end))
     localStorage.setItem('spielName', String(spielName))
+    localStorage.setItem('gameRockCountState', String(gameRockCountState))
   }, [
     teamAName,
     teamBName,
@@ -87,6 +92,7 @@ export default function App() {
     teamBRockCountState,
     end,
     spielName,
+    gameRockCountState,
     loadedFromStorage // include to ensure effect respects load order
   ])
 
@@ -123,6 +129,7 @@ export default function App() {
             setSpielGameType={setSpielGameType}
             setSpielName={setSpielName}
             spielName={spielName}
+            gameRockCountState={gameRockCountState}
           />
         </HStack>
 
@@ -147,7 +154,6 @@ export default function App() {
           spielName={spielName}
         /> 
         <br />
-
         <ControlPanel
           teamAName={teamAName}
           setTeamAName={setTeamAName}
@@ -175,8 +181,11 @@ export default function App() {
           setSpielGameType={setSpielGameType}
           setSpielName={setSpielName}
           spielName={spielName}
+          gameRockCountState={gameRockCountState}
+          setGameRockCountState={setGameRockCountState} 
         />
-      </Box>
+      </Box> 
     </Flex>
+   
   )
 }

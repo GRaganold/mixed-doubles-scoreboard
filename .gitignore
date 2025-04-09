@@ -32,3 +32,6 @@ electron-builder.json
 
 # Npm package lock file (if you don't want to push it)
 package-lock.json
+
+
+webScraper/ranking-scraping/

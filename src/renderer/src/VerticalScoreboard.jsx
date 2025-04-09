@@ -21,7 +21,8 @@ const TeamComponent = ({
   teamStyles,
   teamScore,
   hammerState,
-  Background
+  Background,
+  gameRockCountState
 }) => {
   const textShadowValue =
     teamColor !== 'yellow'
@@ -81,7 +82,8 @@ export default function VerticalScoreboard({
   teamBRockCountState,
   end,
   hammerState,
-  spielGameType
+  spielGameType,
+  gameRockCountState
 }) {
   const Background = '#f1f2f3'
 
@@ -203,6 +205,7 @@ export default function VerticalScoreboard({
                   teamBColor={teamBColor}
                   teamARockCountState={teamARockCountState}
                   teamAColor={teamAColor}
+                  gameRockCountState={gameRockCountState}
                 />
               </Box>
               <Box bg="d1d2d3" w="full">
@@ -212,6 +215,7 @@ export default function VerticalScoreboard({
                   teamBColor={teamBColor}
                   teamARockCountState={teamARockCountState}
                   teamAColor={teamAColor}
+                  gameRockCountState={gameRockCountState}
                 />
               </Box>
             </VStack>
