@@ -25540,8 +25540,9 @@ function ControlPanel({
             size: "sm",
             borderRadius: 5,
             children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", disabled: true, children: "- stages of competition -" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 8, children: "Four person" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 5, children: "Mixed Doubles456" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 5, children: "Mixed Doubles" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 6, children: "Triples" })
             ]
           }
