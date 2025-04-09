@@ -475,27 +475,27 @@ export default function ControlPanel({
           <VStack color="black" m={1} w="650px">
             <Box w="full">
               <HStack>
-                <Select
-                  value={gameRockCountState === '' ? '' : gameRockCountState} // Ensure the disabled option is selected when state is ""
-                  onChange={(e) => {
-                    const value = Number(e.target.value)
-                    setGameRockCountState(value) // ✅ set main game-level rock count
-                    setTeamARockCountState(value) // optional: sync team A
-                    setTeamBRockCountState(value) // optional: sync team B
-                  }}
-                  bg="white"
-                  w="250px"
-                  _focus={{ bg: 'white' }}
-                  size="sm"
-                  borderRadius={5}
-                >
-                  <option value="" disabled>
-                    - stages of competition -
-                  </option>
-                  <option value={8}>Four person</option>
-                  <option value={5}>Mixed Doubles</option>
-                  <option value={6}>Triples</option>
-                </Select>
+              <Select
+                value={gameRockCountState}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  setGameRockCountState(value) // ✅ set main game-level rock count
+                  setTeamARockCountState(value) // optional: sync team A
+                  setTeamBRockCountState(value) // optional: sync team B
+                }}
+                bg="white"
+                w="250px"
+                _focus={{ bg: 'white' }}
+                size="sm"
+                borderRadius={5}
+              >
+                <option value="" disabled>
+                  - stages of competition -
+                </option>
+                <option value={8}>Four person</option>
+                <option value={5}>Mixed Doubles</option>
+                <option value={6}>Triples</option>
+              </Select>
 
                 <Button
                   h="8"
