@@ -4,7 +4,6 @@ import ControlPanel from './ControlPanel'
 import VerticalScoreboard from './VerticalScoreboard'
 import BoxScore from './BoxScore'
 
-
 export default function App() {
   const [hammerState, setHammerState] = useState('A')
   const [teamAName, setTeamAName] = useState('Team B Name')
@@ -61,6 +60,16 @@ export default function App() {
     setLoadedFromStorage(true) // ✅ localStorage is now safe to write
   }, [])
 
+  // Handle gameRockCountState adjustment after loading from storage
+  useEffect(() => {
+    if (loadedFromStorage && gameRockCountState !== '') {
+      setGameRockCountState((prevState) => {
+        const temp = Number(prevState) - 1 // subtract 1
+        return temp + 1 // add 1 back to reset
+      })
+    }
+  }, [loadedFromStorage, gameRockCountState])
+
   // Save to localStorage — only after loading is complete
   useEffect(() => {
     if (!loadedFromStorage) return
@@ -95,7 +104,6 @@ export default function App() {
 
     loadedFromStorage // include to ensure effect respects load order
   ])
-
   console.log(spielName)
   const [teamScores, setTeamScores] = useState([
     { score1: 0, score2: 0 },
@@ -152,7 +160,7 @@ export default function App() {
           setSpielGameType={setSpielGameType}
           setSpielName={setSpielName}
           spielName={spielName}
-        /> 
+        />
         <br />
         <ControlPanel
           teamAName={teamAName}
@@ -182,10 +190,9 @@ export default function App() {
           setSpielName={setSpielName}
           spielName={spielName}
           gameRockCountState={gameRockCountState}
-          setGameRockCountState={setGameRockCountState} 
+          setGameRockCountState={setGameRockCountState}
         />
-      </Box> 
+      </Box>
     </Flex>
-   
   )
 }
