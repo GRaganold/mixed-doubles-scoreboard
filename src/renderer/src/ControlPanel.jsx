@@ -27,6 +27,7 @@ ControlPanel.propTypes = {
   setTeamBColor: PropTypes.func,
   teamBRockCountState: PropTypes.number,
   setTeamBRockCountState: PropTypes.func,
+  gameRockCountState: PropTypes.func,  
   end: PropTypes.number,
   setEnd: PropTypes.func,
   teamScores: PropTypes.arrayOf(
@@ -46,6 +47,7 @@ const getColorStyles = (color) => {
     }
   )
 }
+
 
 export default function ControlPanel({
   teamAName,
@@ -71,7 +73,9 @@ export default function ControlPanel({
   setSpielName,
   spielName,
   setSpielGameType,
-  spielGameType
+  spielGameType, 
+  gameRockCountState,
+  setGameRockCountState
 }) {
   const teamAStyles = getColorStyles(teamAColor)
   const teamBStyles = getColorStyles(teamBColor)
@@ -107,7 +111,7 @@ export default function ControlPanel({
   }
 
   const handleResetARock = () => {
-    setTeamARockCountState(5)
+    setTeamARockCountState(gameRockCountState)
   }
 
   const handleResetBScore = () => {
@@ -123,7 +127,7 @@ export default function ControlPanel({
   }
 
   const handleResetBRock = () => {
-    setTeamBRockCountState(5)
+    setTeamBRockCountState(gameRockCountState)
   }
 
   const ButtonTeamBWithHammer = ({
@@ -272,20 +276,20 @@ export default function ControlPanel({
 
   const handleIncreaseEnd = () => {
     setEnd(end + 1)
-    setTeamARockCountState(5)
-    setTeamBRockCountState(5)
+    setTeamARockCountState(gameRockCountState)
+    setTeamBRockCountState(gameRockCountState)
   }
 
   const handleDecreaseEnd = () => {
     setEnd(Math.max(1, end - 1))
-    setTeamARockCountState(5)
-    setTeamBRockCountState(5)
+    setTeamARockCountState(gameRockCountState)
+    setTeamBRockCountState(gameRockCountState)
   }
 
   const handleResetEnd = () => {
     setEnd(1)
-    setTeamARockCountState(5)
-    setTeamBRockCountState(5)
+    setTeamARockCountState(gameRockCountState)
+    setTeamBRockCountState(gameRockCountState)
     setTeamAScore(0)
     setTeamBScore(0)
     setTeamScores([
@@ -346,8 +350,8 @@ export default function ControlPanel({
 
     // ✅ Use latest state values (not passed-in props)
     if (teamARockCountState + teamBRockCountState <= 3) {
-      setTeamARockCountState(5)
-      setTeamBRockCountState(5)
+      setTeamARockCountState(gameRockCountState)
+      setTeamBRockCountState(gameRockCountState)
     }
   }
 
@@ -470,6 +474,29 @@ export default function ControlPanel({
         <Box display={'flex'} justify="start" bg="#E8E8E8" rounded={'md'} p={2}>
           <VStack color="black" m={1} w="650px">
             <Box w="full">
+              <HStack>
+              <Select
+                value={gameRockCountState || 8}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  setGameRockCountState(value) // ✅ set main game-level rock count
+                  setTeamARockCountState(value) // optional: sync team A
+                  setTeamBRockCountState(value) // optional: sync team B
+                }}
+                bg="white"
+                w="250px"
+                _focus={{ bg: 'white' }}
+                size="sm"
+                borderRadius={5}
+              >
+                <option value="" disabled>
+                  - stages of competition -
+                </option>
+                <option value={8}>Four person</option>
+                <option value={5}>Mixed Doubles</option>
+                <option value={6}>Triples</option>
+              </Select>
+
               <Button
                 h="8"
                 w="full"
@@ -479,8 +506,8 @@ export default function ControlPanel({
                   handleResetEnd()
                   handleResetAScore()
                   handleResetBScore()
-                  setTeamAName('Spruit/Spruit')
-                  setTeamBName('Spruit/Spruit')
+                  setTeamAName('Team A Name')
+                  setTeamBName('Team B Name')
                   setHammerState('A')
                   setTeamScores([
                     { score1: 0, score2: 0 },
@@ -501,7 +528,7 @@ export default function ControlPanel({
                 _hover={nonTeamButtons._hover}
               >
                 Full Reset
-              </Button>
+              </Button></HStack>
               <Flex
                 w="full"
                 justify="center"
@@ -521,7 +548,7 @@ export default function ControlPanel({
                   borderRadius={5}
                 >
                   <option value="" disabled>
-                    --- Set Game Type ---
+                    - stages of competition -
                   </option>
                   <option value="Round Robin">Round Robin</option>
                   <option value="Playoff">Playoff</option>
@@ -621,7 +648,7 @@ export default function ControlPanel({
                     color={teamAStyles.color}
                     _hover={hoverStyle}
                     onClick={handleIncreaseARock}
-                    isDisabled={teamARockCountState === 5}
+                    isDisabled={teamARockCountState === gameRockCountState}
                     className="handleIncreaseARock"
                   >
                     +
@@ -632,7 +659,7 @@ export default function ControlPanel({
                     color={teamAStyles.color}
                     _hover={hoverStyle}
                     onClick={handleResetARock}
-                    isDisabled={teamARockCountState === 5}
+                    isDisabled={teamARockCountState === gameRockCountState}
                   >
                     Reset
                   </Button>
@@ -710,7 +737,7 @@ export default function ControlPanel({
                     _hover={hoverStyle}
                     onClick={handleIncreaseBRock}
                     className={'handleIncreaseBRock'}
-                    isDisabled={teamBRockCountState === 5}
+                    isDisabled={teamBRockCountState === gameRockCountState}
                   >
                     +
                   </Button>
@@ -721,7 +748,7 @@ export default function ControlPanel({
                     _hover={hoverStyle}
                     onClick={handleResetBRock}
                     className={'handleResetBRock'}
-                    isDisabled={teamBRockCountState === 5}
+                    isDisabled={teamBRockCountState === gameRockCountState}
                   >
                     Reset
                   </Button>
@@ -746,7 +773,7 @@ export default function ControlPanel({
                 bg={nonTeamButtons.bg}
                 _hover={nonTeamButtons._hover}
                 onClick={handleIncreaseEnd}
-                isDisabled={end === 16}
+                isDisabled={end === 10}
               >
                 +
               </Button>
@@ -755,7 +782,7 @@ export default function ControlPanel({
                 bg={nonTeamButtons.bg}
                 _hover={nonTeamButtons._hover}
                 onClick={handleResetEnd}
-                isDisabled={end === 1 && teamARockCountState === 5 && teamBRockCountState === 5}
+                isDisabled={end === 1 && teamARockCountState === gameRockCountState && teamBRockCountState === gameRockCountState}
               >
                 Reset
               </Button>

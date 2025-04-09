@@ -26,7 +26,7 @@ const boxSize = "8";
 const flashInterval = 1000; // Flash every 1 seconds
 
 // Hammer team component
-function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState }) {
+function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState,gameRockCountState }) {
 	const [highlightedRockWithHammer, setHighlightedRockWithHammer] = useState(-1);
 
 	useEffect(() => {
@@ -43,10 +43,10 @@ function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor,
 	return (
 		<>
 			{Array.from({ length: teamARockCountState }, (_, index) => (
-				<Box
-					key={index}
-					borderLeft={index !== 0 && index !== 2 && index !== 3 ? "2px solid gray" : undefined}
-				>
+				<Box key={index} borderLeft={
+					gameRockCountState === 5 ? (index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : undefined) : 
+					(index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : undefined)
+				}>
 					<Flex borderRadius={0} m="1px">
 						<CircleIcon
 							boxSize={boxSize}
@@ -67,7 +67,7 @@ function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor,
 }
 
 // Non-hammer team component
-function WithoutHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState }) {
+function WithoutHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState,gameRockCountState }) {
 	const [highlightedRockWithHammer, setHighlightedRockWithHammer] = useState(-1);
 
 	useEffect(() => {
@@ -84,10 +84,10 @@ function WithoutHammerTeamA({ teamBRockCountState, teamARockCountState, teamACol
 	return (
 		<>
 			{Array.from({ length: teamARockCountState }, (_, index) => (
-				<Box
-					key={index}
-					borderLeft={index !== 0 && index !== 2 && index !== 3 ? "2px solid gray" : undefined}
-				>
+				<Box key={index} borderLeft={
+					gameRockCountState === 5 ? (index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : undefined) : 
+					(index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : undefined)
+				}>
 					<Flex borderRadius={0} m="1px">
 						<CircleIcon
 							boxSize={boxSize}
@@ -113,8 +113,11 @@ export default function TeamARocks({
 	teamBColor,
 	teamARockCountState,
 	teamAColor,
-	hammerState
-}) {
+	hammerState, gameRockCountState }) {
+		// Debugging the state value
+		useEffect(() => {
+			console.log('gameRockCountState has changed:', gameRockCountState);
+		}, [gameRockCountState]); // Track changes to gameRockCountState
 	return (
 		<Flex
 			direction="row"
@@ -133,6 +136,7 @@ export default function TeamARocks({
 					teamAColor={teamAColor}
 					teamBColor={teamBColor}
 					hammerState={hammerState}
+					gameRockCountState={gameRockCountState}
 				/>
 			) : (
 				<WithoutHammerTeamA
@@ -141,6 +145,7 @@ export default function TeamARocks({
 					teamAColor={teamAColor}
 					teamBColor={teamBColor}
 					hammerState={hammerState}
+					gameRockCountState={gameRockCountState}
 				/>
 			)}
 		</Flex>
