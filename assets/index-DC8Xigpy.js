@@ -25524,10 +25524,6 @@ function ControlPanel({
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { background: "#00ff00", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { fontSize: "sm", pr: 2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { display: "flex", justify: "start", bg: "#E8E8E8", rounded: "md", p: 2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(VStack, { color: "black", m: 1, w: "650px", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { w: "full", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(HStack, { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
-          " ",
-          gameRockCountState
-        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Select,
           {
