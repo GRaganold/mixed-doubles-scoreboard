@@ -26650,7 +26650,6 @@ function App() {
     const storedTeamBRockCountState = localStorage.getItem("teamBRockCountState");
     const storedEnd = localStorage.getItem("end");
     const storedSpielName = localStorage.getItem("spielName");
-    const storedGameRockCountState = localStorage.getItem("gameRockCountState");
     if (storedTeamAName) setTeamAName(storedTeamAName);
     if (storedTeamBName) setTeamBName(storedTeamBName);
     if (storedHammerState) setHammerState(storedHammerState);
@@ -26662,7 +26661,6 @@ function App() {
     if (storedTeamBRockCountState) setTeamBRockCountState(Number(storedTeamBRockCountState));
     if (storedEnd) setEnd(Number(storedEnd));
     if (storedSpielName) setSpielName(storedSpielName);
-    if (storedGameRockCountState) setGameRockCountState(storedGameRockCountState);
     setLoadedFromStorage(true);
   }, []);
   reactExports.useEffect(() => {
@@ -26678,7 +26676,6 @@ function App() {
     localStorage.setItem("teamBRockCountState", String(teamBRockCountState));
     localStorage.setItem("end", String(end));
     localStorage.setItem("spielName", String(spielName));
-    localStorage.setItem("gameRockCountState", String(gameRockCountState));
   }, [
     teamAName,
     teamBName,
@@ -26691,7 +26688,6 @@ function App() {
     teamBRockCountState,
     end,
     spielName,
-    gameRockCountState,
     loadedFromStorage
     // include to ensure effect respects load order
   ]);
