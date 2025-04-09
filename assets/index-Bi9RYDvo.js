@@ -25186,6 +25186,7 @@ ControlPanel.propTypes = {
   teamBRockCountState: PropTypes.number,
   setTeamBRockCountState: PropTypes.func,
   gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
   end: PropTypes.number,
   setEnd: PropTypes.func,
   teamScores: PropTypes.arrayOf(
@@ -26214,7 +26215,9 @@ const TeamComponent = ({
   teamScore,
   hammerState,
   Background,
+  /* eslint-disable */
   gameRockCountState
+  /* eslint-enable */
 }) => {
   const textShadowValue = teamColor !== "yellow" ? "1px 1px 2px rgba(0, 0, 0, 0.8)" : "1px 1px 2px rgba(255, 255, 255, 0.8)";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Flex, { w: "full", bg: Background, bgGradient: teamStyles.bgGradient, h: "50px", children: [
@@ -26260,6 +26263,63 @@ const TeamComponent = ({
       }
     )
   ] });
+};
+VerticalScoreboard.propTypes = {
+  teamAName: PropTypes.string,
+  setTeamAName: PropTypes.func,
+  spielName: PropTypes.string,
+  setSpielName: PropTypes.func,
+  spielGameType: PropTypes.string,
+  setSpielGameType: PropTypes.func,
+  teamBName: PropTypes.string,
+  setTeamBName: PropTypes.func,
+  hammerState: PropTypes.string,
+  setHammerState: PropTypes.func,
+  teamAScore: PropTypes.number,
+  setTeamAScore: PropTypes.func,
+  teamAColor: PropTypes.string,
+  setTeamAColor: PropTypes.func,
+  teamARockCountState: PropTypes.number,
+  setTeamARockCountState: PropTypes.func,
+  teamBScore: PropTypes.number,
+  setTeamBScore: PropTypes.func,
+  teamBColor: PropTypes.string,
+  setTeamBColor: PropTypes.func,
+  teamBRockCountState: PropTypes.number,
+  setTeamBRockCountState: PropTypes.func,
+  gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
+  end: PropTypes.number,
+  setEnd: PropTypes.func,
+  teamScores: PropTypes.arrayOf(
+    PropTypes.shape({
+      score1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      score2: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    })
+  ).isRequired,
+  setTeamScores: PropTypes.func.isRequired,
+  teamAStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamBStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired
+};
+TeamComponent.propTypes = {
+  teamLetter: PropTypes.string.isRequired,
+  teamName: PropTypes.string,
+  teamColor: PropTypes.string.isRequired,
+  teamStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamScore: PropTypes.number.isRequired,
+  hammerState: PropTypes.string.isRequired,
+  Background: PropTypes.string.isRequired,
+  gameRockCountState: PropTypes.number
+  // Define this if needed for prop validation
 };
 function VerticalScoreboard({
   teamAName,
@@ -26732,6 +26792,14 @@ function App() {
     if (storedGameRockCountState) setGameRockCountState(storedGameRockCountState);
     setLoadedFromStorage(true);
   }, []);
+  reactExports.useEffect(() => {
+    if (loadedFromStorage && gameRockCountState !== "") {
+      setGameRockCountState((prevState) => {
+        const temp = Number(prevState) - 1;
+        return temp + 1;
+      });
+    }
+  }, [loadedFromStorage, gameRockCountState]);
   reactExports.useEffect(() => {
     if (!loadedFromStorage) return;
     localStorage.setItem("teamAName", teamAName);
