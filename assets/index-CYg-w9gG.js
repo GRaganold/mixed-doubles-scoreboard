@@ -25524,10 +25524,14 @@ function ControlPanel({
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { background: "#00ff00", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { fontSize: "sm", pr: 2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { display: "flex", justify: "start", bg: "#E8E8E8", rounded: "md", p: 2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(VStack, { color: "black", m: 1, w: "650px", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { w: "full", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(HStack, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
+          " ",
+          gameRockCountState
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Select,
           {
-            value: gameRockCountState || 8,
+            value: gameRockCountState,
             onChange: (e) => {
               const value = Number(e.target.value);
               setGameRockCountState(value);
@@ -26630,13 +26634,13 @@ function App() {
   const [spielGameType, setSpielGameType] = reactExports.useState("");
   const [teamAScore, setTeamAScore] = reactExports.useState(0);
   const [teamAColor, setTeamAColor] = reactExports.useState("red");
-  const [teamARockCountState, setTeamARockCountState] = reactExports.useState(1);
+  const [teamARockCountState, setTeamARockCountState] = reactExports.useState("");
   const [teamBName, setTeamBName] = reactExports.useState("Team B Name");
   const [teamBScore, setTeamBScore] = reactExports.useState(0);
   const [teamBColor, setTeamBColor] = reactExports.useState("yellow");
-  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(1);
+  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState("");
   const [end, setEnd] = reactExports.useState(1);
-  const [gameRockCountState, setGameRockCountState] = reactExports.useState(1);
+  const [gameRockCountState, setGameRockCountState] = reactExports.useState("");
   const [loadedFromStorage, setLoadedFromStorage] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const storedTeamAName = localStorage.getItem("teamAName");
