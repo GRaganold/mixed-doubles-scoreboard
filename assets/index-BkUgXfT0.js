@@ -25527,7 +25527,7 @@ function ControlPanel({
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Select,
           {
-            value: gameRockCountState,
+            value: gameRockCountState || 8,
             onChange: (e) => {
               const value = Number(e.target.value);
               setGameRockCountState(value);
@@ -25540,10 +25540,9 @@ function ControlPanel({
             size: "sm",
             borderRadius: 5,
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "1", disabled: true, children: "- stages of competition -" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 5, children: "Mixed Doubles" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 6, children: "Triples" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 8, children: "Men's / Women's" })
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 8, children: "Four person" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 5, children: "Mixed Doubles456" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 6, children: "Triples" })
             ]
           }
         ),
@@ -26630,13 +26629,13 @@ function App() {
   const [spielGameType, setSpielGameType] = reactExports.useState("");
   const [teamAScore, setTeamAScore] = reactExports.useState(0);
   const [teamAColor, setTeamAColor] = reactExports.useState("red");
-  const [teamARockCountState, setTeamARockCountState] = reactExports.useState(5);
+  const [teamARockCountState, setTeamARockCountState] = reactExports.useState(8);
   const [teamBName, setTeamBName] = reactExports.useState("Spruit/Spruit");
   const [teamBScore, setTeamBScore] = reactExports.useState(0);
   const [teamBColor, setTeamBColor] = reactExports.useState("yellow");
-  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(5);
+  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(8);
   const [end, setEnd] = reactExports.useState(1);
-  const [gameRockCountState, setGameRockCountState] = reactExports.useState(1);
+  const [gameRockCountState, setGameRockCountState] = reactExports.useState(8);
   const [loadedFromStorage, setLoadedFromStorage] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const storedTeamAName = localStorage.getItem("teamAName");
