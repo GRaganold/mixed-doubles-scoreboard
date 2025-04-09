@@ -25558,8 +25558,8 @@ function ControlPanel({
               handleResetEnd();
               handleResetAScore();
               handleResetBScore();
-              setTeamAName("Spruit/Spruit");
-              setTeamBName("Spruit/Spruit");
+              setTeamAName("Team A Name");
+              setTeamBName("Team B Name");
               setHammerState("A");
               setTeamScores([
                 { score1: 0, score2: 0 },
@@ -25872,7 +25872,7 @@ function ControlPanel({
           bg: nonTeamButtons.bg,
           _hover: nonTeamButtons._hover,
           onClick: handleIncreaseEnd,
-          isDisabled: end === 16,
+          isDisabled: end === 10,
           children: "+"
         }
       ),
@@ -25883,7 +25883,7 @@ function ControlPanel({
           bg: nonTeamButtons.bg,
           _hover: nonTeamButtons._hover,
           onClick: handleResetEnd,
-          isDisabled: end === 1 && teamARockCountState === 5 && teamBRockCountState === 5,
+          isDisabled: end === 1 && teamARockCountState === gameRockCountState && teamBRockCountState === gameRockCountState,
           children: "Reset"
         }
       )
@@ -26625,18 +26625,18 @@ BoxScore.propTypes = {
 };
 function App() {
   const [hammerState, setHammerState] = reactExports.useState("A");
-  const [teamAName, setTeamAName] = reactExports.useState("Spruit/Spruit");
+  const [teamAName, setTeamAName] = reactExports.useState("Team B Name");
   const [spielName, setSpielName] = reactExports.useState("Mixed Doubles Championships");
   const [spielGameType, setSpielGameType] = reactExports.useState("");
   const [teamAScore, setTeamAScore] = reactExports.useState(0);
   const [teamAColor, setTeamAColor] = reactExports.useState("red");
-  const [teamARockCountState, setTeamARockCountState] = reactExports.useState(8);
-  const [teamBName, setTeamBName] = reactExports.useState("Spruit/Spruit");
+  const [teamARockCountState, setTeamARockCountState] = reactExports.useState(1);
+  const [teamBName, setTeamBName] = reactExports.useState("Team B Name");
   const [teamBScore, setTeamBScore] = reactExports.useState(0);
   const [teamBColor, setTeamBColor] = reactExports.useState("yellow");
-  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(8);
+  const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(1);
   const [end, setEnd] = reactExports.useState(1);
-  const [gameRockCountState, setGameRockCountState] = reactExports.useState(8);
+  const [gameRockCountState, setGameRockCountState] = reactExports.useState(1);
   const [loadedFromStorage, setLoadedFromStorage] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const storedTeamAName = localStorage.getItem("teamAName");
