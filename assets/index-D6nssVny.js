@@ -25527,7 +25527,7 @@ function ControlPanel({
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Select,
           {
-            value: gameRockCountState || 8,
+            value: gameRockCountState === "" ? "" : gameRockCountState,
             onChange: (e) => {
               const value = Number(e.target.value);
               setGameRockCountState(value);
@@ -25948,47 +25948,69 @@ const CircleIcon$1 = (props) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Icon, { v
 ] });
 const boxSize$1 = "8";
 const flashInterval$1 = 1e3;
-function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function WithHammerTeamA({
+  teamBRockCountState,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     if (hammerState === "A" && (teamARockCountState + teamBRockCountState) % 2 !== 0) {
       const intervalId = setInterval(() => {
-        setHighlightedRockWithHammer(
-          (prev2) => prev2 === -1 ? teamARockCountState - 1 : -1
-        );
+        setHighlightedRockWithHammer((prev2) => prev2 === -1 ? teamARockCountState - 1 : -1);
       }, flashInterval$1);
       return () => clearInterval(intervalId);
     }
   }, [teamBRockCountState, hammerState, teamARockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon$1,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize: boxSize$1,
-      color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
-      stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
-    }
-  ) }) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon$1,
+        {
+          boxSize: boxSize$1,
+          color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
+          stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
+        }
+      ) })
+    },
+    index
+  )) });
 }
-function WithoutHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function WithoutHammerTeamA({
+  teamBRockCountState,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     if (hammerState === "B" && (teamARockCountState + teamBRockCountState) % 2 === 0) {
       const intervalId = setInterval(() => {
-        setHighlightedRockWithHammer(
-          (prev2) => prev2 === -1 ? teamARockCountState - 1 : -1
-        );
+        setHighlightedRockWithHammer((prev2) => prev2 === -1 ? teamARockCountState - 1 : -1);
       }, flashInterval$1);
       return () => clearInterval(intervalId);
     }
   }, [teamBRockCountState, hammerState, teamARockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon$1,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize: boxSize$1,
-      color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
-      stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
-    }
-  ) }) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon$1,
+        {
+          boxSize: boxSize$1,
+          color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
+          stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
+        }
+      ) })
+    },
+    index
+  )) });
 }
 function TeamARocks({
   teamBRockCountState,
@@ -26042,49 +26064,94 @@ const CircleIcon = (props) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Icon, { vie
     /* @__PURE__ */ jsxRuntimeExports.jsx("stop", { offset: "50%", style: { stopColor: "#707070", stopOpacity: 1 } }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("stop", { offset: "100%", style: { stopColor: "#909090", stopOpacity: 1 } })
   ] }) }),
-  /* @__PURE__ */ jsxRuntimeExports.jsx("path", { stroke: props.stroke, strokeWidth: "28", fill: props.color, d: "M 100, 100 m -75, 0 a 50,50 0 1,0 150,0 a 75,75 0 1,0 -150,0" })
+  /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "path",
+    {
+      stroke: props.stroke,
+      strokeWidth: "28",
+      fill: props.color,
+      d: "M 100, 100 m -75, 0 a 50,50 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+    }
+  )
 ] });
 const boxSize = "8";
 const flashInterval = 1e3;
-function WithHammerTeamB({ teamBRockCountState, teamBColor, teamARockCountState, hammerState, gameRockCountState }) {
+function WithHammerTeamB({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     console.log("gameRockCountState has changed:", gameRockCountState);
   }, [gameRockCountState]);
   reactExports.useEffect(() => {
     const intervalId = setInterval(() => {
-      setHighlightedRockWithHammer((prevRock) => prevRock === -1 && hammerState === "B" && (teamBRockCountState + teamARockCountState) % 2 !== 0 ? teamBRockCountState - 1 : -1);
+      setHighlightedRockWithHammer(
+        (prevRock) => prevRock === -1 && hammerState === "B" && (teamBRockCountState + teamARockCountState) % 2 !== 0 ? teamBRockCountState - 1 : -1
+      );
     }, flashInterval);
     return () => clearInterval(intervalId);
   }, [teamARockCountState, hammerState, teamBRockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize,
-      color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
-      stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
-    }
-  ) }, index) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon,
+        {
+          boxSize,
+          color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
+          stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+        }
+      ) }, index)
+    },
+    index
+  )) });
 }
-function WithoutHammerTeamB({ teamBRockCountState, teamBColor, teamARockCountState, hammerState, gameRockCountState }) {
+function WithoutHammerTeamB({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     const intervalId = setInterval(() => {
-      setHighlightedRockWithHammer((prevRock) => prevRock === -1 && hammerState === "A" && (teamBRockCountState + teamARockCountState) % 2 === 0 ? teamBRockCountState - 1 : -1);
+      setHighlightedRockWithHammer(
+        (prevRock) => prevRock === -1 && hammerState === "A" && (teamBRockCountState + teamARockCountState) % 2 === 0 ? teamBRockCountState - 1 : -1
+      );
     }, flashInterval);
     return () => clearInterval(intervalId);
   }, [teamARockCountState, hammerState, teamBRockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize,
-      color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
-      stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon,
+        {
+          boxSize,
+          color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
+          stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+        },
+        index
+      ) }, index)
     },
     index
-  ) }, index) }, index)) });
+  )) });
 }
-function TeamBRocks({ teamBRockCountState, teamBColor, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function TeamBRocks({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   reactExports.useEffect(() => {
     console.log("gameRockCountState has changed:", gameRockCountState);
   }, [gameRockCountState]);
@@ -26636,7 +26703,7 @@ function App() {
   const [teamBColor, setTeamBColor] = reactExports.useState("yellow");
   const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState(1);
   const [end, setEnd] = reactExports.useState(1);
-  const [gameRockCountState, setGameRockCountState] = reactExports.useState(1);
+  const [gameRockCountState, setGameRockCountState] = reactExports.useState("");
   const [loadedFromStorage, setLoadedFromStorage] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const storedTeamAName = localStorage.getItem("teamAName");
