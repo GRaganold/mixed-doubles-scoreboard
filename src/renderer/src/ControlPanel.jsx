@@ -476,7 +476,7 @@ export default function ControlPanel({
             <Box w="full">
               <HStack>
               <Select
-                value={gameRockCountState || 8}
+                value={gameRockCountState}
                 onChange={(e) => {
                   const value = Number(e.target.value)
                   setGameRockCountState(value) // ✅ set main game-level rock count

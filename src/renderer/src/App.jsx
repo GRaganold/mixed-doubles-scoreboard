@@ -12,14 +12,14 @@ export default function App() {
   const [spielGameType, setSpielGameType] = useState('')
   const [teamAScore, setTeamAScore] = useState(0)
   const [teamAColor, setTeamAColor] = useState('red')
-  const [teamARockCountState, setTeamARockCountState] = useState(1)
+  const [teamARockCountState, setTeamARockCountState] = useState("")
 
   const [teamBName, setTeamBName] = useState('Team B Name')
   const [teamBScore, setTeamBScore] = useState(0)
   const [teamBColor, setTeamBColor] = useState('yellow')
-  const [teamBRockCountState, setTeamBRockCountState] = useState(1)
+  const [teamBRockCountState, setTeamBRockCountState] = useState("")
   const [end, setEnd] = useState(1)
-  const [gameRockCountState, setGameRockCountState] = useState(1)
+  const [gameRockCountState, setGameRockCountState] = useState("")
 
   const [loadedFromStorage, setLoadedFromStorage] = useState(false) // 👈
 
@@ -39,7 +39,7 @@ export default function App() {
 
     const storedEnd = localStorage.getItem('end')
     const storedSpielName = localStorage.getItem('spielName')
-    const storedGameRockCountState = localStorage.getItem('gameRockCountState')
+
 
     if (storedTeamAName) setTeamAName(storedTeamAName)
     if (storedTeamBName) setTeamBName(storedTeamBName)
@@ -55,7 +55,7 @@ export default function App() {
 
     if (storedEnd) setEnd(Number(storedEnd))
     if (storedSpielName) setSpielName(storedSpielName)
-    if (storedGameRockCountState) setGameRockCountState(storedGameRockCountState)
+
     
 
     setLoadedFromStorage(true) // ✅ localStorage is now safe to write
@@ -79,7 +79,7 @@ export default function App() {
 
     localStorage.setItem('end', String(end))
     localStorage.setItem('spielName', String(spielName))
-    localStorage.setItem('gameRockCountState', String(gameRockCountState))
+
   }, [
     teamAName,
     teamBName,
@@ -92,7 +92,7 @@ export default function App() {
     teamBRockCountState,
     end,
     spielName,
-    gameRockCountState,
+
     loadedFromStorage // include to ensure effect respects load order
   ])
 
