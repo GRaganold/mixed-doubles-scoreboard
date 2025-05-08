@@ -15816,7 +15816,9 @@ function PopChild({ children, isPresent: isPresent2, anchorX }) {
         `);
     }
     return () => {
-      document.head.removeChild(style);
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
     };
   }, [isPresent2]);
   return jsxRuntimeExports.jsx(PopChildMeasure, { isPresent: isPresent2, childRef: ref, sizeRef: size2, children: reactExports.cloneElement(children, { ref }) });
@@ -15824,33 +15826,31 @@ function PopChild({ children, isPresent: isPresent2, anchorX }) {
 const PresenceChild = ({ children, initial, isPresent: isPresent2, onExitComplete, custom, presenceAffectsLayout, mode: mode2, anchorX }) => {
   const presenceChildren = useConstant(newChildrenMap);
   const id2 = reactExports.useId();
-  const memoizedOnExitComplete = reactExports.useCallback((childId) => {
-    presenceChildren.set(childId, true);
-    for (const isComplete of presenceChildren.values()) {
-      if (!isComplete)
-        return;
-    }
-    onExitComplete && onExitComplete();
-  }, [presenceChildren, onExitComplete]);
-  const context = reactExports.useMemo(
-    () => ({
+  let isReusedContext = true;
+  let context = reactExports.useMemo(() => {
+    isReusedContext = false;
+    return {
       id: id2,
       initial,
       isPresent: isPresent2,
       custom,
-      onExitComplete: memoizedOnExitComplete,
+      onExitComplete: (childId) => {
+        presenceChildren.set(childId, true);
+        for (const isComplete of presenceChildren.values()) {
+          if (!isComplete)
+            return;
+        }
+        onExitComplete && onExitComplete();
+      },
       register: (childId) => {
         presenceChildren.set(childId, false);
         return () => presenceChildren.delete(childId);
       }
-    }),
-    /**
-     * If the presence of a child affects the layout of the components around it,
-     * we want to make a new context value to ensure they get re-rendered
-     * so they can detect that layout change.
-     */
-    presenceAffectsLayout ? [Math.random(), memoizedOnExitComplete] : [isPresent2, memoizedOnExitComplete]
-  );
+    };
+  }, [isPresent2, presenceChildren, onExitComplete]);
+  if (presenceAffectsLayout && isReusedContext) {
+    context = { ...context };
+  }
   reactExports.useMemo(() => {
     presenceChildren.forEach((_, key) => presenceChildren.set(key, false));
   }, [isPresent2]);
@@ -15969,11 +15969,18 @@ function removeItem(arr, item) {
   if (index > -1)
     arr.splice(index, 1);
 }
+const clamp = (min, max, v) => {
+  if (v > max)
+    return max;
+  if (v < min)
+    return min;
+  return v;
+};
 let invariant = () => {
 };
-const MotionGlobalConfig = {
-  useManualTiming: false
-};
+const MotionGlobalConfig = {};
+const isNumericalString = (v) => /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(v);
+const isZeroValueString = (v) => /^0[^.\s]+$/u.test(v);
 // @__NO_SIDE_EFFECTS__
 function memo(callback) {
   let result;
@@ -15984,6 +15991,8 @@ function memo(callback) {
   };
 }
 const noop = /* @__NO_SIDE_EFFECTS__ */ (any) => any;
+const combineFunctions = (a, b) => (v) => b(a(v));
+const pipe$1 = (...transformers) => transformers.reduce(combineFunctions);
 const progress = /* @__NO_SIDE_EFFECTS__ */ (from2, to, value) => {
   const toFromDifference = to - from2;
   return toFromDifference === 0 ? 1 : (value - from2) / toFromDifference;
@@ -16021,198 +16030,81 @@ const millisecondsToSeconds = /* @__NO_SIDE_EFFECTS__ */ (milliseconds) => milli
 function velocityPerSecond(velocity, frameDuration) {
   return frameDuration ? velocity * (1e3 / frameDuration) : 0;
 }
-const supportsScrollTimeline = /* @__PURE__ */ memo(() => window.ScrollTimeline !== void 0);
-class GroupAnimation {
-  constructor(animations2) {
-    this.stop = () => this.runAll("stop");
-    this.animations = animations2.filter(Boolean);
-  }
-  get finished() {
-    return Promise.all(this.animations.map((animation) => animation.finished));
-  }
-  /**
-   * TODO: Filter out cancelled or stopped animations before returning
-   */
-  getAll(propName) {
-    return this.animations[0][propName];
-  }
-  setAll(propName, newValue) {
-    for (let i = 0; i < this.animations.length; i++) {
-      this.animations[i][propName] = newValue;
+const calcBezier = (t2, a1, a2) => (((1 - 3 * a2 + 3 * a1) * t2 + (3 * a2 - 6 * a1)) * t2 + 3 * a1) * t2;
+const subdivisionPrecision = 1e-7;
+const subdivisionMaxIterations = 12;
+function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
+  let currentX;
+  let currentT;
+  let i = 0;
+  do {
+    currentT = lowerBound + (upperBound - lowerBound) / 2;
+    currentX = calcBezier(currentT, mX1, mX2) - x;
+    if (currentX > 0) {
+      upperBound = currentT;
+    } else {
+      lowerBound = currentT;
     }
-  }
-  attachTimeline(timeline, fallback) {
-    const subscriptions = this.animations.map((animation) => {
-      if (supportsScrollTimeline() && animation.attachTimeline) {
-        return animation.attachTimeline(timeline);
-      } else if (typeof fallback === "function") {
-        return fallback(animation);
-      }
-    });
-    return () => {
-      subscriptions.forEach((cancel, i) => {
-        cancel && cancel();
-        this.animations[i].stop();
-      });
-    };
-  }
-  get time() {
-    return this.getAll("time");
-  }
-  set time(time2) {
-    this.setAll("time", time2);
-  }
-  get speed() {
-    return this.getAll("speed");
-  }
-  set speed(speed) {
-    this.setAll("speed", speed);
-  }
-  get startTime() {
-    return this.getAll("startTime");
-  }
-  get duration() {
-    let max = 0;
-    for (let i = 0; i < this.animations.length; i++) {
-      max = Math.max(max, this.animations[i].duration);
-    }
-    return max;
-  }
-  runAll(methodName) {
-    this.animations.forEach((controls) => controls[methodName]());
-  }
-  flatten() {
-    this.runAll("flatten");
-  }
-  play() {
-    this.runAll("play");
-  }
-  pause() {
-    this.runAll("pause");
-  }
-  cancel() {
-    this.runAll("cancel");
-  }
-  complete() {
-    this.runAll("complete");
-  }
+  } while (Math.abs(currentX) > subdivisionPrecision && ++i < subdivisionMaxIterations);
+  return currentT;
 }
-class GroupAnimationWithThen extends GroupAnimation {
-  then(onResolve, _onReject) {
-    return this.finished.finally(onResolve).then(() => {
-    });
-  }
+function cubicBezier(mX1, mY1, mX2, mY2) {
+  if (mX1 === mY1 && mX2 === mY2)
+    return noop;
+  const getTForX = (aX) => binarySubdivide(aX, 0, 1, mX1, mX2);
+  return (t2) => t2 === 0 || t2 === 1 ? t2 : calcBezier(getTForX(t2), mY1, mY2);
 }
-const statsBuffer = {
-  value: null
+const mirrorEasing = (easing) => (p) => p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
+const reverseEasing = (easing) => (p) => 1 - easing(1 - p);
+const backOut = /* @__PURE__ */ cubicBezier(0.33, 1.53, 0.69, 0.99);
+const backIn = /* @__PURE__ */ reverseEasing(backOut);
+const backInOut = /* @__PURE__ */ mirrorEasing(backIn);
+const anticipate = (p) => (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
+const circIn = (p) => 1 - Math.sin(Math.acos(p));
+const circOut = reverseEasing(circIn);
+const circInOut = mirrorEasing(circIn);
+const easeIn = /* @__PURE__ */ cubicBezier(0.42, 0, 1, 1);
+const easeOut = /* @__PURE__ */ cubicBezier(0, 0, 0.58, 1);
+const easeInOut = /* @__PURE__ */ cubicBezier(0.42, 0, 0.58, 1);
+const isEasingArray = (ease2) => {
+  return Array.isArray(ease2) && typeof ease2[0] !== "number";
 };
 const isBezierDefinition = (easing) => Array.isArray(easing) && typeof easing[0] === "number";
-const supportsFlags = {};
-function memoSupports(callback, supportsFlag) {
-  const memoized = /* @__PURE__ */ memo(callback);
-  return () => supportsFlags[supportsFlag] ?? memoized();
-}
-const supportsLinearEasing = /* @__PURE__ */ memoSupports(() => {
-  try {
-    document.createElement("div").animate({ opacity: 0 }, { easing: "linear(0, 1)" });
-  } catch (e) {
-    return false;
-  }
-  return true;
-}, "linearEasing");
-const generateLinearEasing = (easing, duration, resolution = 10) => {
-  let points = "";
-  const numPoints = Math.max(Math.round(duration / resolution), 2);
-  for (let i = 0; i < numPoints; i++) {
-    points += easing(i / (numPoints - 1)) + ", ";
-  }
-  return `linear(${points.substring(0, points.length - 2)})`;
+const easingLookup = {
+  linear: noop,
+  easeIn,
+  easeInOut,
+  easeOut,
+  circIn,
+  circInOut,
+  circOut,
+  backIn,
+  backInOut,
+  backOut,
+  anticipate
 };
-const cubicBezierAsString = ([a, b, c, d]) => `cubic-bezier(${a}, ${b}, ${c}, ${d})`;
-const supportedWaapiEasing = {
-  linear: "linear",
-  ease: "ease",
-  easeIn: "ease-in",
-  easeOut: "ease-out",
-  easeInOut: "ease-in-out",
-  circIn: /* @__PURE__ */ cubicBezierAsString([0, 0.65, 0.55, 1]),
-  circOut: /* @__PURE__ */ cubicBezierAsString([0.55, 0, 1, 0.45]),
-  backIn: /* @__PURE__ */ cubicBezierAsString([0.31, 0.01, 0.66, -0.59]),
-  backOut: /* @__PURE__ */ cubicBezierAsString([0.33, 1.53, 0.69, 0.99])
+const isValidEasing = (easing) => {
+  return typeof easing === "string";
 };
-function mapEasingToNativeEasing(easing, duration) {
-  if (!easing) {
-    return void 0;
-  } else if (typeof easing === "function" && supportsLinearEasing()) {
-    return generateLinearEasing(easing, duration);
-  } else if (isBezierDefinition(easing)) {
-    return cubicBezierAsString(easing);
-  } else if (Array.isArray(easing)) {
-    return easing.map((segmentEasing) => mapEasingToNativeEasing(segmentEasing, duration) || supportedWaapiEasing.easeOut);
-  } else {
-    return supportedWaapiEasing[easing];
+const easingDefinitionToFunction = (definition) => {
+  if (isBezierDefinition(definition)) {
+    invariant(definition.length === 4);
+    const [x1, y1, x2, y2] = definition;
+    return cubicBezier(x1, y1, x2, y2);
+  } else if (isValidEasing(definition)) {
+    return easingLookup[definition];
   }
-}
-function startWaapiAnimation(element, valueName, keyframes2, { delay: delay2 = 0, duration = 300, repeat = 0, repeatType = "loop", ease: ease2 = "easeInOut", times } = {}, pseudoElement = void 0) {
-  const keyframeOptions = {
-    [valueName]: keyframes2
-  };
-  if (times)
-    keyframeOptions.offset = times;
-  const easing = mapEasingToNativeEasing(ease2, duration);
-  if (Array.isArray(easing))
-    keyframeOptions.easing = easing;
-  const animation = element.animate(keyframeOptions, {
-    delay: delay2,
-    duration,
-    easing: !Array.isArray(easing) ? easing : "linear",
-    fill: "both",
-    iterations: repeat + 1,
-    direction: repeatType === "reverse" ? "alternate" : "normal",
-    pseudoElement
-  });
-  return animation;
-}
-function isGenerator(type) {
-  return typeof type === "function" && "applyToOptions" in type;
-}
-function getValueTransition(transition2, key) {
-  return transition2?.[key] ?? transition2?.["default"] ?? transition2;
-}
-const maxGeneratorDuration = 2e4;
-function calcGeneratorDuration(generator) {
-  let duration = 0;
-  const timeStep = 50;
-  let state2 = generator.next(duration);
-  while (!state2.done && duration < maxGeneratorDuration) {
-    duration += timeStep;
-    state2 = generator.next(duration);
-  }
-  return duration >= maxGeneratorDuration ? Infinity : duration;
-}
-function createGeneratorEasing(options, scale2 = 100, createGenerator) {
-  const generator = createGenerator({ ...options, keyframes: [0, scale2] });
-  const duration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
-  return {
-    type: "keyframes",
-    ease: (progress2) => {
-      return generator.next(duration * progress2).value / scale2;
-    },
-    duration: /* @__PURE__ */ millisecondsToSeconds(duration)
-  };
-}
-function isWaapiSupportedEasing(easing) {
-  return Boolean(typeof easing === "function" && supportsLinearEasing() || !easing || typeof easing === "string" && (easing in supportedWaapiEasing || supportsLinearEasing()) || isBezierDefinition(easing) || Array.isArray(easing) && easing.every(isWaapiSupportedEasing));
-}
-function attachTimeline(animation, timeline) {
-  animation.timeline = timeline;
-  animation.onfinish = null;
-}
+  return definition;
+};
 const stepsOrder = [
+  "setup",
+  // Compute
   "read",
   // Read
   "resolveKeyframes",
   // Write/Read/Write/Read
+  "preUpdate",
+  // Compute
   "update",
   // Compute
   "preRender",
@@ -16222,6 +16114,9 @@ const stepsOrder = [
   "postRender"
   // Compute
 ];
+const statsBuffer = {
+  value: null
+};
 function createRenderStep(runNextFrame, stepName) {
   let thisFrame = /* @__PURE__ */ new Set();
   let nextFrame = /* @__PURE__ */ new Set();
@@ -16302,17 +16197,19 @@ function createRenderBatcher(scheduleNextBatch, allowKeepAlive) {
     acc[key] = createRenderStep(flagRunNextFrame, allowKeepAlive ? key : void 0);
     return acc;
   }, {});
-  const { read, resolveKeyframes, update, preRender, render, postRender } = steps;
+  const { setup, read, resolveKeyframes, preUpdate, update, preRender, render, postRender } = steps;
   const processBatch = () => {
-    const timestamp = performance.now();
+    const timestamp = MotionGlobalConfig.useManualTiming ? state2.timestamp : performance.now();
     runNextFrame = false;
-    {
+    if (!MotionGlobalConfig.useManualTiming) {
       state2.delta = useDefaultElapsed ? 1e3 / 60 : Math.max(Math.min(timestamp - state2.timestamp, maxElapsed), 1);
     }
     state2.timestamp = timestamp;
     state2.isProcessing = true;
+    setup.process(state2);
     read.process(state2);
     resolveKeyframes.process(state2);
+    preUpdate.process(state2);
     update.process(state2);
     preRender.process(state2);
     render.process(state2);
@@ -16347,7 +16244,6 @@ function createRenderBatcher(scheduleNextBatch, allowKeepAlive) {
   return { schedule, cancel, state: state2, steps };
 }
 const { schedule: frame, cancel: cancelFrame, state: frameData, steps: frameSteps } = /* @__PURE__ */ createRenderBatcher(typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : noop, true);
-const { schedule: microtask } = /* @__PURE__ */ createRenderBatcher(queueMicrotask, false);
 let now;
 function clearTime() {
   now = void 0;
@@ -16364,32 +16260,2012 @@ const time = {
     queueMicrotask(clearTime);
   }
 };
-const isDragging = {
-  x: false,
-  y: false
+const checkStringStartsWith = (token2) => (key) => typeof key === "string" && key.startsWith(token2);
+const isCSSVariableName = /* @__PURE__ */ checkStringStartsWith("--");
+const startsAsVariableToken = /* @__PURE__ */ checkStringStartsWith("var(--");
+const isCSSVariableToken = (value) => {
+  const startsWithToken = startsAsVariableToken(value);
+  if (!startsWithToken)
+    return false;
+  return singleCssVariableRegex.test(value.split("/*")[0].trim());
 };
-function isDragActive() {
-  return isDragging.x || isDragging.y;
+const singleCssVariableRegex = /var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu;
+const number = {
+  test: (v) => typeof v === "number",
+  parse: parseFloat,
+  transform: (v) => v
+};
+const alpha = {
+  ...number,
+  transform: (v) => clamp(0, 1, v)
+};
+const scale = {
+  ...number,
+  default: 1
+};
+const sanitize = (v) => Math.round(v * 1e5) / 1e5;
+const floatRegex = /-?(?:\d+(?:\.\d+)?|\.\d+)/gu;
+function isNullish(v) {
+  return v == null;
 }
-function setDragLock(axis) {
-  if (axis === "x" || axis === "y") {
-    if (isDragging[axis]) {
-      return null;
-    } else {
-      isDragging[axis] = true;
-      return () => {
-        isDragging[axis] = false;
-      };
-    }
+const singleColorRegex = /^(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))$/iu;
+const isColorString = (type, testProp) => (v) => {
+  return Boolean(typeof v === "string" && singleColorRegex.test(v) && v.startsWith(type) || testProp && !isNullish(v) && Object.prototype.hasOwnProperty.call(v, testProp));
+};
+const splitColor = (aName, bName, cName) => (v) => {
+  if (typeof v !== "string")
+    return v;
+  const [a, b, c, alpha2] = v.match(floatRegex);
+  return {
+    [aName]: parseFloat(a),
+    [bName]: parseFloat(b),
+    [cName]: parseFloat(c),
+    alpha: alpha2 !== void 0 ? parseFloat(alpha2) : 1
+  };
+};
+const clampRgbUnit = (v) => clamp(0, 255, v);
+const rgbUnit = {
+  ...number,
+  transform: (v) => Math.round(clampRgbUnit(v))
+};
+const rgba = {
+  test: /* @__PURE__ */ isColorString("rgb", "red"),
+  parse: /* @__PURE__ */ splitColor("red", "green", "blue"),
+  transform: ({ red, green, blue, alpha: alpha$1 = 1 }) => "rgba(" + rgbUnit.transform(red) + ", " + rgbUnit.transform(green) + ", " + rgbUnit.transform(blue) + ", " + sanitize(alpha.transform(alpha$1)) + ")"
+};
+function parseHex(v) {
+  let r2 = "";
+  let g = "";
+  let b = "";
+  let a = "";
+  if (v.length > 5) {
+    r2 = v.substring(1, 3);
+    g = v.substring(3, 5);
+    b = v.substring(5, 7);
+    a = v.substring(7, 9);
   } else {
-    if (isDragging.x || isDragging.y) {
-      return null;
+    r2 = v.substring(1, 2);
+    g = v.substring(2, 3);
+    b = v.substring(3, 4);
+    a = v.substring(4, 5);
+    r2 += r2;
+    g += g;
+    b += b;
+    a += a;
+  }
+  return {
+    red: parseInt(r2, 16),
+    green: parseInt(g, 16),
+    blue: parseInt(b, 16),
+    alpha: a ? parseInt(a, 16) / 255 : 1
+  };
+}
+const hex = {
+  test: /* @__PURE__ */ isColorString("#"),
+  parse: parseHex,
+  transform: rgba.transform
+};
+const createUnitType = /* @__NO_SIDE_EFFECTS__ */ (unit) => ({
+  test: (v) => typeof v === "string" && v.endsWith(unit) && v.split(" ").length === 1,
+  parse: parseFloat,
+  transform: (v) => `${v}${unit}`
+});
+const degrees = /* @__PURE__ */ createUnitType("deg");
+const percent = /* @__PURE__ */ createUnitType("%");
+const px = /* @__PURE__ */ createUnitType("px");
+const vh = /* @__PURE__ */ createUnitType("vh");
+const vw = /* @__PURE__ */ createUnitType("vw");
+const progressPercentage = /* @__PURE__ */ (() => ({
+  ...percent,
+  parse: (v) => percent.parse(v) / 100,
+  transform: (v) => percent.transform(v * 100)
+}))();
+const hsla = {
+  test: /* @__PURE__ */ isColorString("hsl", "hue"),
+  parse: /* @__PURE__ */ splitColor("hue", "saturation", "lightness"),
+  transform: ({ hue, saturation, lightness, alpha: alpha$1 = 1 }) => {
+    return "hsla(" + Math.round(hue) + ", " + percent.transform(sanitize(saturation)) + ", " + percent.transform(sanitize(lightness)) + ", " + sanitize(alpha.transform(alpha$1)) + ")";
+  }
+};
+const color = {
+  test: (v) => rgba.test(v) || hex.test(v) || hsla.test(v),
+  parse: (v) => {
+    if (rgba.test(v)) {
+      return rgba.parse(v);
+    } else if (hsla.test(v)) {
+      return hsla.parse(v);
     } else {
-      isDragging.x = isDragging.y = true;
-      return () => {
-        isDragging.x = isDragging.y = false;
-      };
+      return hex.parse(v);
     }
+  },
+  transform: (v) => {
+    return typeof v === "string" ? v : v.hasOwnProperty("red") ? rgba.transform(v) : hsla.transform(v);
+  }
+};
+const colorRegex = /(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu;
+function test(v) {
+  return isNaN(v) && typeof v === "string" && (v.match(floatRegex)?.length || 0) + (v.match(colorRegex)?.length || 0) > 0;
+}
+const NUMBER_TOKEN = "number";
+const COLOR_TOKEN = "color";
+const VAR_TOKEN = "var";
+const VAR_FUNCTION_TOKEN = "var(";
+const SPLIT_TOKEN = "${}";
+const complexRegex = /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)/giu;
+function analyseComplexValue(value) {
+  const originalValue = value.toString();
+  const values = [];
+  const indexes = {
+    color: [],
+    number: [],
+    var: []
+  };
+  const types = [];
+  let i = 0;
+  const tokenised = originalValue.replace(complexRegex, (parsedValue) => {
+    if (color.test(parsedValue)) {
+      indexes.color.push(i);
+      types.push(COLOR_TOKEN);
+      values.push(color.parse(parsedValue));
+    } else if (parsedValue.startsWith(VAR_FUNCTION_TOKEN)) {
+      indexes.var.push(i);
+      types.push(VAR_TOKEN);
+      values.push(parsedValue);
+    } else {
+      indexes.number.push(i);
+      types.push(NUMBER_TOKEN);
+      values.push(parseFloat(parsedValue));
+    }
+    ++i;
+    return SPLIT_TOKEN;
+  });
+  const split2 = tokenised.split(SPLIT_TOKEN);
+  return { values, split: split2, indexes, types };
+}
+function parseComplexValue(v) {
+  return analyseComplexValue(v).values;
+}
+function createTransformer(source) {
+  const { split: split2, types } = analyseComplexValue(source);
+  const numSections = split2.length;
+  return (v) => {
+    let output = "";
+    for (let i = 0; i < numSections; i++) {
+      output += split2[i];
+      if (v[i] !== void 0) {
+        const type = types[i];
+        if (type === NUMBER_TOKEN) {
+          output += sanitize(v[i]);
+        } else if (type === COLOR_TOKEN) {
+          output += color.transform(v[i]);
+        } else {
+          output += v[i];
+        }
+      }
+    }
+    return output;
+  };
+}
+const convertNumbersToZero = (v) => typeof v === "number" ? 0 : v;
+function getAnimatableNone$1(v) {
+  const parsed = parseComplexValue(v);
+  const transformer = createTransformer(v);
+  return transformer(parsed.map(convertNumbersToZero));
+}
+const complex = {
+  test,
+  parse: parseComplexValue,
+  createTransformer,
+  getAnimatableNone: getAnimatableNone$1
+};
+function hueToRgb(p, q, t2) {
+  if (t2 < 0)
+    t2 += 1;
+  if (t2 > 1)
+    t2 -= 1;
+  if (t2 < 1 / 6)
+    return p + (q - p) * 6 * t2;
+  if (t2 < 1 / 2)
+    return q;
+  if (t2 < 2 / 3)
+    return p + (q - p) * (2 / 3 - t2) * 6;
+  return p;
+}
+function hslaToRgba({ hue, saturation, lightness, alpha: alpha2 }) {
+  hue /= 360;
+  saturation /= 100;
+  lightness /= 100;
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+  if (!saturation) {
+    red = green = blue = lightness;
+  } else {
+    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+    const p = 2 * lightness - q;
+    red = hueToRgb(p, q, hue + 1 / 3);
+    green = hueToRgb(p, q, hue);
+    blue = hueToRgb(p, q, hue - 1 / 3);
+  }
+  return {
+    red: Math.round(red * 255),
+    green: Math.round(green * 255),
+    blue: Math.round(blue * 255),
+    alpha: alpha2
+  };
+}
+function mixImmediate(a, b) {
+  return (p) => p > 0 ? b : a;
+}
+const mixNumber$1 = (from2, to, progress2) => {
+  return from2 + (to - from2) * progress2;
+};
+const mixLinearColor = (from2, to, v) => {
+  const fromExpo = from2 * from2;
+  const expo = v * (to * to - fromExpo) + fromExpo;
+  return expo < 0 ? 0 : Math.sqrt(expo);
+};
+const colorTypes = [hex, rgba, hsla];
+const getColorType = (v) => colorTypes.find((type) => type.test(v));
+function asRGBA(color2) {
+  const type = getColorType(color2);
+  if (!Boolean(type))
+    return false;
+  let model = type.parse(color2);
+  if (type === hsla) {
+    model = hslaToRgba(model);
+  }
+  return model;
+}
+const mixColor = (from2, to) => {
+  const fromRGBA = asRGBA(from2);
+  const toRGBA = asRGBA(to);
+  if (!fromRGBA || !toRGBA) {
+    return mixImmediate(from2, to);
+  }
+  const blended = { ...fromRGBA };
+  return (v) => {
+    blended.red = mixLinearColor(fromRGBA.red, toRGBA.red, v);
+    blended.green = mixLinearColor(fromRGBA.green, toRGBA.green, v);
+    blended.blue = mixLinearColor(fromRGBA.blue, toRGBA.blue, v);
+    blended.alpha = mixNumber$1(fromRGBA.alpha, toRGBA.alpha, v);
+    return rgba.transform(blended);
+  };
+};
+const invisibleValues = /* @__PURE__ */ new Set(["none", "hidden"]);
+function mixVisibility(origin, target) {
+  if (invisibleValues.has(origin)) {
+    return (p) => p <= 0 ? origin : target;
+  } else {
+    return (p) => p >= 1 ? target : origin;
+  }
+}
+function mixNumber(a, b) {
+  return (p) => mixNumber$1(a, b, p);
+}
+function getMixer(a) {
+  if (typeof a === "number") {
+    return mixNumber;
+  } else if (typeof a === "string") {
+    return isCSSVariableToken(a) ? mixImmediate : color.test(a) ? mixColor : mixComplex;
+  } else if (Array.isArray(a)) {
+    return mixArray;
+  } else if (typeof a === "object") {
+    return color.test(a) ? mixColor : mixObject;
+  }
+  return mixImmediate;
+}
+function mixArray(a, b) {
+  const output = [...a];
+  const numValues = output.length;
+  const blendValue = a.map((v, i) => getMixer(v)(v, b[i]));
+  return (p) => {
+    for (let i = 0; i < numValues; i++) {
+      output[i] = blendValue[i](p);
+    }
+    return output;
+  };
+}
+function mixObject(a, b) {
+  const output = { ...a, ...b };
+  const blendValue = {};
+  for (const key in output) {
+    if (a[key] !== void 0 && b[key] !== void 0) {
+      blendValue[key] = getMixer(a[key])(a[key], b[key]);
+    }
+  }
+  return (v) => {
+    for (const key in blendValue) {
+      output[key] = blendValue[key](v);
+    }
+    return output;
+  };
+}
+function matchOrder(origin, target) {
+  const orderedOrigin = [];
+  const pointers = { color: 0, var: 0, number: 0 };
+  for (let i = 0; i < target.values.length; i++) {
+    const type = target.types[i];
+    const originIndex = origin.indexes[type][pointers[type]];
+    const originValue = origin.values[originIndex] ?? 0;
+    orderedOrigin[i] = originValue;
+    pointers[type]++;
+  }
+  return orderedOrigin;
+}
+const mixComplex = (origin, target) => {
+  const template = complex.createTransformer(target);
+  const originStats = analyseComplexValue(origin);
+  const targetStats = analyseComplexValue(target);
+  const canInterpolate = originStats.indexes.var.length === targetStats.indexes.var.length && originStats.indexes.color.length === targetStats.indexes.color.length && originStats.indexes.number.length >= targetStats.indexes.number.length;
+  if (canInterpolate) {
+    if (invisibleValues.has(origin) && !targetStats.values.length || invisibleValues.has(target) && !originStats.values.length) {
+      return mixVisibility(origin, target);
+    }
+    return pipe$1(mixArray(matchOrder(originStats, targetStats), targetStats.values), template);
+  } else {
+    return mixImmediate(origin, target);
+  }
+};
+function mix(from2, to, p) {
+  if (typeof from2 === "number" && typeof to === "number" && typeof p === "number") {
+    return mixNumber$1(from2, to, p);
+  }
+  const mixer = getMixer(from2);
+  return mixer(from2, to);
+}
+const frameloopDriver = (update) => {
+  const passTimestamp = ({ timestamp }) => update(timestamp);
+  return {
+    start: (keepAlive = true) => frame.update(passTimestamp, keepAlive),
+    stop: () => cancelFrame(passTimestamp),
+    /**
+     * If we're processing this frame we can use the
+     * framelocked timestamp to keep things in sync.
+     */
+    now: () => frameData.isProcessing ? frameData.timestamp : time.now()
+  };
+};
+const generateLinearEasing = (easing, duration, resolution = 10) => {
+  let points = "";
+  const numPoints = Math.max(Math.round(duration / resolution), 2);
+  for (let i = 0; i < numPoints; i++) {
+    points += easing(i / (numPoints - 1)) + ", ";
+  }
+  return `linear(${points.substring(0, points.length - 2)})`;
+};
+const maxGeneratorDuration = 2e4;
+function calcGeneratorDuration(generator) {
+  let duration = 0;
+  const timeStep = 50;
+  let state2 = generator.next(duration);
+  while (!state2.done && duration < maxGeneratorDuration) {
+    duration += timeStep;
+    state2 = generator.next(duration);
+  }
+  return duration >= maxGeneratorDuration ? Infinity : duration;
+}
+function createGeneratorEasing(options, scale2 = 100, createGenerator) {
+  const generator = createGenerator({ ...options, keyframes: [0, scale2] });
+  const duration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
+  return {
+    type: "keyframes",
+    ease: (progress2) => {
+      return generator.next(duration * progress2).value / scale2;
+    },
+    duration: /* @__PURE__ */ millisecondsToSeconds(duration)
+  };
+}
+const velocitySampleDuration = 5;
+function calcGeneratorVelocity(resolveValue, t2, current) {
+  const prevT = Math.max(t2 - velocitySampleDuration, 0);
+  return velocityPerSecond(current - resolveValue(prevT), t2 - prevT);
+}
+const springDefaults = {
+  // Default spring physics
+  stiffness: 100,
+  damping: 10,
+  mass: 1,
+  velocity: 0,
+  // Default duration/bounce-based options
+  duration: 800,
+  // in ms
+  bounce: 0.3,
+  visualDuration: 0.3,
+  // in seconds
+  // Rest thresholds
+  restSpeed: {
+    granular: 0.01,
+    default: 2
+  },
+  restDelta: {
+    granular: 5e-3,
+    default: 0.5
+  },
+  // Limits
+  minDuration: 0.01,
+  // in seconds
+  maxDuration: 10,
+  // in seconds
+  minDamping: 0.05,
+  maxDamping: 1
+};
+const safeMin = 1e-3;
+function findSpring({ duration = springDefaults.duration, bounce = springDefaults.bounce, velocity = springDefaults.velocity, mass = springDefaults.mass }) {
+  let envelope;
+  let derivative;
+  let dampingRatio = 1 - bounce;
+  dampingRatio = clamp(springDefaults.minDamping, springDefaults.maxDamping, dampingRatio);
+  duration = clamp(springDefaults.minDuration, springDefaults.maxDuration, /* @__PURE__ */ millisecondsToSeconds(duration));
+  if (dampingRatio < 1) {
+    envelope = (undampedFreq2) => {
+      const exponentialDecay = undampedFreq2 * dampingRatio;
+      const delta = exponentialDecay * duration;
+      const a = exponentialDecay - velocity;
+      const b = calcAngularFreq(undampedFreq2, dampingRatio);
+      const c = Math.exp(-delta);
+      return safeMin - a / b * c;
+    };
+    derivative = (undampedFreq2) => {
+      const exponentialDecay = undampedFreq2 * dampingRatio;
+      const delta = exponentialDecay * duration;
+      const d = delta * velocity + velocity;
+      const e = Math.pow(dampingRatio, 2) * Math.pow(undampedFreq2, 2) * duration;
+      const f = Math.exp(-delta);
+      const g = calcAngularFreq(Math.pow(undampedFreq2, 2), dampingRatio);
+      const factor = -envelope(undampedFreq2) + safeMin > 0 ? -1 : 1;
+      return factor * ((d - e) * f) / g;
+    };
+  } else {
+    envelope = (undampedFreq2) => {
+      const a = Math.exp(-undampedFreq2 * duration);
+      const b = (undampedFreq2 - velocity) * duration + 1;
+      return -1e-3 + a * b;
+    };
+    derivative = (undampedFreq2) => {
+      const a = Math.exp(-undampedFreq2 * duration);
+      const b = (velocity - undampedFreq2) * (duration * duration);
+      return a * b;
+    };
+  }
+  const initialGuess = 5 / duration;
+  const undampedFreq = approximateRoot(envelope, derivative, initialGuess);
+  duration = /* @__PURE__ */ secondsToMilliseconds(duration);
+  if (isNaN(undampedFreq)) {
+    return {
+      stiffness: springDefaults.stiffness,
+      damping: springDefaults.damping,
+      duration
+    };
+  } else {
+    const stiffness = Math.pow(undampedFreq, 2) * mass;
+    return {
+      stiffness,
+      damping: dampingRatio * 2 * Math.sqrt(mass * stiffness),
+      duration
+    };
+  }
+}
+const rootIterations = 12;
+function approximateRoot(envelope, derivative, initialGuess) {
+  let result = initialGuess;
+  for (let i = 1; i < rootIterations; i++) {
+    result = result - envelope(result) / derivative(result);
+  }
+  return result;
+}
+function calcAngularFreq(undampedFreq, dampingRatio) {
+  return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio);
+}
+const durationKeys = ["duration", "bounce"];
+const physicsKeys = ["stiffness", "damping", "mass"];
+function isSpringType(options, keys2) {
+  return keys2.some((key) => options[key] !== void 0);
+}
+function getSpringOptions(options) {
+  let springOptions = {
+    velocity: springDefaults.velocity,
+    stiffness: springDefaults.stiffness,
+    damping: springDefaults.damping,
+    mass: springDefaults.mass,
+    isResolvedFromDuration: false,
+    ...options
+  };
+  if (!isSpringType(options, physicsKeys) && isSpringType(options, durationKeys)) {
+    if (options.visualDuration) {
+      const visualDuration = options.visualDuration;
+      const root = 2 * Math.PI / (visualDuration * 1.2);
+      const stiffness = root * root;
+      const damping = 2 * clamp(0.05, 1, 1 - (options.bounce || 0)) * Math.sqrt(stiffness);
+      springOptions = {
+        ...springOptions,
+        mass: springDefaults.mass,
+        stiffness,
+        damping
+      };
+    } else {
+      const derived = findSpring(options);
+      springOptions = {
+        ...springOptions,
+        ...derived,
+        mass: springDefaults.mass
+      };
+      springOptions.isResolvedFromDuration = true;
+    }
+  }
+  return springOptions;
+}
+function spring(optionsOrVisualDuration = springDefaults.visualDuration, bounce = springDefaults.bounce) {
+  const options = typeof optionsOrVisualDuration !== "object" ? {
+    visualDuration: optionsOrVisualDuration,
+    keyframes: [0, 1],
+    bounce
+  } : optionsOrVisualDuration;
+  let { restSpeed, restDelta } = options;
+  const origin = options.keyframes[0];
+  const target = options.keyframes[options.keyframes.length - 1];
+  const state2 = { done: false, value: origin };
+  const { stiffness, damping, mass, duration, velocity, isResolvedFromDuration } = getSpringOptions({
+    ...options,
+    velocity: -/* @__PURE__ */ millisecondsToSeconds(options.velocity || 0)
+  });
+  const initialVelocity = velocity || 0;
+  const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
+  const initialDelta = target - origin;
+  const undampedAngularFreq = /* @__PURE__ */ millisecondsToSeconds(Math.sqrt(stiffness / mass));
+  const isGranularScale = Math.abs(initialDelta) < 5;
+  restSpeed || (restSpeed = isGranularScale ? springDefaults.restSpeed.granular : springDefaults.restSpeed.default);
+  restDelta || (restDelta = isGranularScale ? springDefaults.restDelta.granular : springDefaults.restDelta.default);
+  let resolveSpring;
+  if (dampingRatio < 1) {
+    const angularFreq = calcAngularFreq(undampedAngularFreq, dampingRatio);
+    resolveSpring = (t2) => {
+      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t2);
+      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) / angularFreq * Math.sin(angularFreq * t2) + initialDelta * Math.cos(angularFreq * t2));
+    };
+  } else if (dampingRatio === 1) {
+    resolveSpring = (t2) => target - Math.exp(-undampedAngularFreq * t2) * (initialDelta + (initialVelocity + undampedAngularFreq * initialDelta) * t2);
+  } else {
+    const dampedAngularFreq = undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1);
+    resolveSpring = (t2) => {
+      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t2);
+      const freqForT = Math.min(dampedAngularFreq * t2, 300);
+      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) * Math.sinh(freqForT) + dampedAngularFreq * initialDelta * Math.cosh(freqForT)) / dampedAngularFreq;
+    };
+  }
+  const generator = {
+    calculatedDuration: isResolvedFromDuration ? duration || null : null,
+    next: (t2) => {
+      const current = resolveSpring(t2);
+      if (!isResolvedFromDuration) {
+        let currentVelocity = t2 === 0 ? initialVelocity : 0;
+        if (dampingRatio < 1) {
+          currentVelocity = t2 === 0 ? /* @__PURE__ */ secondsToMilliseconds(initialVelocity) : calcGeneratorVelocity(resolveSpring, t2, current);
+        }
+        const isBelowVelocityThreshold = Math.abs(currentVelocity) <= restSpeed;
+        const isBelowDisplacementThreshold = Math.abs(target - current) <= restDelta;
+        state2.done = isBelowVelocityThreshold && isBelowDisplacementThreshold;
+      } else {
+        state2.done = t2 >= duration;
+      }
+      state2.value = state2.done ? target : current;
+      return state2;
+    },
+    toString: () => {
+      const calculatedDuration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
+      const easing = generateLinearEasing((progress2) => generator.next(calculatedDuration * progress2).value, calculatedDuration, 30);
+      return calculatedDuration + "ms " + easing;
+    },
+    toTransition: () => {
+    }
+  };
+  return generator;
+}
+spring.applyToOptions = (options) => {
+  const generatorOptions = createGeneratorEasing(options, 100, spring);
+  options.ease = generatorOptions.ease;
+  options.duration = /* @__PURE__ */ secondsToMilliseconds(generatorOptions.duration);
+  options.type = "keyframes";
+  return options;
+};
+function inertia({ keyframes: keyframes2, velocity = 0, power = 0.8, timeConstant = 325, bounceDamping = 10, bounceStiffness = 500, modifyTarget, min, max, restDelta = 0.5, restSpeed }) {
+  const origin = keyframes2[0];
+  const state2 = {
+    done: false,
+    value: origin
+  };
+  const isOutOfBounds = (v) => min !== void 0 && v < min || max !== void 0 && v > max;
+  const nearestBoundary = (v) => {
+    if (min === void 0)
+      return max;
+    if (max === void 0)
+      return min;
+    return Math.abs(min - v) < Math.abs(max - v) ? min : max;
+  };
+  let amplitude = power * velocity;
+  const ideal = origin + amplitude;
+  const target = modifyTarget === void 0 ? ideal : modifyTarget(ideal);
+  if (target !== ideal)
+    amplitude = target - origin;
+  const calcDelta = (t2) => -amplitude * Math.exp(-t2 / timeConstant);
+  const calcLatest = (t2) => target + calcDelta(t2);
+  const applyFriction = (t2) => {
+    const delta = calcDelta(t2);
+    const latest = calcLatest(t2);
+    state2.done = Math.abs(delta) <= restDelta;
+    state2.value = state2.done ? target : latest;
+  };
+  let timeReachedBoundary;
+  let spring$1;
+  const checkCatchBoundary = (t2) => {
+    if (!isOutOfBounds(state2.value))
+      return;
+    timeReachedBoundary = t2;
+    spring$1 = spring({
+      keyframes: [state2.value, nearestBoundary(state2.value)],
+      velocity: calcGeneratorVelocity(calcLatest, t2, state2.value),
+      // TODO: This should be passing * 1000
+      damping: bounceDamping,
+      stiffness: bounceStiffness,
+      restDelta,
+      restSpeed
+    });
+  };
+  checkCatchBoundary(0);
+  return {
+    calculatedDuration: null,
+    next: (t2) => {
+      let hasUpdatedFrame = false;
+      if (!spring$1 && timeReachedBoundary === void 0) {
+        hasUpdatedFrame = true;
+        applyFriction(t2);
+        checkCatchBoundary(t2);
+      }
+      if (timeReachedBoundary !== void 0 && t2 >= timeReachedBoundary) {
+        return spring$1.next(t2 - timeReachedBoundary);
+      } else {
+        !hasUpdatedFrame && applyFriction(t2);
+        return state2;
+      }
+    }
+  };
+}
+function createMixers(output, ease2, customMixer) {
+  const mixers = [];
+  const mixerFactory = customMixer || MotionGlobalConfig.mix || mix;
+  const numMixers = output.length - 1;
+  for (let i = 0; i < numMixers; i++) {
+    let mixer = mixerFactory(output[i], output[i + 1]);
+    if (ease2) {
+      const easingFunction = Array.isArray(ease2) ? ease2[i] || noop : ease2;
+      mixer = pipe$1(easingFunction, mixer);
+    }
+    mixers.push(mixer);
+  }
+  return mixers;
+}
+function interpolate(input, output, { clamp: isClamp = true, ease: ease2, mixer } = {}) {
+  const inputLength = input.length;
+  invariant(inputLength === output.length);
+  if (inputLength === 1)
+    return () => output[0];
+  if (inputLength === 2 && output[0] === output[1])
+    return () => output[1];
+  const isZeroDeltaRange = input[0] === input[1];
+  if (input[0] > input[inputLength - 1]) {
+    input = [...input].reverse();
+    output = [...output].reverse();
+  }
+  const mixers = createMixers(output, ease2, mixer);
+  const numMixers = mixers.length;
+  const interpolator = (v) => {
+    if (isZeroDeltaRange && v < input[0])
+      return output[0];
+    let i = 0;
+    if (numMixers > 1) {
+      for (; i < input.length - 2; i++) {
+        if (v < input[i + 1])
+          break;
+      }
+    }
+    const progressInRange = /* @__PURE__ */ progress(input[i], input[i + 1], v);
+    return mixers[i](progressInRange);
+  };
+  return isClamp ? (v) => interpolator(clamp(input[0], input[inputLength - 1], v)) : interpolator;
+}
+function fillOffset(offset, remaining) {
+  const min = offset[offset.length - 1];
+  for (let i = 1; i <= remaining; i++) {
+    const offsetProgress = /* @__PURE__ */ progress(0, remaining, i);
+    offset.push(mixNumber$1(min, 1, offsetProgress));
+  }
+}
+function defaultOffset(arr) {
+  const offset = [0];
+  fillOffset(offset, arr.length - 1);
+  return offset;
+}
+function convertOffsetToTimes(offset, duration) {
+  return offset.map((o) => o * duration);
+}
+function defaultEasing(values, easing) {
+  return values.map(() => easing || easeInOut).splice(0, values.length - 1);
+}
+function keyframes({ duration = 300, keyframes: keyframeValues, times, ease: ease2 = "easeInOut" }) {
+  const easingFunctions = isEasingArray(ease2) ? ease2.map(easingDefinitionToFunction) : easingDefinitionToFunction(ease2);
+  const state2 = {
+    done: false,
+    value: keyframeValues[0]
+  };
+  const absoluteTimes = convertOffsetToTimes(
+    // Only use the provided offsets if they're the correct length
+    // TODO Maybe we should warn here if there's a length mismatch
+    times && times.length === keyframeValues.length ? times : defaultOffset(keyframeValues),
+    duration
+  );
+  const mapTimeToKeyframe = interpolate(absoluteTimes, keyframeValues, {
+    ease: Array.isArray(easingFunctions) ? easingFunctions : defaultEasing(keyframeValues, easingFunctions)
+  });
+  return {
+    calculatedDuration: duration,
+    next: (t2) => {
+      state2.value = mapTimeToKeyframe(t2);
+      state2.done = t2 >= duration;
+      return state2;
+    }
+  };
+}
+const isNotNull$1 = (value) => value !== null;
+function getFinalKeyframe$1(keyframes2, { repeat, repeatType = "loop" }, finalKeyframe, speed = 1) {
+  const resolvedKeyframes = keyframes2.filter(isNotNull$1);
+  const useFirstKeyframe = speed < 0 || repeat && repeatType !== "loop" && repeat % 2 === 1;
+  const index = useFirstKeyframe ? 0 : resolvedKeyframes.length - 1;
+  return !index || finalKeyframe === void 0 ? resolvedKeyframes[index] : finalKeyframe;
+}
+const transitionTypeMap = {
+  decay: inertia,
+  inertia,
+  tween: keyframes,
+  keyframes,
+  spring
+};
+function replaceTransitionType(transition2) {
+  if (typeof transition2.type === "string") {
+    transition2.type = transitionTypeMap[transition2.type];
+  }
+}
+class WithPromise {
+  constructor() {
+    this.count = 0;
+    this.updateFinished();
+  }
+  get finished() {
+    return this._finished;
+  }
+  updateFinished() {
+    this.count++;
+    this._finished = new Promise((resolve) => {
+      this.resolve = resolve;
+    });
+  }
+  notifyFinished() {
+    this.resolve();
+  }
+  /**
+   * Allows the animation to be awaited.
+   *
+   * @deprecated Use `finished` instead.
+   */
+  then(onResolve, onReject) {
+    return this.finished.then(onResolve, onReject);
+  }
+}
+const percentToProgress = (percent2) => percent2 / 100;
+class JSAnimation extends WithPromise {
+  constructor(options) {
+    super();
+    this.state = "idle";
+    this.startTime = null;
+    this.isStopped = false;
+    this.currentTime = 0;
+    this.holdTime = null;
+    this.playbackSpeed = 1;
+    this.stop = (sync = true) => {
+      if (sync) {
+        const { motionValue: motionValue2 } = this.options;
+        if (motionValue2 && motionValue2.updatedAt !== time.now()) {
+          this.tick(time.now());
+        }
+      }
+      this.isStopped = true;
+      if (this.state === "idle")
+        return;
+      this.teardown();
+      const { onStop } = this.options;
+      onStop && onStop();
+    };
+    this.options = options;
+    this.initAnimation();
+    this.play();
+    if (options.autoplay === false)
+      this.pause();
+  }
+  initAnimation() {
+    const { options } = this;
+    replaceTransitionType(options);
+    const { type = keyframes, repeat = 0, repeatDelay = 0, repeatType, velocity = 0 } = options;
+    let { keyframes: keyframes$12 } = options;
+    const generatorFactory = type || keyframes;
+    if (generatorFactory !== keyframes && typeof keyframes$12[0] !== "number") {
+      this.mixKeyframes = pipe$1(percentToProgress, mix(keyframes$12[0], keyframes$12[1]));
+      keyframes$12 = [0, 100];
+    }
+    const generator = generatorFactory({ ...options, keyframes: keyframes$12 });
+    if (repeatType === "mirror") {
+      this.mirroredGenerator = generatorFactory({
+        ...options,
+        keyframes: [...keyframes$12].reverse(),
+        velocity: -velocity
+      });
+    }
+    if (generator.calculatedDuration === null) {
+      generator.calculatedDuration = calcGeneratorDuration(generator);
+    }
+    const { calculatedDuration } = generator;
+    this.calculatedDuration = calculatedDuration;
+    this.resolvedDuration = calculatedDuration + repeatDelay;
+    this.totalDuration = this.resolvedDuration * (repeat + 1) - repeatDelay;
+    this.generator = generator;
+  }
+  updateTime(timestamp) {
+    const animationTime = Math.round(timestamp - this.startTime) * this.playbackSpeed;
+    if (this.holdTime !== null) {
+      this.currentTime = this.holdTime;
+    } else {
+      this.currentTime = animationTime;
+    }
+  }
+  tick(timestamp, sample = false) {
+    const { generator, totalDuration, mixKeyframes, mirroredGenerator, resolvedDuration, calculatedDuration } = this;
+    if (this.startTime === null)
+      return generator.next(0);
+    const { delay: delay2 = 0, keyframes: keyframes2, repeat, repeatType, repeatDelay, type, onUpdate, finalKeyframe } = this.options;
+    if (this.speed > 0) {
+      this.startTime = Math.min(this.startTime, timestamp);
+    } else if (this.speed < 0) {
+      this.startTime = Math.min(timestamp - totalDuration / this.speed, this.startTime);
+    }
+    if (sample) {
+      this.currentTime = timestamp;
+    } else {
+      this.updateTime(timestamp);
+    }
+    const timeWithoutDelay = this.currentTime - delay2 * (this.playbackSpeed >= 0 ? 1 : -1);
+    const isInDelayPhase = this.playbackSpeed >= 0 ? timeWithoutDelay < 0 : timeWithoutDelay > totalDuration;
+    this.currentTime = Math.max(timeWithoutDelay, 0);
+    if (this.state === "finished" && this.holdTime === null) {
+      this.currentTime = totalDuration;
+    }
+    let elapsed = this.currentTime;
+    let frameGenerator = generator;
+    if (repeat) {
+      const progress2 = Math.min(this.currentTime, totalDuration) / resolvedDuration;
+      let currentIteration = Math.floor(progress2);
+      let iterationProgress = progress2 % 1;
+      if (!iterationProgress && progress2 >= 1) {
+        iterationProgress = 1;
+      }
+      iterationProgress === 1 && currentIteration--;
+      currentIteration = Math.min(currentIteration, repeat + 1);
+      const isOddIteration = Boolean(currentIteration % 2);
+      if (isOddIteration) {
+        if (repeatType === "reverse") {
+          iterationProgress = 1 - iterationProgress;
+          if (repeatDelay) {
+            iterationProgress -= repeatDelay / resolvedDuration;
+          }
+        } else if (repeatType === "mirror") {
+          frameGenerator = mirroredGenerator;
+        }
+      }
+      elapsed = clamp(0, 1, iterationProgress) * resolvedDuration;
+    }
+    const state2 = isInDelayPhase ? { done: false, value: keyframes2[0] } : frameGenerator.next(elapsed);
+    if (mixKeyframes) {
+      state2.value = mixKeyframes(state2.value);
+    }
+    let { done } = state2;
+    if (!isInDelayPhase && calculatedDuration !== null) {
+      done = this.playbackSpeed >= 0 ? this.currentTime >= totalDuration : this.currentTime <= 0;
+    }
+    const isAnimationFinished = this.holdTime === null && (this.state === "finished" || this.state === "running" && done);
+    if (isAnimationFinished && type !== inertia) {
+      state2.value = getFinalKeyframe$1(keyframes2, this.options, finalKeyframe, this.speed);
+    }
+    if (onUpdate) {
+      onUpdate(state2.value);
+    }
+    if (isAnimationFinished) {
+      this.finish();
+    }
+    return state2;
+  }
+  /**
+   * Allows the returned animation to be awaited or promise-chained. Currently
+   * resolves when the animation finishes at all but in a future update could/should
+   * reject if its cancels.
+   */
+  then(resolve, reject) {
+    return this.finished.then(resolve, reject);
+  }
+  get duration() {
+    return /* @__PURE__ */ millisecondsToSeconds(this.calculatedDuration);
+  }
+  get time() {
+    return /* @__PURE__ */ millisecondsToSeconds(this.currentTime);
+  }
+  set time(newTime) {
+    newTime = /* @__PURE__ */ secondsToMilliseconds(newTime);
+    this.currentTime = newTime;
+    if (this.startTime === null || this.holdTime !== null || this.playbackSpeed === 0) {
+      this.holdTime = newTime;
+    } else if (this.driver) {
+      this.startTime = this.driver.now() - newTime / this.playbackSpeed;
+    }
+    this.driver?.start(false);
+  }
+  get speed() {
+    return this.playbackSpeed;
+  }
+  set speed(newSpeed) {
+    this.updateTime(time.now());
+    const hasChanged = this.playbackSpeed !== newSpeed;
+    this.playbackSpeed = newSpeed;
+    if (hasChanged) {
+      this.time = /* @__PURE__ */ millisecondsToSeconds(this.currentTime);
+    }
+  }
+  play() {
+    if (this.isStopped)
+      return;
+    const { driver = frameloopDriver, onPlay, startTime } = this.options;
+    if (!this.driver) {
+      this.driver = driver((timestamp) => this.tick(timestamp));
+    }
+    onPlay && onPlay();
+    const now2 = this.driver.now();
+    if (this.state === "finished") {
+      this.updateFinished();
+      this.startTime = now2;
+    } else if (this.holdTime !== null) {
+      this.startTime = now2 - this.holdTime;
+    } else if (!this.startTime) {
+      this.startTime = startTime ?? now2;
+    }
+    if (this.state === "finished" && this.speed < 0) {
+      this.startTime += this.calculatedDuration;
+    }
+    this.holdTime = null;
+    this.state = "running";
+    this.driver.start();
+  }
+  pause() {
+    this.state = "paused";
+    this.updateTime(time.now());
+    this.holdTime = this.currentTime;
+  }
+  complete() {
+    if (this.state !== "running") {
+      this.play();
+    }
+    this.state = "finished";
+    this.holdTime = null;
+  }
+  finish() {
+    this.teardown();
+    this.state = "finished";
+    const { onComplete } = this.options;
+    onComplete && onComplete();
+  }
+  cancel() {
+    this.holdTime = null;
+    this.startTime = 0;
+    this.tick(0);
+    this.teardown();
+  }
+  teardown() {
+    this.notifyFinished();
+    this.state = "idle";
+    this.stopDriver();
+    this.startTime = this.holdTime = null;
+  }
+  stopDriver() {
+    if (!this.driver)
+      return;
+    this.driver.stop();
+    this.driver = void 0;
+  }
+  sample(sampleTime) {
+    this.startTime = 0;
+    return this.tick(sampleTime, true);
+  }
+  attachTimeline(timeline) {
+    if (this.options.allowFlatten) {
+      this.options.type = "keyframes";
+      this.options.ease = "linear";
+      this.initAnimation();
+    }
+    this.driver?.stop();
+    return timeline.observe(this);
+  }
+}
+function fillWildcards(keyframes2) {
+  for (let i = 1; i < keyframes2.length; i++) {
+    keyframes2[i] ?? (keyframes2[i] = keyframes2[i - 1]);
+  }
+}
+const radToDeg = (rad) => rad * 180 / Math.PI;
+const rotate = (v) => {
+  const angle = radToDeg(Math.atan2(v[1], v[0]));
+  return rebaseAngle(angle);
+};
+const matrix2dParsers = {
+  x: 4,
+  y: 5,
+  translateX: 4,
+  translateY: 5,
+  scaleX: 0,
+  scaleY: 3,
+  scale: (v) => (Math.abs(v[0]) + Math.abs(v[3])) / 2,
+  rotate,
+  rotateZ: rotate,
+  skewX: (v) => radToDeg(Math.atan(v[1])),
+  skewY: (v) => radToDeg(Math.atan(v[2])),
+  skew: (v) => (Math.abs(v[1]) + Math.abs(v[2])) / 2
+};
+const rebaseAngle = (angle) => {
+  angle = angle % 360;
+  if (angle < 0)
+    angle += 360;
+  return angle;
+};
+const rotateZ = rotate;
+const scaleX = (v) => Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+const scaleY = (v) => Math.sqrt(v[4] * v[4] + v[5] * v[5]);
+const matrix3dParsers = {
+  x: 12,
+  y: 13,
+  z: 14,
+  translateX: 12,
+  translateY: 13,
+  translateZ: 14,
+  scaleX,
+  scaleY,
+  scale: (v) => (scaleX(v) + scaleY(v)) / 2,
+  rotateX: (v) => rebaseAngle(radToDeg(Math.atan2(v[6], v[5]))),
+  rotateY: (v) => rebaseAngle(radToDeg(Math.atan2(-v[2], v[0]))),
+  rotateZ,
+  rotate: rotateZ,
+  skewX: (v) => radToDeg(Math.atan(v[4])),
+  skewY: (v) => radToDeg(Math.atan(v[1])),
+  skew: (v) => (Math.abs(v[1]) + Math.abs(v[4])) / 2
+};
+function defaultTransformValue(name) {
+  return name.includes("scale") ? 1 : 0;
+}
+function parseValueFromTransform(transform2, name) {
+  if (!transform2 || transform2 === "none") {
+    return defaultTransformValue(name);
+  }
+  const matrix3dMatch = transform2.match(/^matrix3d\(([-\d.e\s,]+)\)$/u);
+  let parsers;
+  let match2;
+  if (matrix3dMatch) {
+    parsers = matrix3dParsers;
+    match2 = matrix3dMatch;
+  } else {
+    const matrix2dMatch = transform2.match(/^matrix\(([-\d.e\s,]+)\)$/u);
+    parsers = matrix2dParsers;
+    match2 = matrix2dMatch;
+  }
+  if (!match2) {
+    return defaultTransformValue(name);
+  }
+  const valueParser = parsers[name];
+  const values = match2[1].split(",").map(convertTransformToNumber);
+  return typeof valueParser === "function" ? valueParser(values) : values[valueParser];
+}
+const readTransformValue = (instance, name) => {
+  const { transform: transform2 = "none" } = getComputedStyle(instance);
+  return parseValueFromTransform(transform2, name);
+};
+function convertTransformToNumber(value) {
+  return parseFloat(value.trim());
+}
+const transformPropOrder = [
+  "transformPerspective",
+  "x",
+  "y",
+  "z",
+  "translateX",
+  "translateY",
+  "translateZ",
+  "scale",
+  "scaleX",
+  "scaleY",
+  "rotate",
+  "rotateX",
+  "rotateY",
+  "rotateZ",
+  "skew",
+  "skewX",
+  "skewY"
+];
+const transformProps = /* @__PURE__ */ (() => new Set(transformPropOrder))();
+const isNumOrPxType = (v) => v === number || v === px;
+const transformKeys = /* @__PURE__ */ new Set(["x", "y", "z"]);
+const nonTranslationalTransformKeys = transformPropOrder.filter((key) => !transformKeys.has(key));
+function removeNonTranslationalTransform(visualElement) {
+  const removedTransforms = [];
+  nonTranslationalTransformKeys.forEach((key) => {
+    const value = visualElement.getValue(key);
+    if (value !== void 0) {
+      removedTransforms.push([key, value.get()]);
+      value.set(key.startsWith("scale") ? 1 : 0);
+    }
+  });
+  return removedTransforms;
+}
+const positionalValues = {
+  // Dimensions
+  width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) => x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+  height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) => y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
+  top: (_bbox, { top }) => parseFloat(top),
+  left: (_bbox, { left }) => parseFloat(left),
+  bottom: ({ y }, { top }) => parseFloat(top) + (y.max - y.min),
+  right: ({ x }, { left }) => parseFloat(left) + (x.max - x.min),
+  // Transform
+  x: (_bbox, { transform: transform2 }) => parseValueFromTransform(transform2, "x"),
+  y: (_bbox, { transform: transform2 }) => parseValueFromTransform(transform2, "y")
+};
+positionalValues.translateX = positionalValues.x;
+positionalValues.translateY = positionalValues.y;
+const toResolve = /* @__PURE__ */ new Set();
+let isScheduled = false;
+let anyNeedsMeasurement = false;
+let isForced = false;
+function measureAllKeyframes() {
+  if (anyNeedsMeasurement) {
+    const resolversToMeasure = Array.from(toResolve).filter((resolver) => resolver.needsMeasurement);
+    const elementsToMeasure = new Set(resolversToMeasure.map((resolver) => resolver.element));
+    const transformsToRestore = /* @__PURE__ */ new Map();
+    elementsToMeasure.forEach((element) => {
+      const removedTransforms = removeNonTranslationalTransform(element);
+      if (!removedTransforms.length)
+        return;
+      transformsToRestore.set(element, removedTransforms);
+      element.render();
+    });
+    resolversToMeasure.forEach((resolver) => resolver.measureInitialState());
+    elementsToMeasure.forEach((element) => {
+      element.render();
+      const restore = transformsToRestore.get(element);
+      if (restore) {
+        restore.forEach(([key, value]) => {
+          element.getValue(key)?.set(value);
+        });
+      }
+    });
+    resolversToMeasure.forEach((resolver) => resolver.measureEndState());
+    resolversToMeasure.forEach((resolver) => {
+      if (resolver.suspendedScrollY !== void 0) {
+        window.scrollTo(0, resolver.suspendedScrollY);
+      }
+    });
+  }
+  anyNeedsMeasurement = false;
+  isScheduled = false;
+  toResolve.forEach((resolver) => resolver.complete(isForced));
+  toResolve.clear();
+}
+function readAllKeyframes() {
+  toResolve.forEach((resolver) => {
+    resolver.readKeyframes();
+    if (resolver.needsMeasurement) {
+      anyNeedsMeasurement = true;
+    }
+  });
+}
+function flushKeyframeResolvers() {
+  isForced = true;
+  readAllKeyframes();
+  measureAllKeyframes();
+  isForced = false;
+}
+class KeyframeResolver {
+  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element, isAsync = false) {
+    this.state = "pending";
+    this.isAsync = false;
+    this.needsMeasurement = false;
+    this.unresolvedKeyframes = [...unresolvedKeyframes];
+    this.onComplete = onComplete;
+    this.name = name;
+    this.motionValue = motionValue2;
+    this.element = element;
+    this.isAsync = isAsync;
+  }
+  scheduleResolve() {
+    this.state = "scheduled";
+    if (this.isAsync) {
+      toResolve.add(this);
+      if (!isScheduled) {
+        isScheduled = true;
+        frame.read(readAllKeyframes);
+        frame.resolveKeyframes(measureAllKeyframes);
+      }
+    } else {
+      this.readKeyframes();
+      this.complete();
+    }
+  }
+  readKeyframes() {
+    const { unresolvedKeyframes, name, element, motionValue: motionValue2 } = this;
+    if (unresolvedKeyframes[0] === null) {
+      const currentValue = motionValue2?.get();
+      const finalKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
+      if (currentValue !== void 0) {
+        unresolvedKeyframes[0] = currentValue;
+      } else if (element && name) {
+        const valueAsRead = element.readValue(name, finalKeyframe);
+        if (valueAsRead !== void 0 && valueAsRead !== null) {
+          unresolvedKeyframes[0] = valueAsRead;
+        }
+      }
+      if (unresolvedKeyframes[0] === void 0) {
+        unresolvedKeyframes[0] = finalKeyframe;
+      }
+      if (motionValue2 && currentValue === void 0) {
+        motionValue2.set(unresolvedKeyframes[0]);
+      }
+    }
+    fillWildcards(unresolvedKeyframes);
+  }
+  setFinalKeyframe() {
+  }
+  measureInitialState() {
+  }
+  renderEndStyles() {
+  }
+  measureEndState() {
+  }
+  complete(isForcedComplete = false) {
+    this.state = "complete";
+    this.onComplete(this.unresolvedKeyframes, this.finalKeyframe, isForcedComplete);
+    toResolve.delete(this);
+  }
+  cancel() {
+    if (this.state === "scheduled") {
+      toResolve.delete(this);
+      this.state = "pending";
+    }
+  }
+  resume() {
+    if (this.state === "pending")
+      this.scheduleResolve();
+  }
+}
+const isCSSVar = (name) => name.startsWith("--");
+function setStyle(element, name, value) {
+  isCSSVar(name) ? element.style.setProperty(name, value) : element.style[name] = value;
+}
+const supportsScrollTimeline = /* @__PURE__ */ memo(() => window.ScrollTimeline !== void 0);
+const supportsFlags = {};
+function memoSupports(callback, supportsFlag) {
+  const memoized = /* @__PURE__ */ memo(callback);
+  return () => supportsFlags[supportsFlag] ?? memoized();
+}
+const supportsLinearEasing = /* @__PURE__ */ memoSupports(() => {
+  try {
+    document.createElement("div").animate({ opacity: 0 }, { easing: "linear(0, 1)" });
+  } catch (e) {
+    return false;
+  }
+  return true;
+}, "linearEasing");
+const cubicBezierAsString = ([a, b, c, d]) => `cubic-bezier(${a}, ${b}, ${c}, ${d})`;
+const supportedWaapiEasing = {
+  linear: "linear",
+  ease: "ease",
+  easeIn: "ease-in",
+  easeOut: "ease-out",
+  easeInOut: "ease-in-out",
+  circIn: /* @__PURE__ */ cubicBezierAsString([0, 0.65, 0.55, 1]),
+  circOut: /* @__PURE__ */ cubicBezierAsString([0.55, 0, 1, 0.45]),
+  backIn: /* @__PURE__ */ cubicBezierAsString([0.31, 0.01, 0.66, -0.59]),
+  backOut: /* @__PURE__ */ cubicBezierAsString([0.33, 1.53, 0.69, 0.99])
+};
+function mapEasingToNativeEasing(easing, duration) {
+  if (!easing) {
+    return void 0;
+  } else if (typeof easing === "function") {
+    return supportsLinearEasing() ? generateLinearEasing(easing, duration) : "ease-out";
+  } else if (isBezierDefinition(easing)) {
+    return cubicBezierAsString(easing);
+  } else if (Array.isArray(easing)) {
+    return easing.map((segmentEasing) => mapEasingToNativeEasing(segmentEasing, duration) || supportedWaapiEasing.easeOut);
+  } else {
+    return supportedWaapiEasing[easing];
+  }
+}
+function startWaapiAnimation(element, valueName, keyframes2, { delay: delay2 = 0, duration = 300, repeat = 0, repeatType = "loop", ease: ease2 = "easeOut", times } = {}, pseudoElement = void 0) {
+  const keyframeOptions = {
+    [valueName]: keyframes2
+  };
+  if (times)
+    keyframeOptions.offset = times;
+  const easing = mapEasingToNativeEasing(ease2, duration);
+  if (Array.isArray(easing))
+    keyframeOptions.easing = easing;
+  const options = {
+    delay: delay2,
+    duration,
+    easing: !Array.isArray(easing) ? easing : "linear",
+    fill: "both",
+    iterations: repeat + 1,
+    direction: repeatType === "reverse" ? "alternate" : "normal"
+  };
+  if (pseudoElement)
+    options.pseudoElement = pseudoElement;
+  const animation = element.animate(keyframeOptions, options);
+  return animation;
+}
+function isGenerator(type) {
+  return typeof type === "function" && "applyToOptions" in type;
+}
+function applyGeneratorOptions({ type, ...options }) {
+  if (isGenerator(type) && supportsLinearEasing()) {
+    return type.applyToOptions(options);
+  } else {
+    options.duration ?? (options.duration = 300);
+    options.ease ?? (options.ease = "easeOut");
+  }
+  return options;
+}
+class NativeAnimation extends WithPromise {
+  constructor(options) {
+    super();
+    this.finishedTime = null;
+    this.isStopped = false;
+    if (!options)
+      return;
+    const { element, name, keyframes: keyframes2, pseudoElement, allowFlatten = false, finalKeyframe, onComplete } = options;
+    this.isPseudoElement = Boolean(pseudoElement);
+    this.allowFlatten = allowFlatten;
+    this.options = options;
+    invariant(typeof options.type !== "string");
+    const transition2 = applyGeneratorOptions(options);
+    this.animation = startWaapiAnimation(element, name, keyframes2, transition2, pseudoElement);
+    if (transition2.autoplay === false) {
+      this.animation.pause();
+    }
+    this.animation.onfinish = () => {
+      this.finishedTime = this.time;
+      if (!pseudoElement) {
+        const keyframe = getFinalKeyframe$1(keyframes2, this.options, finalKeyframe, this.speed);
+        if (this.updateMotionValue) {
+          this.updateMotionValue(keyframe);
+        } else {
+          setStyle(element, name, keyframe);
+        }
+        this.animation.cancel();
+      }
+      onComplete?.();
+      this.notifyFinished();
+    };
+    this.animation.oncancel = () => this.notifyFinished();
+  }
+  play() {
+    if (this.isStopped)
+      return;
+    this.animation.play();
+    if (this.state === "finished") {
+      this.updateFinished();
+    }
+  }
+  pause() {
+    this.animation.pause();
+  }
+  complete() {
+    this.animation.finish?.();
+  }
+  cancel() {
+    try {
+      this.animation.cancel();
+    } catch (e) {
+    }
+  }
+  stop() {
+    if (this.isStopped)
+      return;
+    this.isStopped = true;
+    const { state: state2 } = this;
+    if (state2 === "idle" || state2 === "finished") {
+      return;
+    }
+    if (this.updateMotionValue) {
+      this.updateMotionValue();
+    } else {
+      this.commitStyles();
+    }
+    if (!this.isPseudoElement)
+      this.cancel();
+  }
+  /**
+   * WAAPI doesn't natively have any interruption capabilities.
+   *
+   * In this method, we commit styles back to the DOM before cancelling
+   * the animation.
+   *
+   * This is designed to be overridden by NativeAnimationExtended, which
+   * will create a renderless JS animation and sample it twice to calculate
+   * its current value, "previous" value, and therefore allow
+   * Motion to also correctly calculate velocity for any subsequent animation
+   * while deferring the commit until the next animation frame.
+   */
+  commitStyles() {
+    if (!this.isPseudoElement) {
+      this.animation.commitStyles?.();
+    }
+  }
+  get duration() {
+    const duration = this.animation.effect?.getComputedTiming?.().duration || 0;
+    return /* @__PURE__ */ millisecondsToSeconds(Number(duration));
+  }
+  get time() {
+    return /* @__PURE__ */ millisecondsToSeconds(Number(this.animation.currentTime) || 0);
+  }
+  set time(newTime) {
+    this.finishedTime = null;
+    this.animation.currentTime = /* @__PURE__ */ secondsToMilliseconds(newTime);
+  }
+  /**
+   * The playback speed of the animation.
+   * 1 = normal speed, 2 = double speed, 0.5 = half speed.
+   */
+  get speed() {
+    return this.animation.playbackRate;
+  }
+  set speed(newSpeed) {
+    if (newSpeed < 0)
+      this.finishedTime = null;
+    this.animation.playbackRate = newSpeed;
+  }
+  get state() {
+    return this.finishedTime !== null ? "finished" : this.animation.playState;
+  }
+  get startTime() {
+    return Number(this.animation.startTime);
+  }
+  set startTime(newStartTime) {
+    this.animation.startTime = newStartTime;
+  }
+  /**
+   * Attaches a timeline to the animation, for instance the `ScrollTimeline`.
+   */
+  attachTimeline({ timeline, observe }) {
+    if (this.allowFlatten) {
+      this.animation.effect?.updateTiming({ easing: "linear" });
+    }
+    this.animation.onfinish = null;
+    if (timeline && supportsScrollTimeline()) {
+      this.animation.timeline = timeline;
+      return noop;
+    } else {
+      return observe(this);
+    }
+  }
+}
+const unsupportedEasingFunctions = {
+  anticipate,
+  backInOut,
+  circInOut
+};
+function isUnsupportedEase(key) {
+  return key in unsupportedEasingFunctions;
+}
+function replaceStringEasing(transition2) {
+  if (typeof transition2.ease === "string" && isUnsupportedEase(transition2.ease)) {
+    transition2.ease = unsupportedEasingFunctions[transition2.ease];
+  }
+}
+const sampleDelta = 10;
+class NativeAnimationExtended extends NativeAnimation {
+  constructor(options) {
+    replaceStringEasing(options);
+    replaceTransitionType(options);
+    super(options);
+    if (options.startTime) {
+      this.startTime = options.startTime;
+    }
+    this.options = options;
+  }
+  /**
+   * WAAPI doesn't natively have any interruption capabilities.
+   *
+   * Rather than read commited styles back out of the DOM, we can
+   * create a renderless JS animation and sample it twice to calculate
+   * its current value, "previous" value, and therefore allow
+   * Motion to calculate velocity for any subsequent animation.
+   */
+  updateMotionValue(value) {
+    const { motionValue: motionValue2, onUpdate, onComplete, element, ...options } = this.options;
+    if (!motionValue2)
+      return;
+    if (value !== void 0) {
+      motionValue2.set(value);
+      return;
+    }
+    const sampleAnimation = new JSAnimation({
+      ...options,
+      autoplay: false
+    });
+    const sampleTime = /* @__PURE__ */ secondsToMilliseconds(this.finishedTime ?? this.time);
+    motionValue2.setWithVelocity(sampleAnimation.sample(sampleTime - sampleDelta).value, sampleAnimation.sample(sampleTime).value, sampleDelta);
+    sampleAnimation.stop();
+  }
+}
+const isAnimatable = (value, name) => {
+  if (name === "zIndex")
+    return false;
+  if (typeof value === "number" || Array.isArray(value))
+    return true;
+  if (typeof value === "string" && // It's animatable if we have a string
+  (complex.test(value) || value === "0") && // And it contains numbers and/or colors
+  !value.startsWith("url(")) {
+    return true;
+  }
+  return false;
+};
+function hasKeyframesChanged(keyframes2) {
+  const current = keyframes2[0];
+  if (keyframes2.length === 1)
+    return true;
+  for (let i = 0; i < keyframes2.length; i++) {
+    if (keyframes2[i] !== current)
+      return true;
+  }
+}
+function canAnimate(keyframes2, name, type, velocity) {
+  const originKeyframe = keyframes2[0];
+  if (originKeyframe === null)
+    return false;
+  if (name === "display" || name === "visibility")
+    return true;
+  const targetKeyframe = keyframes2[keyframes2.length - 1];
+  const isOriginAnimatable = isAnimatable(originKeyframe, name);
+  const isTargetAnimatable = isAnimatable(targetKeyframe, name);
+  if (!isOriginAnimatable || !isTargetAnimatable) {
+    return false;
+  }
+  return hasKeyframesChanged(keyframes2) || (type === "spring" || isGenerator(type)) && velocity;
+}
+const acceleratedValues = /* @__PURE__ */ new Set([
+  "opacity",
+  "clipPath",
+  "filter",
+  "transform"
+  // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
+  // or until we implement support for linear() easing.
+  // "background-color"
+]);
+const supportsWaapi = /* @__PURE__ */ memo(() => Object.hasOwnProperty.call(Element.prototype, "animate"));
+function supportsBrowserAnimation(options) {
+  const { motionValue: motionValue2, name, repeatDelay, repeatType, damping, type } = options;
+  if (!motionValue2 || !motionValue2.owner || !(motionValue2.owner.current instanceof HTMLElement)) {
+    return false;
+  }
+  const { onUpdate, transformTemplate: transformTemplate2 } = motionValue2.owner.getProps();
+  return supportsWaapi() && name && acceleratedValues.has(name) && (name !== "transform" || !transformTemplate2) && /**
+   * If we're outputting values to onUpdate then we can't use WAAPI as there's
+   * no way to read the value from WAAPI every frame.
+   */
+  !onUpdate && !repeatDelay && repeatType !== "mirror" && damping !== 0 && type !== "inertia";
+}
+const MAX_RESOLVE_DELAY = 40;
+class AsyncMotionValueAnimation extends WithPromise {
+  constructor({ autoplay = true, delay: delay2 = 0, type = "keyframes", repeat = 0, repeatDelay = 0, repeatType = "loop", keyframes: keyframes2, name, motionValue: motionValue2, element, ...options }) {
+    super();
+    this.stop = () => {
+      if (this._animation) {
+        this._animation.stop();
+        this.stopTimeline?.();
+      }
+      this.keyframeResolver?.cancel();
+    };
+    this.createdAt = time.now();
+    const optionsWithDefaults = {
+      autoplay,
+      delay: delay2,
+      type,
+      repeat,
+      repeatDelay,
+      repeatType,
+      name,
+      motionValue: motionValue2,
+      element,
+      ...options
+    };
+    const KeyframeResolver$1 = element?.KeyframeResolver || KeyframeResolver;
+    this.keyframeResolver = new KeyframeResolver$1(keyframes2, (resolvedKeyframes, finalKeyframe, forced) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe, optionsWithDefaults, !forced), name, motionValue2, element);
+    this.keyframeResolver?.scheduleResolve();
+  }
+  onKeyframesResolved(keyframes2, finalKeyframe, options, sync) {
+    this.keyframeResolver = void 0;
+    const { name, type, velocity, delay: delay2, isHandoff, onUpdate } = options;
+    this.resolvedAt = time.now();
+    if (!canAnimate(keyframes2, name, type, velocity)) {
+      if (MotionGlobalConfig.instantAnimations || !delay2) {
+        onUpdate?.(getFinalKeyframe$1(keyframes2, options, finalKeyframe));
+      }
+      keyframes2[0] = keyframes2[keyframes2.length - 1];
+      options.duration = 0;
+      options.repeat = 0;
+    }
+    const startTime = sync ? !this.resolvedAt ? this.createdAt : this.resolvedAt - this.createdAt > MAX_RESOLVE_DELAY ? this.resolvedAt : this.createdAt : void 0;
+    const resolvedOptions = {
+      startTime,
+      finalKeyframe,
+      ...options,
+      keyframes: keyframes2
+    };
+    const animation = !isHandoff && supportsBrowserAnimation(resolvedOptions) ? new NativeAnimationExtended({
+      ...resolvedOptions,
+      element: resolvedOptions.motionValue.owner.current
+    }) : new JSAnimation(resolvedOptions);
+    animation.finished.then(() => this.notifyFinished()).catch(noop);
+    if (this.pendingTimeline) {
+      this.stopTimeline = animation.attachTimeline(this.pendingTimeline);
+      this.pendingTimeline = void 0;
+    }
+    this._animation = animation;
+  }
+  get finished() {
+    if (!this._animation) {
+      return this._finished;
+    } else {
+      return this.animation.finished;
+    }
+  }
+  then(onResolve, _onReject) {
+    return this.finished.finally(onResolve).then(() => {
+    });
+  }
+  get animation() {
+    if (!this._animation) {
+      this.keyframeResolver?.resume();
+      flushKeyframeResolvers();
+    }
+    return this._animation;
+  }
+  get duration() {
+    return this.animation.duration;
+  }
+  get time() {
+    return this.animation.time;
+  }
+  set time(newTime) {
+    this.animation.time = newTime;
+  }
+  get speed() {
+    return this.animation.speed;
+  }
+  get state() {
+    return this.animation.state;
+  }
+  set speed(newSpeed) {
+    this.animation.speed = newSpeed;
+  }
+  get startTime() {
+    return this.animation.startTime;
+  }
+  attachTimeline(timeline) {
+    if (this._animation) {
+      this.stopTimeline = this.animation.attachTimeline(timeline);
+    } else {
+      this.pendingTimeline = timeline;
+    }
+    return () => this.stop();
+  }
+  play() {
+    this.animation.play();
+  }
+  pause() {
+    this.animation.pause();
+  }
+  complete() {
+    this.animation.complete();
+  }
+  cancel() {
+    if (this._animation) {
+      this.animation.cancel();
+    }
+    this.keyframeResolver?.cancel();
+  }
+}
+const splitCSSVariableRegex = (
+  // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
+  /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
+);
+function parseCSSVariable(current) {
+  const match2 = splitCSSVariableRegex.exec(current);
+  if (!match2)
+    return [,];
+  const [, token1, token2, fallback] = match2;
+  return [`--${token1 ?? token2}`, fallback];
+}
+function getVariableValue(current, element, depth = 1) {
+  const [token2, fallback] = parseCSSVariable(current);
+  if (!token2)
+    return;
+  const resolved = window.getComputedStyle(element).getPropertyValue(token2);
+  if (resolved) {
+    const trimmed = resolved.trim();
+    return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed;
+  }
+  return isCSSVariableToken(fallback) ? getVariableValue(fallback, element, depth + 1) : fallback;
+}
+function getValueTransition(transition2, key) {
+  return transition2?.[key] ?? transition2?.["default"] ?? transition2;
+}
+const positionalKeys = /* @__PURE__ */ new Set([
+  "width",
+  "height",
+  "top",
+  "left",
+  "right",
+  "bottom",
+  ...transformPropOrder
+]);
+const auto = {
+  test: (v) => v === "auto",
+  parse: (v) => v
+};
+const testValueType = (v) => (type) => type.test(v);
+const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
+const findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
+function isNone(value) {
+  if (typeof value === "number") {
+    return value === 0;
+  } else if (value !== null) {
+    return value === "none" || value === "0" || isZeroValueString(value);
+  } else {
+    return true;
+  }
+}
+const maxDefaults = /* @__PURE__ */ new Set(["brightness", "contrast", "saturate", "opacity"]);
+function applyDefaultFilter(v) {
+  const [name, value] = v.slice(0, -1).split("(");
+  if (name === "drop-shadow")
+    return v;
+  const [number2] = value.match(floatRegex) || [];
+  if (!number2)
+    return v;
+  const unit = value.replace(number2, "");
+  let defaultValue = maxDefaults.has(name) ? 1 : 0;
+  if (number2 !== value)
+    defaultValue *= 100;
+  return name + "(" + defaultValue + unit + ")";
+}
+const functionRegex = /\b([a-z-]*)\(.*?\)/gu;
+const filter = {
+  ...complex,
+  getAnimatableNone: (v) => {
+    const functions = v.match(functionRegex);
+    return functions ? functions.map(applyDefaultFilter).join(" ") : v;
+  }
+};
+const int = {
+  ...number,
+  transform: Math.round
+};
+const transformValueTypes = {
+  rotate: degrees,
+  rotateX: degrees,
+  rotateY: degrees,
+  rotateZ: degrees,
+  scale,
+  scaleX: scale,
+  scaleY: scale,
+  scaleZ: scale,
+  skew: degrees,
+  skewX: degrees,
+  skewY: degrees,
+  distance: px,
+  translateX: px,
+  translateY: px,
+  translateZ: px,
+  x: px,
+  y: px,
+  z: px,
+  perspective: px,
+  transformPerspective: px,
+  opacity: alpha,
+  originX: progressPercentage,
+  originY: progressPercentage,
+  originZ: px
+};
+const numberValueTypes = {
+  // Border props
+  borderWidth: px,
+  borderTopWidth: px,
+  borderRightWidth: px,
+  borderBottomWidth: px,
+  borderLeftWidth: px,
+  borderRadius: px,
+  radius: px,
+  borderTopLeftRadius: px,
+  borderTopRightRadius: px,
+  borderBottomRightRadius: px,
+  borderBottomLeftRadius: px,
+  // Positioning props
+  width: px,
+  maxWidth: px,
+  height: px,
+  maxHeight: px,
+  top: px,
+  right: px,
+  bottom: px,
+  left: px,
+  // Spacing props
+  padding: px,
+  paddingTop: px,
+  paddingRight: px,
+  paddingBottom: px,
+  paddingLeft: px,
+  margin: px,
+  marginTop: px,
+  marginRight: px,
+  marginBottom: px,
+  marginLeft: px,
+  // Misc
+  backgroundPositionX: px,
+  backgroundPositionY: px,
+  ...transformValueTypes,
+  zIndex: int,
+  // SVG
+  fillOpacity: alpha,
+  strokeOpacity: alpha,
+  numOctaves: int
+};
+const defaultValueTypes = {
+  ...numberValueTypes,
+  // Color props
+  color,
+  backgroundColor: color,
+  outlineColor: color,
+  fill: color,
+  stroke: color,
+  // Border props
+  borderColor: color,
+  borderTopColor: color,
+  borderRightColor: color,
+  borderBottomColor: color,
+  borderLeftColor: color,
+  filter,
+  WebkitFilter: filter
+};
+const getDefaultValueType = (key) => defaultValueTypes[key];
+function getAnimatableNone(key, value) {
+  let defaultValueType = getDefaultValueType(key);
+  if (defaultValueType !== filter)
+    defaultValueType = complex;
+  return defaultValueType.getAnimatableNone ? defaultValueType.getAnimatableNone(value) : void 0;
+}
+const invalidTemplates = /* @__PURE__ */ new Set(["auto", "none", "0"]);
+function makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name) {
+  let i = 0;
+  let animatableTemplate = void 0;
+  while (i < unresolvedKeyframes.length && !animatableTemplate) {
+    const keyframe = unresolvedKeyframes[i];
+    if (typeof keyframe === "string" && !invalidTemplates.has(keyframe) && analyseComplexValue(keyframe).values.length) {
+      animatableTemplate = unresolvedKeyframes[i];
+    }
+    i++;
+  }
+  if (animatableTemplate && name) {
+    for (const noneIndex of noneKeyframeIndexes) {
+      unresolvedKeyframes[noneIndex] = getAnimatableNone(name, animatableTemplate);
+    }
+  }
+}
+class DOMKeyframesResolver extends KeyframeResolver {
+  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element) {
+    super(unresolvedKeyframes, onComplete, name, motionValue2, element, true);
+  }
+  readKeyframes() {
+    const { unresolvedKeyframes, element, name } = this;
+    if (!element || !element.current)
+      return;
+    super.readKeyframes();
+    for (let i = 0; i < unresolvedKeyframes.length; i++) {
+      let keyframe = unresolvedKeyframes[i];
+      if (typeof keyframe === "string") {
+        keyframe = keyframe.trim();
+        if (isCSSVariableToken(keyframe)) {
+          const resolved = getVariableValue(keyframe, element.current);
+          if (resolved !== void 0) {
+            unresolvedKeyframes[i] = resolved;
+          }
+          if (i === unresolvedKeyframes.length - 1) {
+            this.finalKeyframe = keyframe;
+          }
+        }
+      }
+    }
+    this.resolveNoneKeyframes();
+    if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
+      return;
+    }
+    const [origin, target] = unresolvedKeyframes;
+    const originType = findDimensionValueType(origin);
+    const targetType = findDimensionValueType(target);
+    if (originType === targetType)
+      return;
+    if (isNumOrPxType(originType) && isNumOrPxType(targetType)) {
+      for (let i = 0; i < unresolvedKeyframes.length; i++) {
+        const value = unresolvedKeyframes[i];
+        if (typeof value === "string") {
+          unresolvedKeyframes[i] = parseFloat(value);
+        }
+      }
+    } else if (positionalValues[name]) {
+      this.needsMeasurement = true;
+    }
+  }
+  resolveNoneKeyframes() {
+    const { unresolvedKeyframes, name } = this;
+    const noneKeyframeIndexes = [];
+    for (let i = 0; i < unresolvedKeyframes.length; i++) {
+      if (unresolvedKeyframes[i] === null || isNone(unresolvedKeyframes[i])) {
+        noneKeyframeIndexes.push(i);
+      }
+    }
+    if (noneKeyframeIndexes.length) {
+      makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name);
+    }
+  }
+  measureInitialState() {
+    const { element, unresolvedKeyframes, name } = this;
+    if (!element || !element.current)
+      return;
+    if (name === "height") {
+      this.suspendedScrollY = window.pageYOffset;
+    }
+    this.measuredOrigin = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+    unresolvedKeyframes[0] = this.measuredOrigin;
+    const measureKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
+    if (measureKeyframe !== void 0) {
+      element.getValue(name, measureKeyframe).jump(measureKeyframe, false);
+    }
+  }
+  measureEndState() {
+    const { element, name, unresolvedKeyframes } = this;
+    if (!element || !element.current)
+      return;
+    const value = element.getValue(name);
+    value && value.jump(this.measuredOrigin, false);
+    const finalKeyframeIndex = unresolvedKeyframes.length - 1;
+    const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex];
+    unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+    if (finalKeyframe !== null && this.finalKeyframe === void 0) {
+      this.finalKeyframe = finalKeyframe;
+    }
+    if (this.removedTransforms?.length) {
+      this.removedTransforms.forEach(([unsetTransformName, unsetTransformValue]) => {
+        element.getValue(unsetTransformName).set(unsetTransformValue);
+      });
+    }
+    this.resolveNoneKeyframes();
   }
 }
 function resolveElements(elementOrSelector, scope, selectorCache) {
@@ -16397,144 +18273,10 @@ function resolveElements(elementOrSelector, scope, selectorCache) {
     return [elementOrSelector];
   } else if (typeof elementOrSelector === "string") {
     let root = document;
-    const elements = root.querySelectorAll(elementOrSelector);
+    const elements = selectorCache?.[elementOrSelector] ?? root.querySelectorAll(elementOrSelector);
     return elements ? Array.from(elements) : [];
   }
   return Array.from(elementOrSelector);
-}
-function setupGesture(elementOrSelector, options) {
-  const elements = resolveElements(elementOrSelector);
-  const gestureAbortController = new AbortController();
-  const eventOptions = {
-    passive: true,
-    ...options,
-    signal: gestureAbortController.signal
-  };
-  const cancel = () => gestureAbortController.abort();
-  return [elements, eventOptions, cancel];
-}
-function isValidHover(event) {
-  return !(event.pointerType === "touch" || isDragActive());
-}
-function hover(elementOrSelector, onHoverStart, options = {}) {
-  const [elements, eventOptions, cancel] = setupGesture(elementOrSelector, options);
-  const onPointerEnter = (enterEvent) => {
-    if (!isValidHover(enterEvent))
-      return;
-    const { target } = enterEvent;
-    const onHoverEnd = onHoverStart(target, enterEvent);
-    if (typeof onHoverEnd !== "function" || !target)
-      return;
-    const onPointerLeave = (leaveEvent) => {
-      if (!isValidHover(leaveEvent))
-        return;
-      onHoverEnd(leaveEvent);
-      target.removeEventListener("pointerleave", onPointerLeave);
-    };
-    target.addEventListener("pointerleave", onPointerLeave, eventOptions);
-  };
-  elements.forEach((element) => {
-    element.addEventListener("pointerenter", onPointerEnter, eventOptions);
-  });
-  return cancel;
-}
-const isNodeOrChild = (parent, child) => {
-  if (!child) {
-    return false;
-  } else if (parent === child) {
-    return true;
-  } else {
-    return isNodeOrChild(parent, child.parentElement);
-  }
-};
-const isPrimaryPointer = (event) => {
-  if (event.pointerType === "mouse") {
-    return typeof event.button !== "number" || event.button <= 0;
-  } else {
-    return event.isPrimary !== false;
-  }
-};
-const focusableElements = /* @__PURE__ */ new Set([
-  "BUTTON",
-  "INPUT",
-  "SELECT",
-  "TEXTAREA",
-  "A"
-]);
-function isElementKeyboardAccessible(element) {
-  return focusableElements.has(element.tagName) || element.tabIndex !== -1;
-}
-const isPressing = /* @__PURE__ */ new WeakSet();
-function filterEvents(callback) {
-  return (event) => {
-    if (event.key !== "Enter")
-      return;
-    callback(event);
-  };
-}
-function firePointerEvent(target, type) {
-  target.dispatchEvent(new PointerEvent("pointer" + type, { isPrimary: true, bubbles: true }));
-}
-const enableKeyboardPress = (focusEvent, eventOptions) => {
-  const element = focusEvent.currentTarget;
-  if (!element)
-    return;
-  const handleKeydown = filterEvents(() => {
-    if (isPressing.has(element))
-      return;
-    firePointerEvent(element, "down");
-    const handleKeyup = filterEvents(() => {
-      firePointerEvent(element, "up");
-    });
-    const handleBlur = () => firePointerEvent(element, "cancel");
-    element.addEventListener("keyup", handleKeyup, eventOptions);
-    element.addEventListener("blur", handleBlur, eventOptions);
-  });
-  element.addEventListener("keydown", handleKeydown, eventOptions);
-  element.addEventListener("blur", () => element.removeEventListener("keydown", handleKeydown), eventOptions);
-};
-function isValidPressEvent(event) {
-  return isPrimaryPointer(event) && !isDragActive();
-}
-function press(targetOrSelector, onPressStart, options = {}) {
-  const [targets, eventOptions, cancelEvents] = setupGesture(targetOrSelector, options);
-  const startPress = (startEvent) => {
-    const target = startEvent.currentTarget;
-    if (!isValidPressEvent(startEvent) || isPressing.has(target))
-      return;
-    isPressing.add(target);
-    const onPressEnd = onPressStart(target, startEvent);
-    const onPointerEnd = (endEvent, success) => {
-      window.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("pointercancel", onPointerCancel);
-      if (!isValidPressEvent(endEvent) || !isPressing.has(target)) {
-        return;
-      }
-      isPressing.delete(target);
-      if (typeof onPressEnd === "function") {
-        onPressEnd(endEvent, { success });
-      }
-    };
-    const onPointerUp = (upEvent) => {
-      onPointerEnd(upEvent, target === window || target === document || options.useGlobalTarget || isNodeOrChild(target, upEvent.target));
-    };
-    const onPointerCancel = (cancelEvent) => {
-      onPointerEnd(cancelEvent, false);
-    };
-    window.addEventListener("pointerup", onPointerUp, eventOptions);
-    window.addEventListener("pointercancel", onPointerCancel, eventOptions);
-  };
-  targets.forEach((target) => {
-    const pointerDownTarget = options.useGlobalTarget ? window : target;
-    pointerDownTarget.addEventListener("pointerdown", startPress, eventOptions);
-    if (target instanceof HTMLElement) {
-      target.addEventListener("focus", (event) => enableKeyboardPress(event, eventOptions));
-      if (!isElementKeyboardAccessible(target) && !target.hasAttribute("tabindex")) {
-        target.tabIndex = 0;
-      }
-    }
-  });
-  return cancelEvents;
 }
 const MAX_VELOCITY_DELTA = 30;
 const isFloat = (value) => {
@@ -16548,7 +18290,7 @@ class MotionValue {
    * -  `transformer`: A function to transform incoming values with.
    */
   constructor(init, options = {}) {
-    this.version = "12.6.3";
+    this.version = "__VERSION__";
     this.canTrackVelocity = null;
     this.events = {};
     this.updateAndNotify = (v, render = true) => {
@@ -16558,11 +18300,16 @@ class MotionValue {
       }
       this.prev = this.current;
       this.setCurrent(v);
-      if (this.current !== this.prev && this.events.change) {
-        this.events.change.notify(this.current);
+      if (this.current !== this.prev) {
+        this.events.change?.notify(this.current);
+        if (this.dependents) {
+          for (const dependent of this.dependents) {
+            dependent.dirty();
+          }
+        }
       }
-      if (render && this.events.renderRequest) {
-        this.events.renderRequest.notify(this.current);
+      if (render) {
+        this.events.renderRequest?.notify(this.current);
       }
     };
     this.hasAnimated = false;
@@ -16692,6 +18439,20 @@ class MotionValue {
     if (this.stopPassiveEffect)
       this.stopPassiveEffect();
   }
+  dirty() {
+    this.events.change?.notify(this.current);
+  }
+  addDependent(dependent) {
+    if (!this.dependents) {
+      this.dependents = /* @__PURE__ */ new Set();
+    }
+    this.dependents.add(dependent);
+  }
+  removeDependent(dependent) {
+    if (this.dependents) {
+      this.dependents.delete(dependent);
+    }
+  }
   /**
    * Returns the latest state of `MotionValue`
    *
@@ -16783,6 +18544,8 @@ class MotionValue {
    * @public
    */
   destroy() {
+    this.dependents?.clear();
+    this.events.destroy?.notify();
     this.clearListeners();
     this.stop();
     if (this.stopPassiveEffect) {
@@ -16793,6 +18556,176 @@ class MotionValue {
 function motionValue(init, options) {
   return new MotionValue(init, options);
 }
+const getValueAsType = (value, type) => {
+  return type && typeof value === "number" ? type.transform(value) : value;
+};
+const { schedule: microtask } = /* @__PURE__ */ createRenderBatcher(queueMicrotask, false);
+const isDragging = {
+  x: false,
+  y: false
+};
+function isDragActive() {
+  return isDragging.x || isDragging.y;
+}
+function setDragLock(axis) {
+  if (axis === "x" || axis === "y") {
+    if (isDragging[axis]) {
+      return null;
+    } else {
+      isDragging[axis] = true;
+      return () => {
+        isDragging[axis] = false;
+      };
+    }
+  } else {
+    if (isDragging.x || isDragging.y) {
+      return null;
+    } else {
+      isDragging.x = isDragging.y = true;
+      return () => {
+        isDragging.x = isDragging.y = false;
+      };
+    }
+  }
+}
+function setupGesture(elementOrSelector, options) {
+  const elements = resolveElements(elementOrSelector);
+  const gestureAbortController = new AbortController();
+  const eventOptions = {
+    passive: true,
+    ...options,
+    signal: gestureAbortController.signal
+  };
+  const cancel = () => gestureAbortController.abort();
+  return [elements, eventOptions, cancel];
+}
+function isValidHover(event) {
+  return !(event.pointerType === "touch" || isDragActive());
+}
+function hover(elementOrSelector, onHoverStart, options = {}) {
+  const [elements, eventOptions, cancel] = setupGesture(elementOrSelector, options);
+  const onPointerEnter = (enterEvent) => {
+    if (!isValidHover(enterEvent))
+      return;
+    const { target } = enterEvent;
+    const onHoverEnd = onHoverStart(target, enterEvent);
+    if (typeof onHoverEnd !== "function" || !target)
+      return;
+    const onPointerLeave = (leaveEvent) => {
+      if (!isValidHover(leaveEvent))
+        return;
+      onHoverEnd(leaveEvent);
+      target.removeEventListener("pointerleave", onPointerLeave);
+    };
+    target.addEventListener("pointerleave", onPointerLeave, eventOptions);
+  };
+  elements.forEach((element) => {
+    element.addEventListener("pointerenter", onPointerEnter, eventOptions);
+  });
+  return cancel;
+}
+const isNodeOrChild = (parent, child) => {
+  if (!child) {
+    return false;
+  } else if (parent === child) {
+    return true;
+  } else {
+    return isNodeOrChild(parent, child.parentElement);
+  }
+};
+const isPrimaryPointer = (event) => {
+  if (event.pointerType === "mouse") {
+    return typeof event.button !== "number" || event.button <= 0;
+  } else {
+    return event.isPrimary !== false;
+  }
+};
+const focusableElements = /* @__PURE__ */ new Set([
+  "BUTTON",
+  "INPUT",
+  "SELECT",
+  "TEXTAREA",
+  "A"
+]);
+function isElementKeyboardAccessible(element) {
+  return focusableElements.has(element.tagName) || element.tabIndex !== -1;
+}
+const isPressing = /* @__PURE__ */ new WeakSet();
+function filterEvents(callback) {
+  return (event) => {
+    if (event.key !== "Enter")
+      return;
+    callback(event);
+  };
+}
+function firePointerEvent(target, type) {
+  target.dispatchEvent(new PointerEvent("pointer" + type, { isPrimary: true, bubbles: true }));
+}
+const enableKeyboardPress = (focusEvent, eventOptions) => {
+  const element = focusEvent.currentTarget;
+  if (!element)
+    return;
+  const handleKeydown = filterEvents(() => {
+    if (isPressing.has(element))
+      return;
+    firePointerEvent(element, "down");
+    const handleKeyup = filterEvents(() => {
+      firePointerEvent(element, "up");
+    });
+    const handleBlur = () => firePointerEvent(element, "cancel");
+    element.addEventListener("keyup", handleKeyup, eventOptions);
+    element.addEventListener("blur", handleBlur, eventOptions);
+  });
+  element.addEventListener("keydown", handleKeydown, eventOptions);
+  element.addEventListener("blur", () => element.removeEventListener("keydown", handleKeydown), eventOptions);
+};
+function isValidPressEvent(event) {
+  return isPrimaryPointer(event) && !isDragActive();
+}
+function press(targetOrSelector, onPressStart, options = {}) {
+  const [targets, eventOptions, cancelEvents] = setupGesture(targetOrSelector, options);
+  const startPress = (startEvent) => {
+    const target = startEvent.currentTarget;
+    if (!isValidPressEvent(startEvent) || isPressing.has(target))
+      return;
+    isPressing.add(target);
+    const onPressEnd = onPressStart(target, startEvent);
+    const onPointerEnd = (endEvent, success) => {
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
+      if (isPressing.has(target)) {
+        isPressing.delete(target);
+      }
+      if (!isValidPressEvent(endEvent)) {
+        return;
+      }
+      if (typeof onPressEnd === "function") {
+        onPressEnd(endEvent, { success });
+      }
+    };
+    const onPointerUp = (upEvent) => {
+      onPointerEnd(upEvent, target === window || target === document || options.useGlobalTarget || isNodeOrChild(target, upEvent.target));
+    };
+    const onPointerCancel = (cancelEvent) => {
+      onPointerEnd(cancelEvent, false);
+    };
+    window.addEventListener("pointerup", onPointerUp, eventOptions);
+    window.addEventListener("pointercancel", onPointerCancel, eventOptions);
+  };
+  targets.forEach((target) => {
+    const pointerDownTarget = options.useGlobalTarget ? window : target;
+    pointerDownTarget.addEventListener("pointerdown", startPress, eventOptions);
+    if (target instanceof HTMLElement) {
+      target.addEventListener("focus", (event) => enableKeyboardPress(event, eventOptions));
+      if (!isElementKeyboardAccessible(target) && !target.hasAttribute("tabindex")) {
+        target.tabIndex = 0;
+      }
+    }
+  });
+  return cancelEvents;
+}
+const valueTypes = [...dimensionValueTypes, color, complex];
+const findValueType = (v) => valueTypes.find(testValueType(v));
 const LazyContext = reactExports.createContext({ strict: false });
 const featureProps = {
   animation: [
@@ -17043,7 +18976,7 @@ function useVisualElement(Component, visualState, props, createVisualElement, Pr
   return visualElement;
 }
 function createProjectionNode$1(visualElement, props, ProjectionNodeConstructor, initialPromotionConfig) {
-  const { layoutId, layout: layout2, drag: drag2, dragConstraints, layoutScroll, layoutRoot } = props;
+  const { layoutId, layout: layout2, drag: drag2, dragConstraints, layoutScroll, layoutRoot, layoutCrossfade } = props;
   visualElement.projection = new ProjectionNodeConstructor(visualElement.latestValues, props["data-framer-portal-id"] ? void 0 : getClosestProjectingNode(visualElement.parent));
   visualElement.projection.setOptions({
     layoutId,
@@ -17059,6 +18992,7 @@ function createProjectionNode$1(visualElement, props, ProjectionNodeConstructor,
      */
     animationType: typeof layout2 === "string" ? layout2 : "both",
     initialPromotionConfig,
+    crossfade: layoutCrossfade,
     layoutScroll,
     layoutRoot
   });
@@ -17110,16 +19044,6 @@ function getProjectionFunctionality(props) {
     ProjectionNode: combined.ProjectionNode
   };
 }
-const checkStringStartsWith = (token2) => (key) => typeof key === "string" && key.startsWith(token2);
-const isCSSVariableName = /* @__PURE__ */ checkStringStartsWith("--");
-const startsAsVariableToken = /* @__PURE__ */ checkStringStartsWith("var(--");
-const isCSSVariableToken = (value) => {
-  const startsWithToken = startsAsVariableToken(value);
-  if (!startsWithToken)
-    return false;
-  return singleCssVariableRegex.test(value.split("/*")[0].trim());
-};
-const singleCssVariableRegex = /var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu;
 const scaleCorrectors = {};
 function addScaleCorrector(correctors) {
   for (const key in correctors) {
@@ -17129,145 +19053,10 @@ function addScaleCorrector(correctors) {
     }
   }
 }
-const transformPropOrder = [
-  "transformPerspective",
-  "x",
-  "y",
-  "z",
-  "translateX",
-  "translateY",
-  "translateZ",
-  "scale",
-  "scaleX",
-  "scaleY",
-  "rotate",
-  "rotateX",
-  "rotateY",
-  "rotateZ",
-  "skew",
-  "skewX",
-  "skewY"
-];
-const transformProps = new Set(transformPropOrder);
 function isForcedMotionValue(key, { layout: layout2, layoutId }) {
   return transformProps.has(key) || key.startsWith("origin") || (layout2 || layoutId !== void 0) && (!!scaleCorrectors[key] || key === "opacity");
 }
 const isMotionValue = (value) => Boolean(value && value.getVelocity);
-const getValueAsType = (value, type) => {
-  return type && typeof value === "number" ? type.transform(value) : value;
-};
-const clamp = (min, max, v) => {
-  if (v > max)
-    return max;
-  if (v < min)
-    return min;
-  return v;
-};
-const number = {
-  test: (v) => typeof v === "number",
-  parse: parseFloat,
-  transform: (v) => v
-};
-const alpha = {
-  ...number,
-  transform: (v) => clamp(0, 1, v)
-};
-const scale = {
-  ...number,
-  default: 1
-};
-const createUnitType = (unit) => ({
-  test: (v) => typeof v === "string" && v.endsWith(unit) && v.split(" ").length === 1,
-  parse: parseFloat,
-  transform: (v) => `${v}${unit}`
-});
-const degrees = /* @__PURE__ */ createUnitType("deg");
-const percent = /* @__PURE__ */ createUnitType("%");
-const px = /* @__PURE__ */ createUnitType("px");
-const vh = /* @__PURE__ */ createUnitType("vh");
-const vw = /* @__PURE__ */ createUnitType("vw");
-const progressPercentage = {
-  ...percent,
-  parse: (v) => percent.parse(v) / 100,
-  transform: (v) => percent.transform(v * 100)
-};
-const browserNumberValueTypes = {
-  // Border props
-  borderWidth: px,
-  borderTopWidth: px,
-  borderRightWidth: px,
-  borderBottomWidth: px,
-  borderLeftWidth: px,
-  borderRadius: px,
-  radius: px,
-  borderTopLeftRadius: px,
-  borderTopRightRadius: px,
-  borderBottomRightRadius: px,
-  borderBottomLeftRadius: px,
-  // Positioning props
-  width: px,
-  maxWidth: px,
-  height: px,
-  maxHeight: px,
-  top: px,
-  right: px,
-  bottom: px,
-  left: px,
-  // Spacing props
-  padding: px,
-  paddingTop: px,
-  paddingRight: px,
-  paddingBottom: px,
-  paddingLeft: px,
-  margin: px,
-  marginTop: px,
-  marginRight: px,
-  marginBottom: px,
-  marginLeft: px,
-  // Misc
-  backgroundPositionX: px,
-  backgroundPositionY: px
-};
-const transformValueTypes = {
-  rotate: degrees,
-  rotateX: degrees,
-  rotateY: degrees,
-  rotateZ: degrees,
-  scale,
-  scaleX: scale,
-  scaleY: scale,
-  scaleZ: scale,
-  skew: degrees,
-  skewX: degrees,
-  skewY: degrees,
-  distance: px,
-  translateX: px,
-  translateY: px,
-  translateZ: px,
-  x: px,
-  y: px,
-  z: px,
-  perspective: px,
-  transformPerspective: px,
-  opacity: alpha,
-  originX: progressPercentage,
-  originY: progressPercentage,
-  originZ: px
-};
-const int = {
-  ...number,
-  transform: Math.round
-};
-const numberValueTypes = {
-  ...browserNumberValueTypes,
-  ...transformValueTypes,
-  zIndex: int,
-  size: px,
-  // SVG
-  fillOpacity: alpha,
-  strokeOpacity: alpha,
-  numOctaves: int
-};
 const translateAlias = {
   x: "translateX",
   y: "translateY",
@@ -17452,26 +19241,16 @@ function buildSVGPath(attrs, length2, spacing2 = 1, offset = 0, useDashCase = tr
   const pathSpacing = px.transform(spacing2);
   attrs[keys2.array] = `${pathLength} ${pathSpacing}`;
 }
-function calcOrigin$1(origin, offset, size2) {
-  return typeof origin === "string" ? origin : px.transform(offset + size2 * origin);
-}
-function calcSVGTransformOrigin(dimensions, originX, originY) {
-  const pxOriginX = calcOrigin$1(originX, dimensions.x, dimensions.width);
-  const pxOriginY = calcOrigin$1(originY, dimensions.y, dimensions.height);
-  return `${pxOriginX} ${pxOriginY}`;
-}
 function buildSVGAttrs(state2, {
   attrX,
   attrY,
   attrScale,
-  originX,
-  originY,
   pathLength,
   pathSpacing = 1,
   pathOffset = 0,
   // This is object creation, which we try to avoid per-frame.
   ...latest
-}, isSVGTag2, transformTemplate2) {
+}, isSVGTag2, transformTemplate2, styleProp) {
   buildHTMLStyles(state2, latest, transformTemplate2);
   if (isSVGTag2) {
     if (state2.style.viewBox) {
@@ -17481,14 +19260,18 @@ function buildSVGAttrs(state2, {
   }
   state2.attrs = state2.style;
   state2.style = {};
-  const { attrs, style, dimensions } = state2;
+  const { attrs, style } = state2;
   if (attrs.transform) {
-    if (dimensions)
-      style.transform = attrs.transform;
+    style.transform = attrs.transform;
     delete attrs.transform;
   }
-  if (dimensions && (originX !== void 0 || originY !== void 0 || style.transform)) {
-    style.transformOrigin = calcSVGTransformOrigin(dimensions, originX !== void 0 ? originX : 0.5, originY !== void 0 ? originY : 0.5);
+  if (style.transform || attrs.transformOrigin) {
+    style.transformOrigin = attrs.transformOrigin ?? "50% 50%";
+    delete attrs.transformOrigin;
+  }
+  if (style.transform) {
+    style.transformBox = styleProp?.transformBox ?? "fill-box";
+    delete attrs.transformBox;
   }
   if (attrX !== void 0)
     attrs.x = attrX;
@@ -17508,7 +19291,7 @@ const isSVGTag = (tag) => typeof tag === "string" && tag.toLowerCase() === "svg"
 function useSVGProps(props, visualState, _isStatic, Component) {
   const visualProps = reactExports.useMemo(() => {
     const state2 = createSvgRenderState();
-    buildSVGAttrs(state2, visualState, isSVGTag(Component), props.transformTemplate);
+    buildSVGAttrs(state2, visualState, isSVGTag(Component), props.transformTemplate, props.style);
     return {
       ...state2.attrs,
       style: { ...state2.style }
@@ -17558,28 +19341,14 @@ function resolveVariantFromProps(props, definition, custom, visualElement) {
   }
   return definition;
 }
-const isKeyframesTarget = (v) => {
-  return Array.isArray(v);
-};
-const isCustomValue = (v) => {
-  return Boolean(v && typeof v === "object" && v.mix && v.toValue);
-};
-const resolveFinalValueInKeyframes = (v) => {
-  return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
-};
 function resolveMotionValue(value) {
-  const unwrappedValue = isMotionValue(value) ? value.get() : value;
-  return isCustomValue(unwrappedValue) ? unwrappedValue.toValue() : unwrappedValue;
+  return isMotionValue(value) ? value.get() : value;
 }
-function makeState({ scrapeMotionValuesFromProps: scrapeMotionValuesFromProps2, createRenderState, onUpdate }, props, context, presenceContext) {
+function makeState({ scrapeMotionValuesFromProps: scrapeMotionValuesFromProps2, createRenderState }, props, context, presenceContext) {
   const state2 = {
     latestValues: makeLatestValues(props, context, presenceContext, scrapeMotionValuesFromProps2),
     renderState: createRenderState()
   };
-  if (onUpdate) {
-    state2.onMount = (instance) => onUpdate({ props, current: instance, ...state2 });
-    state2.onUpdate = (visualElement) => onUpdate(visualElement);
-  }
   return state2;
 }
 const makeUseVisualState = (config2) => (props, isStatic) => {
@@ -17646,55 +19415,6 @@ const htmlMotionConfig = {
     createRenderState: createHtmlRenderState
   })
 };
-function updateSVGDimensions(instance, renderState) {
-  try {
-    renderState.dimensions = typeof instance.getBBox === "function" ? instance.getBBox() : instance.getBoundingClientRect();
-  } catch (e) {
-    renderState.dimensions = {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0
-    };
-  }
-}
-function renderHTML(element, { style, vars: vars2 }, styleProp, projection) {
-  Object.assign(element.style, style, projection && projection.getProjectionStyles(styleProp));
-  for (const key in vars2) {
-    element.style.setProperty(key, vars2[key]);
-  }
-}
-const camelCaseAttributes = /* @__PURE__ */ new Set([
-  "baseFrequency",
-  "diffuseConstant",
-  "kernelMatrix",
-  "kernelUnitLength",
-  "keySplines",
-  "keyTimes",
-  "limitingConeAngle",
-  "markerHeight",
-  "markerWidth",
-  "numOctaves",
-  "targetX",
-  "targetY",
-  "surfaceScale",
-  "specularConstant",
-  "specularExponent",
-  "stdDeviation",
-  "tableValues",
-  "viewBox",
-  "gradientTransform",
-  "pathLength",
-  "startOffset",
-  "textLength",
-  "lengthAdjust"
-]);
-function renderSVG(element, renderState, _styleProp, projection) {
-  renderHTML(element, renderState, void 0, projection);
-  for (const key in renderState.attrs) {
-    element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
-  }
-}
 function scrapeMotionValuesFromProps(props, prevProps, visualElement) {
   const newValues = scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
   for (const key in props) {
@@ -17705,44 +19425,10 @@ function scrapeMotionValuesFromProps(props, prevProps, visualElement) {
   }
   return newValues;
 }
-const layoutProps = ["x", "y", "width", "height", "cx", "cy", "r"];
 const svgMotionConfig = {
   useVisualState: makeUseVisualState({
     scrapeMotionValuesFromProps,
-    createRenderState: createSvgRenderState,
-    onUpdate: ({ props, prevProps, current, renderState, latestValues }) => {
-      if (!current)
-        return;
-      let hasTransform2 = !!props.drag;
-      if (!hasTransform2) {
-        for (const key in latestValues) {
-          if (transformProps.has(key)) {
-            hasTransform2 = true;
-            break;
-          }
-        }
-      }
-      if (!hasTransform2)
-        return;
-      let needsMeasure = !prevProps;
-      if (prevProps) {
-        for (let i = 0; i < layoutProps.length; i++) {
-          const key = layoutProps[i];
-          if (props[key] !== prevProps[key]) {
-            needsMeasure = true;
-          }
-        }
-      }
-      if (!needsMeasure)
-        return;
-      frame.read(() => {
-        updateSVGDimensions(current, renderState);
-        frame.render(() => {
-          buildSVGAttrs(renderState, latestValues, isSVGTag(current.tagName), props.transformTemplate);
-          renderSVG(current, renderState);
-        });
-      });
-    }
+    createRenderState: createSvgRenderState
   })
 };
 function createMotionComponentFactory(preloadedFeatures, createVisualElement) {
@@ -17762,21 +19448,18 @@ function resolveVariant(visualElement, definition, custom) {
   const props = visualElement.getProps();
   return resolveVariantFromProps(props, definition, custom !== void 0 ? custom : props.custom, visualElement);
 }
-const positionalKeys = /* @__PURE__ */ new Set([
-  "width",
-  "height",
-  "top",
-  "left",
-  "right",
-  "bottom",
-  ...transformPropOrder
-]);
+const isKeyframesTarget = (v) => {
+  return Array.isArray(v);
+};
 function setMotionValue(visualElement, key, value) {
   if (visualElement.hasValue(key)) {
     visualElement.getValue(key).set(value);
   } else {
     visualElement.addValue(key, motionValue(value));
   }
+}
+function resolveFinalValueInKeyframes(v) {
+  return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
 }
 function setTarget(visualElement, definition) {
   const resolved = resolveVariant(visualElement, definition);
@@ -17794,1821 +19477,20 @@ function addValueToWillChange(visualElement, key) {
   const willChange = visualElement.getValue("willChange");
   if (isWillChangeMotionValue(willChange)) {
     return willChange.add(key);
+  } else if (!willChange && MotionGlobalConfig.WillChange) {
+    const newWillChange = new MotionGlobalConfig.WillChange("auto");
+    visualElement.addValue("willChange", newWillChange);
+    newWillChange.add(key);
   }
 }
 function getOptimisedAppearId(visualElement) {
   return visualElement.props[optimizedAppearDataAttribute];
 }
-const calcBezier = (t2, a1, a2) => (((1 - 3 * a2 + 3 * a1) * t2 + (3 * a2 - 6 * a1)) * t2 + 3 * a1) * t2;
-const subdivisionPrecision = 1e-7;
-const subdivisionMaxIterations = 12;
-function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
-  let currentX;
-  let currentT;
-  let i = 0;
-  do {
-    currentT = lowerBound + (upperBound - lowerBound) / 2;
-    currentX = calcBezier(currentT, mX1, mX2) - x;
-    if (currentX > 0) {
-      upperBound = currentT;
-    } else {
-      lowerBound = currentT;
-    }
-  } while (Math.abs(currentX) > subdivisionPrecision && ++i < subdivisionMaxIterations);
-  return currentT;
-}
-function cubicBezier(mX1, mY1, mX2, mY2) {
-  if (mX1 === mY1 && mX2 === mY2)
-    return noop;
-  const getTForX = (aX) => binarySubdivide(aX, 0, 1, mX1, mX2);
-  return (t2) => t2 === 0 || t2 === 1 ? t2 : calcBezier(getTForX(t2), mY1, mY2);
-}
-const mirrorEasing = (easing) => (p) => p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
-const reverseEasing = (easing) => (p) => 1 - easing(1 - p);
-const backOut = /* @__PURE__ */ cubicBezier(0.33, 1.53, 0.69, 0.99);
-const backIn = /* @__PURE__ */ reverseEasing(backOut);
-const backInOut = /* @__PURE__ */ mirrorEasing(backIn);
-const anticipate = (p) => (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
-const circIn = (p) => 1 - Math.sin(Math.acos(p));
-const circOut = reverseEasing(circIn);
-const circInOut = mirrorEasing(circIn);
-const isZeroValueString = (v) => /^0[^.\s]+$/u.test(v);
-function isNone(value) {
-  if (typeof value === "number") {
-    return value === 0;
-  } else if (value !== null) {
-    return value === "none" || value === "0" || isZeroValueString(value);
-  } else {
-    return true;
-  }
-}
-const sanitize = (v) => Math.round(v * 1e5) / 1e5;
-const floatRegex = /-?(?:\d+(?:\.\d+)?|\.\d+)/gu;
-function isNullish(v) {
-  return v == null;
-}
-const singleColorRegex = /^(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))$/iu;
-const isColorString = (type, testProp) => (v) => {
-  return Boolean(typeof v === "string" && singleColorRegex.test(v) && v.startsWith(type) || testProp && !isNullish(v) && Object.prototype.hasOwnProperty.call(v, testProp));
-};
-const splitColor = (aName, bName, cName) => (v) => {
-  if (typeof v !== "string")
-    return v;
-  const [a, b, c, alpha2] = v.match(floatRegex);
-  return {
-    [aName]: parseFloat(a),
-    [bName]: parseFloat(b),
-    [cName]: parseFloat(c),
-    alpha: alpha2 !== void 0 ? parseFloat(alpha2) : 1
-  };
-};
-const clampRgbUnit = (v) => clamp(0, 255, v);
-const rgbUnit = {
-  ...number,
-  transform: (v) => Math.round(clampRgbUnit(v))
-};
-const rgba = {
-  test: /* @__PURE__ */ isColorString("rgb", "red"),
-  parse: /* @__PURE__ */ splitColor("red", "green", "blue"),
-  transform: ({ red, green, blue, alpha: alpha$1 = 1 }) => "rgba(" + rgbUnit.transform(red) + ", " + rgbUnit.transform(green) + ", " + rgbUnit.transform(blue) + ", " + sanitize(alpha.transform(alpha$1)) + ")"
-};
-function parseHex(v) {
-  let r2 = "";
-  let g = "";
-  let b = "";
-  let a = "";
-  if (v.length > 5) {
-    r2 = v.substring(1, 3);
-    g = v.substring(3, 5);
-    b = v.substring(5, 7);
-    a = v.substring(7, 9);
-  } else {
-    r2 = v.substring(1, 2);
-    g = v.substring(2, 3);
-    b = v.substring(3, 4);
-    a = v.substring(4, 5);
-    r2 += r2;
-    g += g;
-    b += b;
-    a += a;
-  }
-  return {
-    red: parseInt(r2, 16),
-    green: parseInt(g, 16),
-    blue: parseInt(b, 16),
-    alpha: a ? parseInt(a, 16) / 255 : 1
-  };
-}
-const hex = {
-  test: /* @__PURE__ */ isColorString("#"),
-  parse: parseHex,
-  transform: rgba.transform
-};
-const hsla = {
-  test: /* @__PURE__ */ isColorString("hsl", "hue"),
-  parse: /* @__PURE__ */ splitColor("hue", "saturation", "lightness"),
-  transform: ({ hue, saturation, lightness, alpha: alpha$1 = 1 }) => {
-    return "hsla(" + Math.round(hue) + ", " + percent.transform(sanitize(saturation)) + ", " + percent.transform(sanitize(lightness)) + ", " + sanitize(alpha.transform(alpha$1)) + ")";
-  }
-};
-const color = {
-  test: (v) => rgba.test(v) || hex.test(v) || hsla.test(v),
-  parse: (v) => {
-    if (rgba.test(v)) {
-      return rgba.parse(v);
-    } else if (hsla.test(v)) {
-      return hsla.parse(v);
-    } else {
-      return hex.parse(v);
-    }
-  },
-  transform: (v) => {
-    return typeof v === "string" ? v : v.hasOwnProperty("red") ? rgba.transform(v) : hsla.transform(v);
-  }
-};
-const colorRegex = /(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu;
-function test(v) {
-  return isNaN(v) && typeof v === "string" && (v.match(floatRegex)?.length || 0) + (v.match(colorRegex)?.length || 0) > 0;
-}
-const NUMBER_TOKEN = "number";
-const COLOR_TOKEN = "color";
-const VAR_TOKEN = "var";
-const VAR_FUNCTION_TOKEN = "var(";
-const SPLIT_TOKEN = "${}";
-const complexRegex = /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)/giu;
-function analyseComplexValue(value) {
-  const originalValue = value.toString();
-  const values = [];
-  const indexes = {
-    color: [],
-    number: [],
-    var: []
-  };
-  const types = [];
-  let i = 0;
-  const tokenised = originalValue.replace(complexRegex, (parsedValue) => {
-    if (color.test(parsedValue)) {
-      indexes.color.push(i);
-      types.push(COLOR_TOKEN);
-      values.push(color.parse(parsedValue));
-    } else if (parsedValue.startsWith(VAR_FUNCTION_TOKEN)) {
-      indexes.var.push(i);
-      types.push(VAR_TOKEN);
-      values.push(parsedValue);
-    } else {
-      indexes.number.push(i);
-      types.push(NUMBER_TOKEN);
-      values.push(parseFloat(parsedValue));
-    }
-    ++i;
-    return SPLIT_TOKEN;
-  });
-  const split2 = tokenised.split(SPLIT_TOKEN);
-  return { values, split: split2, indexes, types };
-}
-function parseComplexValue(v) {
-  return analyseComplexValue(v).values;
-}
-function createTransformer(source) {
-  const { split: split2, types } = analyseComplexValue(source);
-  const numSections = split2.length;
-  return (v) => {
-    let output = "";
-    for (let i = 0; i < numSections; i++) {
-      output += split2[i];
-      if (v[i] !== void 0) {
-        const type = types[i];
-        if (type === NUMBER_TOKEN) {
-          output += sanitize(v[i]);
-        } else if (type === COLOR_TOKEN) {
-          output += color.transform(v[i]);
-        } else {
-          output += v[i];
-        }
-      }
-    }
-    return output;
-  };
-}
-const convertNumbersToZero = (v) => typeof v === "number" ? 0 : v;
-function getAnimatableNone$1(v) {
-  const parsed = parseComplexValue(v);
-  const transformer = createTransformer(v);
-  return transformer(parsed.map(convertNumbersToZero));
-}
-const complex = {
-  test,
-  parse: parseComplexValue,
-  createTransformer,
-  getAnimatableNone: getAnimatableNone$1
-};
-const maxDefaults = /* @__PURE__ */ new Set(["brightness", "contrast", "saturate", "opacity"]);
-function applyDefaultFilter(v) {
-  const [name, value] = v.slice(0, -1).split("(");
-  if (name === "drop-shadow")
-    return v;
-  const [number2] = value.match(floatRegex) || [];
-  if (!number2)
-    return v;
-  const unit = value.replace(number2, "");
-  let defaultValue = maxDefaults.has(name) ? 1 : 0;
-  if (number2 !== value)
-    defaultValue *= 100;
-  return name + "(" + defaultValue + unit + ")";
-}
-const functionRegex = /\b([a-z-]*)\(.*?\)/gu;
-const filter = {
-  ...complex,
-  getAnimatableNone: (v) => {
-    const functions = v.match(functionRegex);
-    return functions ? functions.map(applyDefaultFilter).join(" ") : v;
-  }
-};
-const defaultValueTypes = {
-  ...numberValueTypes,
-  // Color props
-  color,
-  backgroundColor: color,
-  outlineColor: color,
-  fill: color,
-  stroke: color,
-  // Border props
-  borderColor: color,
-  borderTopColor: color,
-  borderRightColor: color,
-  borderBottomColor: color,
-  borderLeftColor: color,
-  filter,
-  WebkitFilter: filter
-};
-const getDefaultValueType = (key) => defaultValueTypes[key];
-function getAnimatableNone(key, value) {
-  let defaultValueType = getDefaultValueType(key);
-  if (defaultValueType !== filter)
-    defaultValueType = complex;
-  return defaultValueType.getAnimatableNone ? defaultValueType.getAnimatableNone(value) : void 0;
-}
-const invalidTemplates = /* @__PURE__ */ new Set(["auto", "none", "0"]);
-function makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name) {
-  let i = 0;
-  let animatableTemplate = void 0;
-  while (i < unresolvedKeyframes.length && !animatableTemplate) {
-    const keyframe = unresolvedKeyframes[i];
-    if (typeof keyframe === "string" && !invalidTemplates.has(keyframe) && analyseComplexValue(keyframe).values.length) {
-      animatableTemplate = unresolvedKeyframes[i];
-    }
-    i++;
-  }
-  if (animatableTemplate && name) {
-    for (const noneIndex of noneKeyframeIndexes) {
-      unresolvedKeyframes[noneIndex] = getAnimatableNone(name, animatableTemplate);
-    }
-  }
-}
-const radToDeg = (rad) => rad * 180 / Math.PI;
-const rotate = (v) => {
-  const angle = radToDeg(Math.atan2(v[1], v[0]));
-  return rebaseAngle(angle);
-};
-const matrix2dParsers = {
-  x: 4,
-  y: 5,
-  translateX: 4,
-  translateY: 5,
-  scaleX: 0,
-  scaleY: 3,
-  scale: (v) => (Math.abs(v[0]) + Math.abs(v[3])) / 2,
-  rotate,
-  rotateZ: rotate,
-  skewX: (v) => radToDeg(Math.atan(v[1])),
-  skewY: (v) => radToDeg(Math.atan(v[2])),
-  skew: (v) => (Math.abs(v[1]) + Math.abs(v[2])) / 2
-};
-const rebaseAngle = (angle) => {
-  angle = angle % 360;
-  if (angle < 0)
-    angle += 360;
-  return angle;
-};
-const rotateZ = rotate;
-const scaleX = (v) => Math.sqrt(v[0] * v[0] + v[1] * v[1]);
-const scaleY = (v) => Math.sqrt(v[4] * v[4] + v[5] * v[5]);
-const matrix3dParsers = {
-  x: 12,
-  y: 13,
-  z: 14,
-  translateX: 12,
-  translateY: 13,
-  translateZ: 14,
-  scaleX,
-  scaleY,
-  scale: (v) => (scaleX(v) + scaleY(v)) / 2,
-  rotateX: (v) => rebaseAngle(radToDeg(Math.atan2(v[6], v[5]))),
-  rotateY: (v) => rebaseAngle(radToDeg(Math.atan2(-v[2], v[0]))),
-  rotateZ,
-  rotate: rotateZ,
-  skewX: (v) => radToDeg(Math.atan(v[4])),
-  skewY: (v) => radToDeg(Math.atan(v[1])),
-  skew: (v) => (Math.abs(v[1]) + Math.abs(v[4])) / 2
-};
-function defaultTransformValue(name) {
-  return name.includes("scale") ? 1 : 0;
-}
-function parseValueFromTransform(transform2, name) {
-  if (!transform2 || transform2 === "none") {
-    return defaultTransformValue(name);
-  }
-  const matrix3dMatch = transform2.match(/^matrix3d\(([-\d.e\s,]+)\)$/u);
-  let parsers;
-  let match2;
-  if (matrix3dMatch) {
-    parsers = matrix3dParsers;
-    match2 = matrix3dMatch;
-  } else {
-    const matrix2dMatch = transform2.match(/^matrix\(([-\d.e\s,]+)\)$/u);
-    parsers = matrix2dParsers;
-    match2 = matrix2dMatch;
-  }
-  if (!match2) {
-    return defaultTransformValue(name);
-  }
-  const valueParser = parsers[name];
-  const values = match2[1].split(",").map(convertTransformToNumber);
-  return typeof valueParser === "function" ? valueParser(values) : values[valueParser];
-}
-const readTransformValue = (instance, name) => {
-  const { transform: transform2 = "none" } = getComputedStyle(instance);
-  return parseValueFromTransform(transform2, name);
-};
-function convertTransformToNumber(value) {
-  return parseFloat(value.trim());
-}
-const isNumOrPxType = (v) => v === number || v === px;
-const transformKeys = /* @__PURE__ */ new Set(["x", "y", "z"]);
-const nonTranslationalTransformKeys = transformPropOrder.filter((key) => !transformKeys.has(key));
-function removeNonTranslationalTransform(visualElement) {
-  const removedTransforms = [];
-  nonTranslationalTransformKeys.forEach((key) => {
-    const value = visualElement.getValue(key);
-    if (value !== void 0) {
-      removedTransforms.push([key, value.get()]);
-      value.set(key.startsWith("scale") ? 1 : 0);
-    }
-  });
-  return removedTransforms;
-}
-const positionalValues = {
-  // Dimensions
-  width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) => x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
-  height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) => y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
-  top: (_bbox, { top }) => parseFloat(top),
-  left: (_bbox, { left }) => parseFloat(left),
-  bottom: ({ y }, { top }) => parseFloat(top) + (y.max - y.min),
-  right: ({ x }, { left }) => parseFloat(left) + (x.max - x.min),
-  // Transform
-  x: (_bbox, { transform: transform2 }) => parseValueFromTransform(transform2, "x"),
-  y: (_bbox, { transform: transform2 }) => parseValueFromTransform(transform2, "y")
-};
-positionalValues.translateX = positionalValues.x;
-positionalValues.translateY = positionalValues.y;
-const toResolve = /* @__PURE__ */ new Set();
-let isScheduled = false;
-let anyNeedsMeasurement = false;
-function measureAllKeyframes() {
-  if (anyNeedsMeasurement) {
-    const resolversToMeasure = Array.from(toResolve).filter((resolver) => resolver.needsMeasurement);
-    const elementsToMeasure = new Set(resolversToMeasure.map((resolver) => resolver.element));
-    const transformsToRestore = /* @__PURE__ */ new Map();
-    elementsToMeasure.forEach((element) => {
-      const removedTransforms = removeNonTranslationalTransform(element);
-      if (!removedTransforms.length)
-        return;
-      transformsToRestore.set(element, removedTransforms);
-      element.render();
-    });
-    resolversToMeasure.forEach((resolver) => resolver.measureInitialState());
-    elementsToMeasure.forEach((element) => {
-      element.render();
-      const restore = transformsToRestore.get(element);
-      if (restore) {
-        restore.forEach(([key, value]) => {
-          element.getValue(key)?.set(value);
-        });
-      }
-    });
-    resolversToMeasure.forEach((resolver) => resolver.measureEndState());
-    resolversToMeasure.forEach((resolver) => {
-      if (resolver.suspendedScrollY !== void 0) {
-        window.scrollTo(0, resolver.suspendedScrollY);
-      }
-    });
-  }
-  anyNeedsMeasurement = false;
-  isScheduled = false;
-  toResolve.forEach((resolver) => resolver.complete());
-  toResolve.clear();
-}
-function readAllKeyframes() {
-  toResolve.forEach((resolver) => {
-    resolver.readKeyframes();
-    if (resolver.needsMeasurement) {
-      anyNeedsMeasurement = true;
-    }
-  });
-}
-function flushKeyframeResolvers() {
-  readAllKeyframes();
-  measureAllKeyframes();
-}
-class KeyframeResolver {
-  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element, isAsync = false) {
-    this.isComplete = false;
-    this.isAsync = false;
-    this.needsMeasurement = false;
-    this.isScheduled = false;
-    this.unresolvedKeyframes = [...unresolvedKeyframes];
-    this.onComplete = onComplete;
-    this.name = name;
-    this.motionValue = motionValue2;
-    this.element = element;
-    this.isAsync = isAsync;
-  }
-  scheduleResolve() {
-    this.isScheduled = true;
-    if (this.isAsync) {
-      toResolve.add(this);
-      if (!isScheduled) {
-        isScheduled = true;
-        frame.read(readAllKeyframes);
-        frame.resolveKeyframes(measureAllKeyframes);
-      }
-    } else {
-      this.readKeyframes();
-      this.complete();
-    }
-  }
-  readKeyframes() {
-    const { unresolvedKeyframes, name, element, motionValue: motionValue2 } = this;
-    for (let i = 0; i < unresolvedKeyframes.length; i++) {
-      if (unresolvedKeyframes[i] === null) {
-        if (i === 0) {
-          const currentValue = motionValue2?.get();
-          const finalKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
-          if (currentValue !== void 0) {
-            unresolvedKeyframes[0] = currentValue;
-          } else if (element && name) {
-            const valueAsRead = element.readValue(name, finalKeyframe);
-            if (valueAsRead !== void 0 && valueAsRead !== null) {
-              unresolvedKeyframes[0] = valueAsRead;
-            }
-          }
-          if (unresolvedKeyframes[0] === void 0) {
-            unresolvedKeyframes[0] = finalKeyframe;
-          }
-          if (motionValue2 && currentValue === void 0) {
-            motionValue2.set(unresolvedKeyframes[0]);
-          }
-        } else {
-          unresolvedKeyframes[i] = unresolvedKeyframes[i - 1];
-        }
-      }
-    }
-  }
-  setFinalKeyframe() {
-  }
-  measureInitialState() {
-  }
-  renderEndStyles() {
-  }
-  measureEndState() {
-  }
-  complete() {
-    this.isComplete = true;
-    this.onComplete(this.unresolvedKeyframes, this.finalKeyframe);
-    toResolve.delete(this);
-  }
-  cancel() {
-    if (!this.isComplete) {
-      this.isScheduled = false;
-      toResolve.delete(this);
-    }
-  }
-  resume() {
-    if (!this.isComplete)
-      this.scheduleResolve();
-  }
-}
-const isNumericalString = (v) => /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(v);
-const splitCSSVariableRegex = (
-  // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
-  /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
-);
-function parseCSSVariable(current) {
-  const match2 = splitCSSVariableRegex.exec(current);
-  if (!match2)
-    return [,];
-  const [, token1, token2, fallback] = match2;
-  return [`--${token1 ?? token2}`, fallback];
-}
-function getVariableValue(current, element, depth = 1) {
-  const [token2, fallback] = parseCSSVariable(current);
-  if (!token2)
-    return;
-  const resolved = window.getComputedStyle(element).getPropertyValue(token2);
-  if (resolved) {
-    const trimmed = resolved.trim();
-    return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed;
-  }
-  return isCSSVariableToken(fallback) ? getVariableValue(fallback, element, depth + 1) : fallback;
-}
-const testValueType = (v) => (type) => type.test(v);
-const auto = {
-  test: (v) => v === "auto",
-  parse: (v) => v
-};
-const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
-const findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
-class DOMKeyframesResolver extends KeyframeResolver {
-  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element) {
-    super(unresolvedKeyframes, onComplete, name, motionValue2, element, true);
-  }
-  readKeyframes() {
-    const { unresolvedKeyframes, element, name } = this;
-    if (!element || !element.current)
-      return;
-    super.readKeyframes();
-    for (let i = 0; i < unresolvedKeyframes.length; i++) {
-      let keyframe = unresolvedKeyframes[i];
-      if (typeof keyframe === "string") {
-        keyframe = keyframe.trim();
-        if (isCSSVariableToken(keyframe)) {
-          const resolved = getVariableValue(keyframe, element.current);
-          if (resolved !== void 0) {
-            unresolvedKeyframes[i] = resolved;
-          }
-          if (i === unresolvedKeyframes.length - 1) {
-            this.finalKeyframe = keyframe;
-          }
-        }
-      }
-    }
-    this.resolveNoneKeyframes();
-    if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
-      return;
-    }
-    const [origin, target] = unresolvedKeyframes;
-    const originType = findDimensionValueType(origin);
-    const targetType = findDimensionValueType(target);
-    if (originType === targetType)
-      return;
-    if (isNumOrPxType(originType) && isNumOrPxType(targetType)) {
-      for (let i = 0; i < unresolvedKeyframes.length; i++) {
-        const value = unresolvedKeyframes[i];
-        if (typeof value === "string") {
-          unresolvedKeyframes[i] = parseFloat(value);
-        }
-      }
-    } else {
-      this.needsMeasurement = true;
-    }
-  }
-  resolveNoneKeyframes() {
-    const { unresolvedKeyframes, name } = this;
-    const noneKeyframeIndexes = [];
-    for (let i = 0; i < unresolvedKeyframes.length; i++) {
-      if (isNone(unresolvedKeyframes[i])) {
-        noneKeyframeIndexes.push(i);
-      }
-    }
-    if (noneKeyframeIndexes.length) {
-      makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name);
-    }
-  }
-  measureInitialState() {
-    const { element, unresolvedKeyframes, name } = this;
-    if (!element || !element.current)
-      return;
-    if (name === "height") {
-      this.suspendedScrollY = window.pageYOffset;
-    }
-    this.measuredOrigin = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
-    unresolvedKeyframes[0] = this.measuredOrigin;
-    const measureKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
-    if (measureKeyframe !== void 0) {
-      element.getValue(name, measureKeyframe).jump(measureKeyframe, false);
-    }
-  }
-  measureEndState() {
-    const { element, name, unresolvedKeyframes } = this;
-    if (!element || !element.current)
-      return;
-    const value = element.getValue(name);
-    value && value.jump(this.measuredOrigin, false);
-    const finalKeyframeIndex = unresolvedKeyframes.length - 1;
-    const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex];
-    unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
-    if (finalKeyframe !== null && this.finalKeyframe === void 0) {
-      this.finalKeyframe = finalKeyframe;
-    }
-    if (this.removedTransforms?.length) {
-      this.removedTransforms.forEach(([unsetTransformName, unsetTransformValue]) => {
-        element.getValue(unsetTransformName).set(unsetTransformValue);
-      });
-    }
-    this.resolveNoneKeyframes();
-  }
-}
-const isAnimatable = (value, name) => {
-  if (name === "zIndex")
-    return false;
-  if (typeof value === "number" || Array.isArray(value))
-    return true;
-  if (typeof value === "string" && // It's animatable if we have a string
-  (complex.test(value) || value === "0") && // And it contains numbers and/or colors
-  !value.startsWith("url(")) {
-    return true;
-  }
-  return false;
-};
-function hasKeyframesChanged(keyframes2) {
-  const current = keyframes2[0];
-  if (keyframes2.length === 1)
-    return true;
-  for (let i = 0; i < keyframes2.length; i++) {
-    if (keyframes2[i] !== current)
-      return true;
-  }
-}
-function canAnimate(keyframes2, name, type, velocity) {
-  const originKeyframe = keyframes2[0];
-  if (originKeyframe === null)
-    return false;
-  if (name === "display" || name === "visibility")
-    return true;
-  const targetKeyframe = keyframes2[keyframes2.length - 1];
-  const isOriginAnimatable = isAnimatable(originKeyframe, name);
-  const isTargetAnimatable = isAnimatable(targetKeyframe, name);
-  if (!isOriginAnimatable || !isTargetAnimatable) {
-    return false;
-  }
-  return hasKeyframesChanged(keyframes2) || (type === "spring" || isGenerator(type)) && velocity;
-}
 const isNotNull = (value) => value !== null;
 function getFinalKeyframe(keyframes2, { repeat, repeatType = "loop" }, finalKeyframe) {
   const resolvedKeyframes = keyframes2.filter(isNotNull);
   const index = repeat && repeatType !== "loop" && repeat % 2 === 1 ? 0 : resolvedKeyframes.length - 1;
-  return !index || finalKeyframe === void 0 ? resolvedKeyframes[index] : finalKeyframe;
-}
-const MAX_RESOLVE_DELAY = 40;
-class BaseAnimation {
-  constructor({ autoplay = true, delay: delay2 = 0, type = "keyframes", repeat = 0, repeatDelay = 0, repeatType = "loop", ...options }) {
-    this.isStopped = false;
-    this.hasAttemptedResolve = false;
-    this.createdAt = time.now();
-    this.options = {
-      autoplay,
-      delay: delay2,
-      type,
-      repeat,
-      repeatDelay,
-      repeatType,
-      ...options
-    };
-    this.updateFinishedPromise();
-  }
-  /**
-   * This method uses the createdAt and resolvedAt to calculate the
-   * animation startTime. *Ideally*, we would use the createdAt time as t=0
-   * as the following frame would then be the first frame of the animation in
-   * progress, which would feel snappier.
-   *
-   * However, if there's a delay (main thread work) between the creation of
-   * the animation and the first commited frame, we prefer to use resolvedAt
-   * to avoid a sudden jump into the animation.
-   */
-  calcStartTime() {
-    if (!this.resolvedAt)
-      return this.createdAt;
-    return this.resolvedAt - this.createdAt > MAX_RESOLVE_DELAY ? this.resolvedAt : this.createdAt;
-  }
-  /**
-   * A getter for resolved data. If keyframes are not yet resolved, accessing
-   * this.resolved will synchronously flush all pending keyframe resolvers.
-   * This is a deoptimisation, but at its worst still batches read/writes.
-   */
-  get resolved() {
-    if (!this._resolved && !this.hasAttemptedResolve) {
-      flushKeyframeResolvers();
-    }
-    return this._resolved;
-  }
-  /**
-   * A method to be called when the keyframes resolver completes. This method
-   * will check if its possible to run the animation and, if not, skip it.
-   * Otherwise, it will call initPlayback on the implementing class.
-   */
-  onKeyframesResolved(keyframes2, finalKeyframe) {
-    this.resolvedAt = time.now();
-    this.hasAttemptedResolve = true;
-    const { name, type, velocity, delay: delay2, onComplete, onUpdate, isGenerator: isGenerator2 } = this.options;
-    if (!isGenerator2 && !canAnimate(keyframes2, name, type, velocity)) {
-      if (!delay2) {
-        onUpdate && onUpdate(getFinalKeyframe(keyframes2, this.options, finalKeyframe));
-        onComplete && onComplete();
-        this.resolveFinishedPromise();
-        return;
-      } else {
-        this.options.duration = 0;
-      }
-    }
-    const resolvedAnimation = this.initPlayback(keyframes2, finalKeyframe);
-    if (resolvedAnimation === false)
-      return;
-    this._resolved = {
-      keyframes: keyframes2,
-      finalKeyframe,
-      ...resolvedAnimation
-    };
-    this.onPostResolved();
-  }
-  onPostResolved() {
-  }
-  /**
-   * Allows the returned animation to be awaited or promise-chained. Currently
-   * resolves when the animation finishes at all but in a future update could/should
-   * reject if its cancels.
-   */
-  then(resolve, reject) {
-    return this.currentFinishedPromise.then(resolve, reject);
-  }
-  flatten() {
-    if (!this.options.allowFlatten)
-      return;
-    this.options.type = "keyframes";
-    this.options.ease = "linear";
-  }
-  updateFinishedPromise() {
-    this.currentFinishedPromise = new Promise((resolve) => {
-      this.resolveFinishedPromise = resolve;
-    });
-  }
-}
-const mixNumber$1 = (from2, to, progress2) => {
-  return from2 + (to - from2) * progress2;
-};
-function hueToRgb(p, q, t2) {
-  if (t2 < 0)
-    t2 += 1;
-  if (t2 > 1)
-    t2 -= 1;
-  if (t2 < 1 / 6)
-    return p + (q - p) * 6 * t2;
-  if (t2 < 1 / 2)
-    return q;
-  if (t2 < 2 / 3)
-    return p + (q - p) * (2 / 3 - t2) * 6;
-  return p;
-}
-function hslaToRgba({ hue, saturation, lightness, alpha: alpha2 }) {
-  hue /= 360;
-  saturation /= 100;
-  lightness /= 100;
-  let red = 0;
-  let green = 0;
-  let blue = 0;
-  if (!saturation) {
-    red = green = blue = lightness;
-  } else {
-    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-    const p = 2 * lightness - q;
-    red = hueToRgb(p, q, hue + 1 / 3);
-    green = hueToRgb(p, q, hue);
-    blue = hueToRgb(p, q, hue - 1 / 3);
-  }
-  return {
-    red: Math.round(red * 255),
-    green: Math.round(green * 255),
-    blue: Math.round(blue * 255),
-    alpha: alpha2
-  };
-}
-function mixImmediate(a, b) {
-  return (p) => p > 0 ? b : a;
-}
-const mixLinearColor = (from2, to, v) => {
-  const fromExpo = from2 * from2;
-  const expo = v * (to * to - fromExpo) + fromExpo;
-  return expo < 0 ? 0 : Math.sqrt(expo);
-};
-const colorTypes = [hex, rgba, hsla];
-const getColorType = (v) => colorTypes.find((type) => type.test(v));
-function asRGBA(color2) {
-  const type = getColorType(color2);
-  if (!Boolean(type))
-    return false;
-  let model = type.parse(color2);
-  if (type === hsla) {
-    model = hslaToRgba(model);
-  }
-  return model;
-}
-const mixColor = (from2, to) => {
-  const fromRGBA = asRGBA(from2);
-  const toRGBA = asRGBA(to);
-  if (!fromRGBA || !toRGBA) {
-    return mixImmediate(from2, to);
-  }
-  const blended = { ...fromRGBA };
-  return (v) => {
-    blended.red = mixLinearColor(fromRGBA.red, toRGBA.red, v);
-    blended.green = mixLinearColor(fromRGBA.green, toRGBA.green, v);
-    blended.blue = mixLinearColor(fromRGBA.blue, toRGBA.blue, v);
-    blended.alpha = mixNumber$1(fromRGBA.alpha, toRGBA.alpha, v);
-    return rgba.transform(blended);
-  };
-};
-const combineFunctions = (a, b) => (v) => b(a(v));
-const pipe$1 = (...transformers) => transformers.reduce(combineFunctions);
-const invisibleValues = /* @__PURE__ */ new Set(["none", "hidden"]);
-function mixVisibility(origin, target) {
-  if (invisibleValues.has(origin)) {
-    return (p) => p <= 0 ? origin : target;
-  } else {
-    return (p) => p >= 1 ? target : origin;
-  }
-}
-function mixNumber(a, b) {
-  return (p) => mixNumber$1(a, b, p);
-}
-function getMixer(a) {
-  if (typeof a === "number") {
-    return mixNumber;
-  } else if (typeof a === "string") {
-    return isCSSVariableToken(a) ? mixImmediate : color.test(a) ? mixColor : mixComplex;
-  } else if (Array.isArray(a)) {
-    return mixArray;
-  } else if (typeof a === "object") {
-    return color.test(a) ? mixColor : mixObject;
-  }
-  return mixImmediate;
-}
-function mixArray(a, b) {
-  const output = [...a];
-  const numValues = output.length;
-  const blendValue = a.map((v, i) => getMixer(v)(v, b[i]));
-  return (p) => {
-    for (let i = 0; i < numValues; i++) {
-      output[i] = blendValue[i](p);
-    }
-    return output;
-  };
-}
-function mixObject(a, b) {
-  const output = { ...a, ...b };
-  const blendValue = {};
-  for (const key in output) {
-    if (a[key] !== void 0 && b[key] !== void 0) {
-      blendValue[key] = getMixer(a[key])(a[key], b[key]);
-    }
-  }
-  return (v) => {
-    for (const key in blendValue) {
-      output[key] = blendValue[key](v);
-    }
-    return output;
-  };
-}
-function matchOrder(origin, target) {
-  const orderedOrigin = [];
-  const pointers = { color: 0, var: 0, number: 0 };
-  for (let i = 0; i < target.values.length; i++) {
-    const type = target.types[i];
-    const originIndex = origin.indexes[type][pointers[type]];
-    const originValue = origin.values[originIndex] ?? 0;
-    orderedOrigin[i] = originValue;
-    pointers[type]++;
-  }
-  return orderedOrigin;
-}
-const mixComplex = (origin, target) => {
-  const template = complex.createTransformer(target);
-  const originStats = analyseComplexValue(origin);
-  const targetStats = analyseComplexValue(target);
-  const canInterpolate = originStats.indexes.var.length === targetStats.indexes.var.length && originStats.indexes.color.length === targetStats.indexes.color.length && originStats.indexes.number.length >= targetStats.indexes.number.length;
-  if (canInterpolate) {
-    if (invisibleValues.has(origin) && !targetStats.values.length || invisibleValues.has(target) && !originStats.values.length) {
-      return mixVisibility(origin, target);
-    }
-    return pipe$1(mixArray(matchOrder(originStats, targetStats), targetStats.values), template);
-  } else {
-    return mixImmediate(origin, target);
-  }
-};
-function mix(from2, to, p) {
-  if (typeof from2 === "number" && typeof to === "number" && typeof p === "number") {
-    return mixNumber$1(from2, to, p);
-  }
-  const mixer = getMixer(from2);
-  return mixer(from2, to);
-}
-const velocitySampleDuration = 5;
-function calcGeneratorVelocity(resolveValue, t2, current) {
-  const prevT = Math.max(t2 - velocitySampleDuration, 0);
-  return velocityPerSecond(current - resolveValue(prevT), t2 - prevT);
-}
-const springDefaults = {
-  // Default spring physics
-  stiffness: 100,
-  damping: 10,
-  mass: 1,
-  velocity: 0,
-  // Default duration/bounce-based options
-  duration: 800,
-  // in ms
-  bounce: 0.3,
-  visualDuration: 0.3,
-  // in seconds
-  // Rest thresholds
-  restSpeed: {
-    granular: 0.01,
-    default: 2
-  },
-  restDelta: {
-    granular: 5e-3,
-    default: 0.5
-  },
-  // Limits
-  minDuration: 0.01,
-  // in seconds
-  maxDuration: 10,
-  // in seconds
-  minDamping: 0.05,
-  maxDamping: 1
-};
-const safeMin = 1e-3;
-function findSpring({ duration = springDefaults.duration, bounce = springDefaults.bounce, velocity = springDefaults.velocity, mass = springDefaults.mass }) {
-  let envelope;
-  let derivative;
-  let dampingRatio = 1 - bounce;
-  dampingRatio = clamp(springDefaults.minDamping, springDefaults.maxDamping, dampingRatio);
-  duration = clamp(springDefaults.minDuration, springDefaults.maxDuration, /* @__PURE__ */ millisecondsToSeconds(duration));
-  if (dampingRatio < 1) {
-    envelope = (undampedFreq2) => {
-      const exponentialDecay = undampedFreq2 * dampingRatio;
-      const delta = exponentialDecay * duration;
-      const a = exponentialDecay - velocity;
-      const b = calcAngularFreq(undampedFreq2, dampingRatio);
-      const c = Math.exp(-delta);
-      return safeMin - a / b * c;
-    };
-    derivative = (undampedFreq2) => {
-      const exponentialDecay = undampedFreq2 * dampingRatio;
-      const delta = exponentialDecay * duration;
-      const d = delta * velocity + velocity;
-      const e = Math.pow(dampingRatio, 2) * Math.pow(undampedFreq2, 2) * duration;
-      const f = Math.exp(-delta);
-      const g = calcAngularFreq(Math.pow(undampedFreq2, 2), dampingRatio);
-      const factor = -envelope(undampedFreq2) + safeMin > 0 ? -1 : 1;
-      return factor * ((d - e) * f) / g;
-    };
-  } else {
-    envelope = (undampedFreq2) => {
-      const a = Math.exp(-undampedFreq2 * duration);
-      const b = (undampedFreq2 - velocity) * duration + 1;
-      return -1e-3 + a * b;
-    };
-    derivative = (undampedFreq2) => {
-      const a = Math.exp(-undampedFreq2 * duration);
-      const b = (velocity - undampedFreq2) * (duration * duration);
-      return a * b;
-    };
-  }
-  const initialGuess = 5 / duration;
-  const undampedFreq = approximateRoot(envelope, derivative, initialGuess);
-  duration = /* @__PURE__ */ secondsToMilliseconds(duration);
-  if (isNaN(undampedFreq)) {
-    return {
-      stiffness: springDefaults.stiffness,
-      damping: springDefaults.damping,
-      duration
-    };
-  } else {
-    const stiffness = Math.pow(undampedFreq, 2) * mass;
-    return {
-      stiffness,
-      damping: dampingRatio * 2 * Math.sqrt(mass * stiffness),
-      duration
-    };
-  }
-}
-const rootIterations = 12;
-function approximateRoot(envelope, derivative, initialGuess) {
-  let result = initialGuess;
-  for (let i = 1; i < rootIterations; i++) {
-    result = result - envelope(result) / derivative(result);
-  }
-  return result;
-}
-function calcAngularFreq(undampedFreq, dampingRatio) {
-  return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio);
-}
-const durationKeys = ["duration", "bounce"];
-const physicsKeys = ["stiffness", "damping", "mass"];
-function isSpringType(options, keys2) {
-  return keys2.some((key) => options[key] !== void 0);
-}
-function getSpringOptions(options) {
-  let springOptions = {
-    velocity: springDefaults.velocity,
-    stiffness: springDefaults.stiffness,
-    damping: springDefaults.damping,
-    mass: springDefaults.mass,
-    isResolvedFromDuration: false,
-    ...options
-  };
-  if (!isSpringType(options, physicsKeys) && isSpringType(options, durationKeys)) {
-    if (options.visualDuration) {
-      const visualDuration = options.visualDuration;
-      const root = 2 * Math.PI / (visualDuration * 1.2);
-      const stiffness = root * root;
-      const damping = 2 * clamp(0.05, 1, 1 - (options.bounce || 0)) * Math.sqrt(stiffness);
-      springOptions = {
-        ...springOptions,
-        mass: springDefaults.mass,
-        stiffness,
-        damping
-      };
-    } else {
-      const derived = findSpring(options);
-      springOptions = {
-        ...springOptions,
-        ...derived,
-        mass: springDefaults.mass
-      };
-      springOptions.isResolvedFromDuration = true;
-    }
-  }
-  return springOptions;
-}
-function spring(optionsOrVisualDuration = springDefaults.visualDuration, bounce = springDefaults.bounce) {
-  const options = typeof optionsOrVisualDuration !== "object" ? {
-    visualDuration: optionsOrVisualDuration,
-    keyframes: [0, 1],
-    bounce
-  } : optionsOrVisualDuration;
-  let { restSpeed, restDelta } = options;
-  const origin = options.keyframes[0];
-  const target = options.keyframes[options.keyframes.length - 1];
-  const state2 = { done: false, value: origin };
-  const { stiffness, damping, mass, duration, velocity, isResolvedFromDuration } = getSpringOptions({
-    ...options,
-    velocity: -/* @__PURE__ */ millisecondsToSeconds(options.velocity || 0)
-  });
-  const initialVelocity = velocity || 0;
-  const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
-  const initialDelta = target - origin;
-  const undampedAngularFreq = /* @__PURE__ */ millisecondsToSeconds(Math.sqrt(stiffness / mass));
-  const isGranularScale = Math.abs(initialDelta) < 5;
-  restSpeed || (restSpeed = isGranularScale ? springDefaults.restSpeed.granular : springDefaults.restSpeed.default);
-  restDelta || (restDelta = isGranularScale ? springDefaults.restDelta.granular : springDefaults.restDelta.default);
-  let resolveSpring;
-  if (dampingRatio < 1) {
-    const angularFreq = calcAngularFreq(undampedAngularFreq, dampingRatio);
-    resolveSpring = (t2) => {
-      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t2);
-      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) / angularFreq * Math.sin(angularFreq * t2) + initialDelta * Math.cos(angularFreq * t2));
-    };
-  } else if (dampingRatio === 1) {
-    resolveSpring = (t2) => target - Math.exp(-undampedAngularFreq * t2) * (initialDelta + (initialVelocity + undampedAngularFreq * initialDelta) * t2);
-  } else {
-    const dampedAngularFreq = undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1);
-    resolveSpring = (t2) => {
-      const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t2);
-      const freqForT = Math.min(dampedAngularFreq * t2, 300);
-      return target - envelope * ((initialVelocity + dampingRatio * undampedAngularFreq * initialDelta) * Math.sinh(freqForT) + dampedAngularFreq * initialDelta * Math.cosh(freqForT)) / dampedAngularFreq;
-    };
-  }
-  const generator = {
-    calculatedDuration: isResolvedFromDuration ? duration || null : null,
-    next: (t2) => {
-      const current = resolveSpring(t2);
-      if (!isResolvedFromDuration) {
-        let currentVelocity = 0;
-        if (dampingRatio < 1) {
-          currentVelocity = t2 === 0 ? /* @__PURE__ */ secondsToMilliseconds(initialVelocity) : calcGeneratorVelocity(resolveSpring, t2, current);
-        }
-        const isBelowVelocityThreshold = Math.abs(currentVelocity) <= restSpeed;
-        const isBelowDisplacementThreshold = Math.abs(target - current) <= restDelta;
-        state2.done = isBelowVelocityThreshold && isBelowDisplacementThreshold;
-      } else {
-        state2.done = t2 >= duration;
-      }
-      state2.value = state2.done ? target : current;
-      return state2;
-    },
-    toString: () => {
-      const calculatedDuration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
-      const easing = generateLinearEasing((progress2) => generator.next(calculatedDuration * progress2).value, calculatedDuration, 30);
-      return calculatedDuration + "ms " + easing;
-    },
-    toTransition: () => {
-    }
-  };
-  return generator;
-}
-spring.applyToOptions = (options) => {
-  const generatorOptions = createGeneratorEasing(options, 100, spring);
-  options.ease = supportsLinearEasing() ? generatorOptions.ease : "easeOut";
-  options.duration = /* @__PURE__ */ secondsToMilliseconds(generatorOptions.duration);
-  options.type = "keyframes";
-  return options;
-};
-function inertia({ keyframes: keyframes2, velocity = 0, power = 0.8, timeConstant = 325, bounceDamping = 10, bounceStiffness = 500, modifyTarget, min, max, restDelta = 0.5, restSpeed }) {
-  const origin = keyframes2[0];
-  const state2 = {
-    done: false,
-    value: origin
-  };
-  const isOutOfBounds = (v) => min !== void 0 && v < min || max !== void 0 && v > max;
-  const nearestBoundary = (v) => {
-    if (min === void 0)
-      return max;
-    if (max === void 0)
-      return min;
-    return Math.abs(min - v) < Math.abs(max - v) ? min : max;
-  };
-  let amplitude = power * velocity;
-  const ideal = origin + amplitude;
-  const target = modifyTarget === void 0 ? ideal : modifyTarget(ideal);
-  if (target !== ideal)
-    amplitude = target - origin;
-  const calcDelta = (t2) => -amplitude * Math.exp(-t2 / timeConstant);
-  const calcLatest = (t2) => target + calcDelta(t2);
-  const applyFriction = (t2) => {
-    const delta = calcDelta(t2);
-    const latest = calcLatest(t2);
-    state2.done = Math.abs(delta) <= restDelta;
-    state2.value = state2.done ? target : latest;
-  };
-  let timeReachedBoundary;
-  let spring$1;
-  const checkCatchBoundary = (t2) => {
-    if (!isOutOfBounds(state2.value))
-      return;
-    timeReachedBoundary = t2;
-    spring$1 = spring({
-      keyframes: [state2.value, nearestBoundary(state2.value)],
-      velocity: calcGeneratorVelocity(calcLatest, t2, state2.value),
-      // TODO: This should be passing * 1000
-      damping: bounceDamping,
-      stiffness: bounceStiffness,
-      restDelta,
-      restSpeed
-    });
-  };
-  checkCatchBoundary(0);
-  return {
-    calculatedDuration: null,
-    next: (t2) => {
-      let hasUpdatedFrame = false;
-      if (!spring$1 && timeReachedBoundary === void 0) {
-        hasUpdatedFrame = true;
-        applyFriction(t2);
-        checkCatchBoundary(t2);
-      }
-      if (timeReachedBoundary !== void 0 && t2 >= timeReachedBoundary) {
-        return spring$1.next(t2 - timeReachedBoundary);
-      } else {
-        !hasUpdatedFrame && applyFriction(t2);
-        return state2;
-      }
-    }
-  };
-}
-const easeIn = /* @__PURE__ */ cubicBezier(0.42, 0, 1, 1);
-const easeOut = /* @__PURE__ */ cubicBezier(0, 0, 0.58, 1);
-const easeInOut = /* @__PURE__ */ cubicBezier(0.42, 0, 0.58, 1);
-const isEasingArray = (ease2) => {
-  return Array.isArray(ease2) && typeof ease2[0] !== "number";
-};
-const easingLookup = {
-  linear: noop,
-  easeIn,
-  easeInOut,
-  easeOut,
-  circIn,
-  circInOut,
-  circOut,
-  backIn,
-  backInOut,
-  backOut,
-  anticipate
-};
-const easingDefinitionToFunction = (definition) => {
-  if (isBezierDefinition(definition)) {
-    invariant(definition.length === 4);
-    const [x1, y1, x2, y2] = definition;
-    return cubicBezier(x1, y1, x2, y2);
-  } else if (typeof definition === "string") {
-    return easingLookup[definition];
-  }
-  return definition;
-};
-function createMixers(output, ease2, customMixer) {
-  const mixers = [];
-  const mixerFactory = customMixer || mix;
-  const numMixers = output.length - 1;
-  for (let i = 0; i < numMixers; i++) {
-    let mixer = mixerFactory(output[i], output[i + 1]);
-    if (ease2) {
-      const easingFunction = Array.isArray(ease2) ? ease2[i] || noop : ease2;
-      mixer = pipe$1(easingFunction, mixer);
-    }
-    mixers.push(mixer);
-  }
-  return mixers;
-}
-function interpolate(input, output, { clamp: isClamp = true, ease: ease2, mixer } = {}) {
-  const inputLength = input.length;
-  invariant(inputLength === output.length);
-  if (inputLength === 1)
-    return () => output[0];
-  if (inputLength === 2 && output[0] === output[1])
-    return () => output[1];
-  const isZeroDeltaRange = input[0] === input[1];
-  if (input[0] > input[inputLength - 1]) {
-    input = [...input].reverse();
-    output = [...output].reverse();
-  }
-  const mixers = createMixers(output, ease2, mixer);
-  const numMixers = mixers.length;
-  const interpolator = (v) => {
-    if (isZeroDeltaRange && v < input[0])
-      return output[0];
-    let i = 0;
-    if (numMixers > 1) {
-      for (; i < input.length - 2; i++) {
-        if (v < input[i + 1])
-          break;
-      }
-    }
-    const progressInRange = /* @__PURE__ */ progress(input[i], input[i + 1], v);
-    return mixers[i](progressInRange);
-  };
-  return isClamp ? (v) => interpolator(clamp(input[0], input[inputLength - 1], v)) : interpolator;
-}
-function fillOffset(offset, remaining) {
-  const min = offset[offset.length - 1];
-  for (let i = 1; i <= remaining; i++) {
-    const offsetProgress = /* @__PURE__ */ progress(0, remaining, i);
-    offset.push(mixNumber$1(min, 1, offsetProgress));
-  }
-}
-function defaultOffset(arr) {
-  const offset = [0];
-  fillOffset(offset, arr.length - 1);
-  return offset;
-}
-function convertOffsetToTimes(offset, duration) {
-  return offset.map((o) => o * duration);
-}
-function defaultEasing(values, easing) {
-  return values.map(() => easing || easeInOut).splice(0, values.length - 1);
-}
-function keyframes({ duration = 300, keyframes: keyframeValues, times, ease: ease2 = "easeInOut" }) {
-  const easingFunctions = isEasingArray(ease2) ? ease2.map(easingDefinitionToFunction) : easingDefinitionToFunction(ease2);
-  const state2 = {
-    done: false,
-    value: keyframeValues[0]
-  };
-  const absoluteTimes = convertOffsetToTimes(
-    // Only use the provided offsets if they're the correct length
-    // TODO Maybe we should warn here if there's a length mismatch
-    times && times.length === keyframeValues.length ? times : defaultOffset(keyframeValues),
-    duration
-  );
-  const mapTimeToKeyframe = interpolate(absoluteTimes, keyframeValues, {
-    ease: Array.isArray(easingFunctions) ? easingFunctions : defaultEasing(keyframeValues, easingFunctions)
-  });
-  return {
-    calculatedDuration: duration,
-    next: (t2) => {
-      state2.value = mapTimeToKeyframe(t2);
-      state2.done = t2 >= duration;
-      return state2;
-    }
-  };
-}
-const frameloopDriver = (update) => {
-  const passTimestamp = ({ timestamp }) => update(timestamp);
-  return {
-    start: () => frame.update(passTimestamp, true),
-    stop: () => cancelFrame(passTimestamp),
-    /**
-     * If we're processing this frame we can use the
-     * framelocked timestamp to keep things in sync.
-     */
-    now: () => frameData.isProcessing ? frameData.timestamp : time.now()
-  };
-};
-const generators = {
-  decay: inertia,
-  inertia,
-  tween: keyframes,
-  keyframes,
-  spring
-};
-const percentToProgress = (percent2) => percent2 / 100;
-class MainThreadAnimation extends BaseAnimation {
-  constructor(options) {
-    super(options);
-    this.holdTime = null;
-    this.cancelTime = null;
-    this.currentTime = 0;
-    this.playbackSpeed = 1;
-    this.pendingPlayState = "running";
-    this.startTime = null;
-    this.state = "idle";
-    this.stop = () => {
-      this.resolver.cancel();
-      this.isStopped = true;
-      if (this.state === "idle")
-        return;
-      this.teardown();
-      const { onStop } = this.options;
-      onStop && onStop();
-    };
-    const { name, motionValue: motionValue2, element, keyframes: keyframes2 } = this.options;
-    const KeyframeResolver$1 = element?.KeyframeResolver || KeyframeResolver;
-    const onResolved = (resolvedKeyframes, finalKeyframe) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe);
-    this.resolver = new KeyframeResolver$1(keyframes2, onResolved, name, motionValue2, element);
-    this.resolver.scheduleResolve();
-  }
-  flatten() {
-    super.flatten();
-    if (this._resolved) {
-      Object.assign(this._resolved, this.initPlayback(this._resolved.keyframes));
-    }
-  }
-  initPlayback(keyframes$12) {
-    const { type = "keyframes", repeat = 0, repeatDelay = 0, repeatType, velocity = 0 } = this.options;
-    const generatorFactory = isGenerator(type) ? type : generators[type] || keyframes;
-    let mapPercentToKeyframes;
-    let mirroredGenerator;
-    if (generatorFactory !== keyframes && typeof keyframes$12[0] !== "number") {
-      mapPercentToKeyframes = pipe$1(percentToProgress, mix(keyframes$12[0], keyframes$12[1]));
-      keyframes$12 = [0, 100];
-    }
-    const generator = generatorFactory({ ...this.options, keyframes: keyframes$12 });
-    if (repeatType === "mirror") {
-      mirroredGenerator = generatorFactory({
-        ...this.options,
-        keyframes: [...keyframes$12].reverse(),
-        velocity: -velocity
-      });
-    }
-    if (generator.calculatedDuration === null) {
-      generator.calculatedDuration = calcGeneratorDuration(generator);
-    }
-    const { calculatedDuration } = generator;
-    const resolvedDuration = calculatedDuration + repeatDelay;
-    const totalDuration = resolvedDuration * (repeat + 1) - repeatDelay;
-    return {
-      generator,
-      mirroredGenerator,
-      mapPercentToKeyframes,
-      calculatedDuration,
-      resolvedDuration,
-      totalDuration
-    };
-  }
-  onPostResolved() {
-    const { autoplay = true } = this.options;
-    this.play();
-    if (this.pendingPlayState === "paused" || !autoplay) {
-      this.pause();
-    } else {
-      this.state = this.pendingPlayState;
-    }
-  }
-  tick(timestamp, sample = false) {
-    const { resolved } = this;
-    if (!resolved) {
-      const { keyframes: keyframes3 } = this.options;
-      return { done: true, value: keyframes3[keyframes3.length - 1] };
-    }
-    const { finalKeyframe, generator, mirroredGenerator, mapPercentToKeyframes, keyframes: keyframes2, calculatedDuration, totalDuration, resolvedDuration } = resolved;
-    if (this.startTime === null)
-      return generator.next(0);
-    const { delay: delay2, repeat, repeatType, repeatDelay, onUpdate } = this.options;
-    if (this.speed > 0) {
-      this.startTime = Math.min(this.startTime, timestamp);
-    } else if (this.speed < 0) {
-      this.startTime = Math.min(timestamp - totalDuration / this.speed, this.startTime);
-    }
-    if (sample) {
-      this.currentTime = timestamp;
-    } else if (this.holdTime !== null) {
-      this.currentTime = this.holdTime;
-    } else {
-      this.currentTime = Math.round(timestamp - this.startTime) * this.speed;
-    }
-    const timeWithoutDelay = this.currentTime - delay2 * (this.speed >= 0 ? 1 : -1);
-    const isInDelayPhase = this.speed >= 0 ? timeWithoutDelay < 0 : timeWithoutDelay > totalDuration;
-    this.currentTime = Math.max(timeWithoutDelay, 0);
-    if (this.state === "finished" && this.holdTime === null) {
-      this.currentTime = totalDuration;
-    }
-    let elapsed = this.currentTime;
-    let frameGenerator = generator;
-    if (repeat) {
-      const progress2 = Math.min(this.currentTime, totalDuration) / resolvedDuration;
-      let currentIteration = Math.floor(progress2);
-      let iterationProgress = progress2 % 1;
-      if (!iterationProgress && progress2 >= 1) {
-        iterationProgress = 1;
-      }
-      iterationProgress === 1 && currentIteration--;
-      currentIteration = Math.min(currentIteration, repeat + 1);
-      const isOddIteration = Boolean(currentIteration % 2);
-      if (isOddIteration) {
-        if (repeatType === "reverse") {
-          iterationProgress = 1 - iterationProgress;
-          if (repeatDelay) {
-            iterationProgress -= repeatDelay / resolvedDuration;
-          }
-        } else if (repeatType === "mirror") {
-          frameGenerator = mirroredGenerator;
-        }
-      }
-      elapsed = clamp(0, 1, iterationProgress) * resolvedDuration;
-    }
-    const state2 = isInDelayPhase ? { done: false, value: keyframes2[0] } : frameGenerator.next(elapsed);
-    if (mapPercentToKeyframes) {
-      state2.value = mapPercentToKeyframes(state2.value);
-    }
-    let { done } = state2;
-    if (!isInDelayPhase && calculatedDuration !== null) {
-      done = this.speed >= 0 ? this.currentTime >= totalDuration : this.currentTime <= 0;
-    }
-    const isAnimationFinished = this.holdTime === null && (this.state === "finished" || this.state === "running" && done);
-    if (isAnimationFinished && finalKeyframe !== void 0) {
-      state2.value = getFinalKeyframe(keyframes2, this.options, finalKeyframe);
-    }
-    if (onUpdate) {
-      onUpdate(state2.value);
-    }
-    if (isAnimationFinished) {
-      this.finish();
-    }
-    return state2;
-  }
-  get duration() {
-    const { resolved } = this;
-    return resolved ? /* @__PURE__ */ millisecondsToSeconds(resolved.calculatedDuration) : 0;
-  }
-  get time() {
-    return /* @__PURE__ */ millisecondsToSeconds(this.currentTime);
-  }
-  set time(newTime) {
-    newTime = /* @__PURE__ */ secondsToMilliseconds(newTime);
-    this.currentTime = newTime;
-    if (this.holdTime !== null || this.speed === 0) {
-      this.holdTime = newTime;
-    } else if (this.driver) {
-      this.startTime = this.driver.now() - newTime / this.speed;
-    }
-  }
-  get speed() {
-    return this.playbackSpeed;
-  }
-  set speed(newSpeed) {
-    const hasChanged = this.playbackSpeed !== newSpeed;
-    this.playbackSpeed = newSpeed;
-    if (hasChanged) {
-      this.time = /* @__PURE__ */ millisecondsToSeconds(this.currentTime);
-    }
-  }
-  play() {
-    if (!this.resolver.isScheduled) {
-      this.resolver.resume();
-    }
-    if (!this._resolved) {
-      this.pendingPlayState = "running";
-      return;
-    }
-    if (this.isStopped)
-      return;
-    const { driver = frameloopDriver, onPlay, startTime } = this.options;
-    if (!this.driver) {
-      this.driver = driver((timestamp) => this.tick(timestamp));
-    }
-    onPlay && onPlay();
-    const now2 = this.driver.now();
-    if (this.holdTime !== null) {
-      this.startTime = now2 - this.holdTime;
-    } else if (!this.startTime) {
-      this.startTime = startTime ?? this.calcStartTime();
-    } else if (this.state === "finished") {
-      this.startTime = now2;
-    }
-    if (this.state === "finished") {
-      this.updateFinishedPromise();
-    }
-    this.cancelTime = this.startTime;
-    this.holdTime = null;
-    this.state = "running";
-    this.driver.start();
-  }
-  pause() {
-    if (!this._resolved) {
-      this.pendingPlayState = "paused";
-      return;
-    }
-    this.state = "paused";
-    this.holdTime = this.currentTime ?? 0;
-  }
-  complete() {
-    if (this.state !== "running") {
-      this.play();
-    }
-    this.pendingPlayState = this.state = "finished";
-    this.holdTime = null;
-  }
-  finish() {
-    this.teardown();
-    this.state = "finished";
-    const { onComplete } = this.options;
-    onComplete && onComplete();
-  }
-  cancel() {
-    if (this.cancelTime !== null) {
-      this.tick(this.cancelTime);
-    }
-    this.teardown();
-    this.updateFinishedPromise();
-  }
-  teardown() {
-    this.state = "idle";
-    this.stopDriver();
-    this.resolveFinishedPromise();
-    this.updateFinishedPromise();
-    this.startTime = this.cancelTime = null;
-    this.resolver.cancel();
-  }
-  stopDriver() {
-    if (!this.driver)
-      return;
-    this.driver.stop();
-    this.driver = void 0;
-  }
-  sample(time2) {
-    this.startTime = 0;
-    return this.tick(time2, true);
-  }
-  get finished() {
-    return this.currentFinishedPromise;
-  }
-}
-const acceleratedValues = /* @__PURE__ */ new Set([
-  "opacity",
-  "clipPath",
-  "filter",
-  "transform"
-  // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
-  // or until we implement support for linear() easing.
-  // "background-color"
-]);
-const supportsWaapi = /* @__PURE__ */ memo(() => Object.hasOwnProperty.call(Element.prototype, "animate"));
-const sampleDelta = 10;
-const maxDuration = 2e4;
-function requiresPregeneratedKeyframes(options) {
-  return isGenerator(options.type) || options.type === "spring" || !isWaapiSupportedEasing(options.ease);
-}
-function pregenerateKeyframes(keyframes2, options) {
-  const sampleAnimation = new MainThreadAnimation({
-    ...options,
-    keyframes: keyframes2,
-    repeat: 0,
-    delay: 0,
-    isGenerator: true
-  });
-  let state2 = { done: false, value: keyframes2[0] };
-  const pregeneratedKeyframes = [];
-  let t2 = 0;
-  while (!state2.done && t2 < maxDuration) {
-    state2 = sampleAnimation.sample(t2);
-    pregeneratedKeyframes.push(state2.value);
-    t2 += sampleDelta;
-  }
-  return {
-    times: void 0,
-    keyframes: pregeneratedKeyframes,
-    duration: t2 - sampleDelta,
-    ease: "linear"
-  };
-}
-const unsupportedEasingFunctions = {
-  anticipate,
-  backInOut,
-  circInOut
-};
-function isUnsupportedEase(key) {
-  return key in unsupportedEasingFunctions;
-}
-class AcceleratedAnimation extends BaseAnimation {
-  constructor(options) {
-    super(options);
-    const { name, motionValue: motionValue2, element, keyframes: keyframes2 } = this.options;
-    this.resolver = new DOMKeyframesResolver(keyframes2, (resolvedKeyframes, finalKeyframe) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe), name, motionValue2, element);
-    this.resolver.scheduleResolve();
-  }
-  initPlayback(keyframes2, finalKeyframe) {
-    let { duration = 300, times, ease: ease2, type, motionValue: motionValue2, name, startTime } = this.options;
-    if (!motionValue2.owner || !motionValue2.owner.current) {
-      return false;
-    }
-    if (typeof ease2 === "string" && supportsLinearEasing() && isUnsupportedEase(ease2)) {
-      ease2 = unsupportedEasingFunctions[ease2];
-    }
-    if (requiresPregeneratedKeyframes(this.options)) {
-      const { onComplete, onUpdate, motionValue: motionValue3, element, ...options } = this.options;
-      const pregeneratedAnimation = pregenerateKeyframes(keyframes2, options);
-      keyframes2 = pregeneratedAnimation.keyframes;
-      if (keyframes2.length === 1) {
-        keyframes2[1] = keyframes2[0];
-      }
-      duration = pregeneratedAnimation.duration;
-      times = pregeneratedAnimation.times;
-      ease2 = pregeneratedAnimation.ease;
-      type = "keyframes";
-    }
-    const animation = startWaapiAnimation(motionValue2.owner.current, name, keyframes2, { ...this.options, duration, times, ease: ease2 });
-    animation.startTime = startTime ?? this.calcStartTime();
-    if (this.pendingTimeline) {
-      attachTimeline(animation, this.pendingTimeline);
-      this.pendingTimeline = void 0;
-    } else {
-      animation.onfinish = () => {
-        const { onComplete } = this.options;
-        motionValue2.set(getFinalKeyframe(keyframes2, this.options, finalKeyframe));
-        onComplete && onComplete();
-        this.cancel();
-        this.resolveFinishedPromise();
-      };
-    }
-    return {
-      animation,
-      duration,
-      times,
-      type,
-      ease: ease2,
-      keyframes: keyframes2
-    };
-  }
-  get duration() {
-    const { resolved } = this;
-    if (!resolved)
-      return 0;
-    const { duration } = resolved;
-    return /* @__PURE__ */ millisecondsToSeconds(duration);
-  }
-  get time() {
-    const { resolved } = this;
-    if (!resolved)
-      return 0;
-    const { animation } = resolved;
-    return /* @__PURE__ */ millisecondsToSeconds(animation.currentTime || 0);
-  }
-  set time(newTime) {
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    const { animation } = resolved;
-    animation.currentTime = /* @__PURE__ */ secondsToMilliseconds(newTime);
-  }
-  get speed() {
-    const { resolved } = this;
-    if (!resolved)
-      return 1;
-    const { animation } = resolved;
-    return animation.playbackRate;
-  }
-  get finished() {
-    return this.resolved.animation.finished;
-  }
-  set speed(newSpeed) {
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    const { animation } = resolved;
-    animation.playbackRate = newSpeed;
-  }
-  get state() {
-    const { resolved } = this;
-    if (!resolved)
-      return "idle";
-    const { animation } = resolved;
-    return animation.playState;
-  }
-  get startTime() {
-    const { resolved } = this;
-    if (!resolved)
-      return null;
-    const { animation } = resolved;
-    return animation.startTime;
-  }
-  /**
-   * Replace the default DocumentTimeline with another AnimationTimeline.
-   * Currently used for scroll animations.
-   */
-  attachTimeline(timeline) {
-    if (!this._resolved) {
-      this.pendingTimeline = timeline;
-    } else {
-      const { resolved } = this;
-      if (!resolved)
-        return noop;
-      const { animation } = resolved;
-      attachTimeline(animation, timeline);
-    }
-    return noop;
-  }
-  play() {
-    if (this.isStopped)
-      return;
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    const { animation } = resolved;
-    if (animation.playState === "finished") {
-      this.updateFinishedPromise();
-    }
-    animation.play();
-  }
-  pause() {
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    const { animation } = resolved;
-    animation.pause();
-  }
-  stop() {
-    this.resolver.cancel();
-    this.isStopped = true;
-    if (this.state === "idle")
-      return;
-    this.resolveFinishedPromise();
-    this.updateFinishedPromise();
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    const { animation, keyframes: keyframes2, duration, type, ease: ease2, times } = resolved;
-    if (animation.playState === "idle" || animation.playState === "finished") {
-      return;
-    }
-    if (this.time) {
-      const { motionValue: motionValue2, onUpdate, onComplete, element, ...options } = this.options;
-      const sampleAnimation = new MainThreadAnimation({
-        ...options,
-        keyframes: keyframes2,
-        duration,
-        type,
-        ease: ease2,
-        times,
-        isGenerator: true
-      });
-      const sampleTime = /* @__PURE__ */ secondsToMilliseconds(this.time);
-      motionValue2.setWithVelocity(sampleAnimation.sample(sampleTime - sampleDelta).value, sampleAnimation.sample(sampleTime).value, sampleDelta);
-    }
-    const { onStop } = this.options;
-    onStop && onStop();
-    this.cancel();
-  }
-  complete() {
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    resolved.animation.finish();
-  }
-  cancel() {
-    const { resolved } = this;
-    if (!resolved)
-      return;
-    resolved.animation.cancel();
-  }
-  static supports(options) {
-    const { motionValue: motionValue2, name, repeatDelay, repeatType, damping, type } = options;
-    if (!motionValue2 || !motionValue2.owner || !(motionValue2.owner.current instanceof HTMLElement)) {
-      return false;
-    }
-    const { onUpdate, transformTemplate: transformTemplate2 } = motionValue2.owner.getProps();
-    return supportsWaapi() && name && acceleratedValues.has(name) && (name !== "transform" || !transformTemplate2) && /**
-     * If we're outputting values to onUpdate then we can't use WAAPI as there's
-     * no way to read the value from WAAPI every frame.
-     */
-    !onUpdate && !repeatDelay && repeatType !== "mirror" && damping !== 0 && type !== "inertia";
-  }
+  return resolvedKeyframes[index];
 }
 const underDampedSpring = {
   type: "spring",
@@ -19647,7 +19529,7 @@ const animateMotionValue = (name, value, target, transition2 = {}, element, isHa
   const delay2 = valueTransition.delay || transition2.delay || 0;
   let { elapsed = 0 } = transition2;
   elapsed = elapsed - /* @__PURE__ */ secondsToMilliseconds(delay2);
-  let options = {
+  const options = {
     keyframes: Array.isArray(target) ? target : [null, target],
     ease: "easeOut",
     velocity: value.getVelocity(),
@@ -19666,17 +19548,10 @@ const animateMotionValue = (name, value, target, transition2 = {}, element, isHa
     element: isHandoff ? void 0 : element
   };
   if (!isTransitionDefined(valueTransition)) {
-    options = {
-      ...options,
-      ...getDefaultTransition(name, options)
-    };
+    Object.assign(options, getDefaultTransition(name, options));
   }
-  if (options.duration) {
-    options.duration = /* @__PURE__ */ secondsToMilliseconds(options.duration);
-  }
-  if (options.repeatDelay) {
-    options.repeatDelay = /* @__PURE__ */ secondsToMilliseconds(options.repeatDelay);
-  }
+  options.duration && (options.duration = /* @__PURE__ */ secondsToMilliseconds(options.duration));
+  options.repeatDelay && (options.repeatDelay = /* @__PURE__ */ secondsToMilliseconds(options.repeatDelay));
   if (options.from !== void 0) {
     options.keyframes[0] = options.from;
   }
@@ -19687,6 +19562,11 @@ const animateMotionValue = (name, value, target, transition2 = {}, element, isHa
       shouldSkip = true;
     }
   }
+  if (MotionGlobalConfig.instantAnimations || MotionGlobalConfig.skipAnimations) {
+    shouldSkip = true;
+    options.duration = 0;
+    options.delay = 0;
+  }
   options.allowFlatten = !valueTransition.type && !valueTransition.ease;
   if (shouldSkip && !isHandoff && value.get() !== void 0) {
     const finalKeyframe = getFinalKeyframe(options.keyframes, valueTransition);
@@ -19695,14 +19575,10 @@ const animateMotionValue = (name, value, target, transition2 = {}, element, isHa
         options.onUpdate(finalKeyframe);
         options.onComplete();
       });
-      return new GroupAnimationWithThen([]);
+      return;
     }
   }
-  if (!isHandoff && AcceleratedAnimation.supports(options)) {
-    return new AcceleratedAnimation(options);
-  } else {
-    return new MainThreadAnimation(options);
-  }
+  return valueTransition.isSync ? new JSAnimation(options) : new AsyncMotionValueAnimation(options);
 };
 function shouldBlockAnimation({ protectedKeys, needsAnimating }, key) {
   const shouldBlock = protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true;
@@ -19725,6 +19601,10 @@ function animateTarget(visualElement, targetAndTransition, { delay: delay2 = 0, 
       delay: delay2,
       ...getValueTransition(transition2 || {}, key)
     };
+    const currentValue = value.get();
+    if (currentValue !== void 0 && !value.isAnimating && !Array.isArray(valueTarget) && valueTarget === currentValue && !valueTransition.velocity) {
+      continue;
+    }
     let isHandoff = false;
     if (window.MotionHandoffAnimation) {
       const appearId = getOptimisedAppearId(visualElement);
@@ -20989,7 +20869,7 @@ class MeasureLayoutWithContext extends reactExports.Component {
   }
   getSnapshotBeforeUpdate(prevProps) {
     const { layoutDependency, visualElement, drag: drag2, isPresent: isPresent2 } = this.props;
-    const projection = visualElement.projection;
+    const { projection } = visualElement;
     if (!projection)
       return null;
     projection.isPresent = isPresent2;
@@ -21100,7 +20980,7 @@ function delay(callback, timeout) {
       callback(elapsed - timeout);
     }
   };
-  frame.read(checkElapsed, true);
+  frame.setup(checkElapsed, true);
   return () => cancelFrame(checkElapsed);
 }
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"];
@@ -21109,15 +20989,10 @@ const asNumber = (value) => typeof value === "string" ? parseFloat(value) : valu
 const isPx = (value) => typeof value === "number" || px.test(value);
 function mixValues(target, follow, lead, progress2, shouldCrossfadeOpacity, isOnlyMember) {
   if (shouldCrossfadeOpacity) {
-    target.opacity = mixNumber$1(
-      0,
-      // TODO Reinstate this if only child
-      lead.opacity !== void 0 ? lead.opacity : 1,
-      easeCrossfadeIn(progress2)
-    );
-    target.opacityExit = mixNumber$1(follow.opacity !== void 0 ? follow.opacity : 1, 0, easeCrossfadeOut(progress2));
+    target.opacity = mixNumber$1(0, lead.opacity ?? 1, easeCrossfadeIn(progress2));
+    target.opacityExit = mixNumber$1(follow.opacity ?? 1, 0, easeCrossfadeOut(progress2));
   } else if (isOnlyMember) {
-    target.opacity = mixNumber$1(follow.opacity !== void 0 ? follow.opacity : 1, lead.opacity !== void 0 ? lead.opacity : 1, progress2);
+    target.opacity = mixNumber$1(follow.opacity ?? 1, lead.opacity ?? 1, progress2);
   }
   for (let i = 0; i < numBorders; i++) {
     const borderLabel = `border${borders[i]}Radius`;
@@ -21449,7 +21324,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     /**
      * Lifecycles
      */
-    mount(instance, isLayoutDirty = this.root.hasTreeAnimated) {
+    mount(instance) {
       if (this.instance)
         return;
       this.isSVG = isSVGElement(instance);
@@ -21460,7 +21335,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
       this.root.nodes.add(this);
       this.parent && this.parent.children.add(this);
-      if (isLayoutDirty && (layout2 || layoutId)) {
+      if (this.root.hasTreeAnimated && (layout2 || layoutId)) {
         this.isLayoutDirty = true;
       }
       if (attachResizeListener) {
@@ -21525,6 +21400,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       stack && stack.remove(this);
       this.parent && this.parent.children.delete(this);
       this.instance = void 0;
+      this.eventHandlers.clear();
       cancelFrame(this.updateProjection);
     }
     // only on the root
@@ -21670,7 +21546,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       if (this.scroll && this.scroll.animationId === this.root.animationId && this.scroll.phase === phase) {
         needsMeasurement = false;
       }
-      if (needsMeasurement) {
+      if (needsMeasurement && this.instance) {
         const isRoot = checkIsScrollRoot(this.instance);
         this.scroll = {
           animationId: this.root.animationId,
@@ -21689,7 +21565,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       const transformTemplate2 = this.getTransformTemplate();
       const transformTemplateValue = transformTemplate2 ? transformTemplate2(this.latestValues, "") : void 0;
       const transformTemplateHasChanged = transformTemplateValue !== this.prevTransformTemplateValue;
-      if (isResetRequested && (hasProjection || hasTransform(this.latestValues) || transformTemplateHasChanged)) {
+      if (isResetRequested && this.instance && (hasProjection || hasTransform(this.latestValues) || transformTemplateHasChanged)) {
         resetTransform(this.instance, transformTemplateValue);
         this.shouldResetTransform = false;
         this.scheduleRender();
@@ -22002,18 +21878,18 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     }
     startAnimation(options) {
       this.notifyListeners("animationStart");
-      this.currentAnimation && this.currentAnimation.stop();
-      if (this.resumingFrom && this.resumingFrom.currentAnimation) {
-        this.resumingFrom.currentAnimation.stop();
-      }
+      this.currentAnimation?.stop(false);
+      this.resumingFrom?.currentAnimation?.stop(false);
       if (this.pendingAnimation) {
         cancelFrame(this.pendingAnimation);
         this.pendingAnimation = void 0;
       }
       this.pendingAnimation = frame.update(() => {
         globalProjectionState.hasAnimatedSinceResize = true;
-        this.currentAnimation = animateSingleValue(0, animationTarget, {
+        this.motionValue || (this.motionValue = motionValue(0));
+        this.currentAnimation = animateSingleValue(this.motionValue, [0, 1e3], {
           ...options,
+          isSync: true,
           onUpdate: (latest) => {
             this.mixTargetDelta(latest);
             options.onUpdate && options.onUpdate(latest);
@@ -22044,7 +21920,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     finishAnimation() {
       if (this.currentAnimation) {
         this.mixTargetDelta && this.mixTargetDelta(animationTarget);
-        this.currentAnimation.stop();
+        this.currentAnimation.stop(false);
       }
       this.completeAnimation();
     }
@@ -22213,7 +22089,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     }
     // Only run on root
     resetTree() {
-      this.root.nodes.forEach((node2) => node2.currentAnimation?.stop());
+      this.root.nodes.forEach((node2) => node2.currentAnimation?.stop(false));
       this.root.nodes.forEach(clearMeasurements);
       this.root.sharedNodes.clear();
     }
@@ -22613,8 +22489,6 @@ function initPrefersReducedMotion() {
     prefersReducedMotion.current = false;
   }
 }
-const valueTypes = [...dimensionValueTypes, color, complex];
-const findValueType = (v) => valueTypes.find(testValueType(v));
 const visualElementStore = /* @__PURE__ */ new WeakMap();
 function updateMotionValuesFromProps(element, next2, prev2) {
   for (const key in next2) {
@@ -22692,8 +22566,7 @@ class VisualElement {
         frame.render(this.render, false, true);
       }
     };
-    const { latestValues, renderState, onUpdate } = visualState;
-    this.onUpdate = onUpdate;
+    const { latestValues, renderState } = visualState;
     this.latestValues = latestValues;
     this.baseTarget = { ...latestValues };
     this.initialValues = props.initial ? { ...latestValues } : {};
@@ -22858,7 +22731,6 @@ class VisualElement {
     if (this.handleChildMotionValue) {
       this.handleChildMotionValue();
     }
-    this.onUpdate && this.onUpdate(this);
   }
   getProps() {
     return this.props;
@@ -23021,6 +22893,12 @@ class DOMVisualElement extends VisualElement {
     }
   }
 }
+function renderHTML(element, { style, vars: vars2 }, styleProp, projection) {
+  Object.assign(element.style, style, projection && projection.getProjectionStyles(styleProp));
+  for (const key in vars2) {
+    element.style.setProperty(key, vars2[key]);
+  }
+}
 function getComputedStyle$1(element) {
   return window.getComputedStyle(element);
 }
@@ -23049,17 +22927,43 @@ class HTMLVisualElement extends DOMVisualElement {
     return scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
   }
 }
+const camelCaseAttributes = /* @__PURE__ */ new Set([
+  "baseFrequency",
+  "diffuseConstant",
+  "kernelMatrix",
+  "kernelUnitLength",
+  "keySplines",
+  "keyTimes",
+  "limitingConeAngle",
+  "markerHeight",
+  "markerWidth",
+  "numOctaves",
+  "targetX",
+  "targetY",
+  "surfaceScale",
+  "specularConstant",
+  "specularExponent",
+  "stdDeviation",
+  "tableValues",
+  "viewBox",
+  "gradientTransform",
+  "pathLength",
+  "startOffset",
+  "textLength",
+  "lengthAdjust"
+]);
+function renderSVG(element, renderState, _styleProp, projection) {
+  renderHTML(element, renderState, void 0, projection);
+  for (const key in renderState.attrs) {
+    element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
+  }
+}
 class SVGVisualElement extends DOMVisualElement {
   constructor() {
     super(...arguments);
     this.type = "svg";
     this.isSVGTag = false;
     this.measureInstanceViewportBox = createBox;
-    this.updateDimensions = () => {
-      if (this.current && !this.renderState.dimensions) {
-        updateSVGDimensions(this.current, this.renderState);
-      }
-    };
   }
   getBaseTargetFromProps(props, key) {
     return props[key];
@@ -23075,13 +22979,8 @@ class SVGVisualElement extends DOMVisualElement {
   scrapeMotionValuesFromProps(props, prevProps, visualElement) {
     return scrapeMotionValuesFromProps(props, prevProps, visualElement);
   }
-  onBindTransform() {
-    if (this.current && !this.renderState.dimensions) {
-      frame.postRender(this.updateDimensions);
-    }
-  }
   build(renderState, latestValues, props) {
-    buildSVGAttrs(renderState, latestValues, this.isSVGTag, props.transformTemplate);
+    buildSVGAttrs(renderState, latestValues, this.isSVGTag, props.transformTemplate, props.style);
   }
   renderInstance(instance, renderState, styleProp, projection) {
     renderSVG(instance, renderState, styleProp, projection);
@@ -24903,7 +24802,7 @@ const Select = forwardRef((props, ref) => {
     iconSize,
     ...rest
   } = omitThemingProps(props);
-  const [layoutProps2, otherProps] = split(rest, layoutPropNames);
+  const [layoutProps, otherProps] = split(rest, layoutPropNames);
   const ownProps = useFormControl(otherProps);
   const rootStyles = {
     width: "100%",
@@ -24924,7 +24823,7 @@ const Select = forwardRef((props, ref) => {
     {
       className: "chakra-select__wrapper",
       __css: rootStyles,
-      ...layoutProps2,
+      ...layoutProps,
       ...rootProps,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25186,6 +25085,7 @@ ControlPanel.propTypes = {
   teamBRockCountState: PropTypes.number,
   setTeamBRockCountState: PropTypes.func,
   gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
   end: PropTypes.number,
   setEnd: PropTypes.func,
   teamScores: PropTypes.arrayOf(
@@ -25948,47 +25848,69 @@ const CircleIcon$1 = (props) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Icon, { v
 ] });
 const boxSize$1 = "8";
 const flashInterval$1 = 1e3;
-function WithHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function WithHammerTeamA({
+  teamBRockCountState,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     if (hammerState === "A" && (teamARockCountState + teamBRockCountState) % 2 !== 0) {
       const intervalId = setInterval(() => {
-        setHighlightedRockWithHammer(
-          (prev2) => prev2 === -1 ? teamARockCountState - 1 : -1
-        );
+        setHighlightedRockWithHammer((prev2) => prev2 === -1 ? teamARockCountState - 1 : -1);
       }, flashInterval$1);
       return () => clearInterval(intervalId);
     }
   }, [teamBRockCountState, hammerState, teamARockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon$1,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize: boxSize$1,
-      color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
-      stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
-    }
-  ) }) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon$1,
+        {
+          boxSize: boxSize$1,
+          color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
+          stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
+        }
+      ) })
+    },
+    index
+  )) });
 }
-function WithoutHammerTeamA({ teamBRockCountState, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function WithoutHammerTeamA({
+  teamBRockCountState,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     if (hammerState === "B" && (teamARockCountState + teamBRockCountState) % 2 === 0) {
       const intervalId = setInterval(() => {
-        setHighlightedRockWithHammer(
-          (prev2) => prev2 === -1 ? teamARockCountState - 1 : -1
-        );
+        setHighlightedRockWithHammer((prev2) => prev2 === -1 ? teamARockCountState - 1 : -1);
       }, flashInterval$1);
       return () => clearInterval(intervalId);
     }
   }, [teamBRockCountState, hammerState, teamARockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon$1,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamARockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize: boxSize$1,
-      color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
-      stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
-    }
-  ) }) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon$1,
+        {
+          boxSize: boxSize$1,
+          color: index === highlightedRockWithHammer ? "transparent" : teamAColor,
+          stroke: index === highlightedRockWithHammer ? "transparent" : "url(#black-gray-black)"
+        }
+      ) })
+    },
+    index
+  )) });
 }
 function TeamARocks({
   teamBRockCountState,
@@ -26042,49 +25964,94 @@ const CircleIcon = (props) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Icon, { vie
     /* @__PURE__ */ jsxRuntimeExports.jsx("stop", { offset: "50%", style: { stopColor: "#707070", stopOpacity: 1 } }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("stop", { offset: "100%", style: { stopColor: "#909090", stopOpacity: 1 } })
   ] }) }),
-  /* @__PURE__ */ jsxRuntimeExports.jsx("path", { stroke: props.stroke, strokeWidth: "28", fill: props.color, d: "M 100, 100 m -75, 0 a 50,50 0 1,0 150,0 a 75,75 0 1,0 -150,0" })
+  /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "path",
+    {
+      stroke: props.stroke,
+      strokeWidth: "28",
+      fill: props.color,
+      d: "M 100, 100 m -75, 0 a 50,50 0 1,0 150,0 a 75,75 0 1,0 -150,0"
+    }
+  )
 ] });
 const boxSize = "8";
 const flashInterval = 1e3;
-function WithHammerTeamB({ teamBRockCountState, teamBColor, teamARockCountState, hammerState, gameRockCountState }) {
+function WithHammerTeamB({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     console.log("gameRockCountState has changed:", gameRockCountState);
   }, [gameRockCountState]);
   reactExports.useEffect(() => {
     const intervalId = setInterval(() => {
-      setHighlightedRockWithHammer((prevRock) => prevRock === -1 && hammerState === "B" && (teamBRockCountState + teamARockCountState) % 2 !== 0 ? teamBRockCountState - 1 : -1);
+      setHighlightedRockWithHammer(
+        (prevRock) => prevRock === -1 && hammerState === "B" && (teamBRockCountState + teamARockCountState) % 2 !== 0 ? teamBRockCountState - 1 : -1
+      );
     }, flashInterval);
     return () => clearInterval(intervalId);
   }, [teamARockCountState, hammerState, teamBRockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize,
-      color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
-      stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
-    }
-  ) }, index) }, index)) });
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon,
+        {
+          boxSize,
+          color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
+          stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+        }
+      ) }, index)
+    },
+    index
+  )) });
 }
-function WithoutHammerTeamB({ teamBRockCountState, teamBColor, teamARockCountState, hammerState, gameRockCountState }) {
+function WithoutHammerTeamB({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  hammerState,
+  gameRockCountState
+}) {
   const [highlightedRockWithHammer, setHighlightedRockWithHammer] = reactExports.useState(-1);
   reactExports.useEffect(() => {
     const intervalId = setInterval(() => {
-      setHighlightedRockWithHammer((prevRock) => prevRock === -1 && hammerState === "A" && (teamBRockCountState + teamARockCountState) % 2 === 0 ? teamBRockCountState - 1 : -1);
+      setHighlightedRockWithHammer(
+        (prevRock) => prevRock === -1 && hammerState === "A" && (teamBRockCountState + teamARockCountState) % 2 === 0 ? teamBRockCountState - 1 : -1
+      );
     }, flashInterval);
     return () => clearInterval(intervalId);
   }, [teamARockCountState, hammerState, teamBRockCountState]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    CircleIcon,
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Array.from({ length: teamBRockCountState }, (_, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Box,
     {
-      boxSize,
-      color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
-      stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+      borderLeft: gameRockCountState === 5 ? index !== 0 && index !== 3 && index !== 2 ? "2px solid gray" : void 0 : index !== 0 && index !== 1 && index !== 3 && index !== 5 && index !== 7 ? "2px solid gray" : void 0,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { borderRadius: 0, m: "1px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        CircleIcon,
+        {
+          boxSize,
+          color: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : teamBColor,
+          stroke: index === highlightedRockWithHammer ? hammerState === "A" ? "transparent" : "transparent" : "url(#black-gray-black)"
+        },
+        index
+      ) }, index)
     },
     index
-  ) }, index) }, index)) });
+  )) });
 }
-function TeamBRocks({ teamBRockCountState, teamBColor, teamARockCountState, teamAColor, hammerState, gameRockCountState }) {
+function TeamBRocks({
+  teamBRockCountState,
+  teamBColor,
+  teamARockCountState,
+  teamAColor,
+  hammerState,
+  gameRockCountState
+}) {
   reactExports.useEffect(() => {
     console.log("gameRockCountState has changed:", gameRockCountState);
   }, [gameRockCountState]);
@@ -26147,7 +26114,9 @@ const TeamComponent = ({
   teamScore,
   hammerState,
   Background,
+  /* eslint-disable */
   gameRockCountState
+  /* eslint-enable */
 }) => {
   const textShadowValue = teamColor !== "yellow" ? "1px 1px 2px rgba(0, 0, 0, 0.8)" : "1px 1px 2px rgba(255, 255, 255, 0.8)";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Flex, { w: "full", bg: Background, bgGradient: teamStyles.bgGradient, h: "50px", children: [
@@ -26193,6 +26162,63 @@ const TeamComponent = ({
       }
     )
   ] });
+};
+VerticalScoreboard.propTypes = {
+  teamAName: PropTypes.string,
+  setTeamAName: PropTypes.func,
+  spielName: PropTypes.string,
+  setSpielName: PropTypes.func,
+  spielGameType: PropTypes.string,
+  setSpielGameType: PropTypes.func,
+  teamBName: PropTypes.string,
+  setTeamBName: PropTypes.func,
+  hammerState: PropTypes.string,
+  setHammerState: PropTypes.func,
+  teamAScore: PropTypes.number,
+  setTeamAScore: PropTypes.func,
+  teamAColor: PropTypes.string,
+  setTeamAColor: PropTypes.func,
+  teamARockCountState: PropTypes.number,
+  setTeamARockCountState: PropTypes.func,
+  teamBScore: PropTypes.number,
+  setTeamBScore: PropTypes.func,
+  teamBColor: PropTypes.string,
+  setTeamBColor: PropTypes.func,
+  teamBRockCountState: PropTypes.number,
+  setTeamBRockCountState: PropTypes.func,
+  gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
+  end: PropTypes.number,
+  setEnd: PropTypes.func,
+  teamScores: PropTypes.arrayOf(
+    PropTypes.shape({
+      score1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      score2: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    })
+  ).isRequired,
+  setTeamScores: PropTypes.func.isRequired,
+  teamAStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamBStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired
+};
+TeamComponent.propTypes = {
+  teamLetter: PropTypes.string.isRequired,
+  teamName: PropTypes.string,
+  teamColor: PropTypes.string.isRequired,
+  teamStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamScore: PropTypes.number.isRequired,
+  hammerState: PropTypes.string.isRequired,
+  Background: PropTypes.string.isRequired,
+  gameRockCountState: PropTypes.number
+  // Define this if needed for prop validation
 };
 function VerticalScoreboard({
   teamAName,
@@ -26663,6 +26689,14 @@ function App() {
     if (storedSpielName) setSpielName(storedSpielName);
     setLoadedFromStorage(true);
   }, []);
+  reactExports.useEffect(() => {
+    if (loadedFromStorage && gameRockCountState !== "") {
+      setGameRockCountState((prevState) => {
+        const temp = Number(prevState) - 1;
+        return temp + 1;
+      });
+    }
+  }, [loadedFromStorage, gameRockCountState]);
   reactExports.useEffect(() => {
     if (!loadedFromStorage) return;
     localStorage.setItem("teamAName", teamAName);
