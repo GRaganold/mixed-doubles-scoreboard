@@ -353,7 +353,7 @@ var hasRequiredScheduler_production_min;
 function requireScheduler_production_min() {
   if (hasRequiredScheduler_production_min) return scheduler_production_min;
   hasRequiredScheduler_production_min = 1;
-  (function(exports) {
+  (function(exports$1) {
     function f(a, b) {
       var c = a.length;
       a.push(b);
@@ -386,12 +386,12 @@ function requireScheduler_production_min() {
     }
     if ("object" === typeof performance && "function" === typeof performance.now) {
       var l = performance;
-      exports.unstable_now = function() {
+      exports$1.unstable_now = function() {
         return l.now();
       };
     } else {
       var p = Date, q = p.now();
-      exports.unstable_now = function() {
+      exports$1.unstable_now = function() {
         return p.now() - q;
       };
     }
@@ -427,7 +427,7 @@ function requireScheduler_production_min() {
             v.callback = null;
             y = v.priorityLevel;
             var e = d(v.expirationTime <= b);
-            b = exports.unstable_now();
+            b = exports$1.unstable_now();
             "function" === typeof e ? v.callback = e : v === h(r2) && k(r2);
             G(b);
           } else k(r2);
@@ -446,11 +446,11 @@ function requireScheduler_production_min() {
     }
     var N = false, O = null, L = -1, P = 5, Q = -1;
     function M() {
-      return exports.unstable_now() - Q < P ? false : true;
+      return exports$1.unstable_now() - Q < P ? false : true;
     }
     function R() {
       if (null !== O) {
-        var a = exports.unstable_now();
+        var a = exports$1.unstable_now();
         Q = a;
         var b = true;
         try {
@@ -479,31 +479,31 @@ function requireScheduler_production_min() {
     }
     function K(a, b) {
       L = D(function() {
-        a(exports.unstable_now());
+        a(exports$1.unstable_now());
       }, b);
     }
-    exports.unstable_IdlePriority = 5;
-    exports.unstable_ImmediatePriority = 1;
-    exports.unstable_LowPriority = 4;
-    exports.unstable_NormalPriority = 3;
-    exports.unstable_Profiling = null;
-    exports.unstable_UserBlockingPriority = 2;
-    exports.unstable_cancelCallback = function(a) {
+    exports$1.unstable_IdlePriority = 5;
+    exports$1.unstable_ImmediatePriority = 1;
+    exports$1.unstable_LowPriority = 4;
+    exports$1.unstable_NormalPriority = 3;
+    exports$1.unstable_Profiling = null;
+    exports$1.unstable_UserBlockingPriority = 2;
+    exports$1.unstable_cancelCallback = function(a) {
       a.callback = null;
     };
-    exports.unstable_continueExecution = function() {
+    exports$1.unstable_continueExecution = function() {
       A || z || (A = true, I(J));
     };
-    exports.unstable_forceFrameRate = function(a) {
+    exports$1.unstable_forceFrameRate = function(a) {
       0 > a || 125 < a ? console.error("forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported") : P = 0 < a ? Math.floor(1e3 / a) : 5;
     };
-    exports.unstable_getCurrentPriorityLevel = function() {
+    exports$1.unstable_getCurrentPriorityLevel = function() {
       return y;
     };
-    exports.unstable_getFirstCallbackNode = function() {
+    exports$1.unstable_getFirstCallbackNode = function() {
       return h(r2);
     };
-    exports.unstable_next = function(a) {
+    exports$1.unstable_next = function(a) {
       switch (y) {
         case 1:
         case 2:
@@ -521,11 +521,11 @@ function requireScheduler_production_min() {
         y = c;
       }
     };
-    exports.unstable_pauseExecution = function() {
+    exports$1.unstable_pauseExecution = function() {
     };
-    exports.unstable_requestPaint = function() {
+    exports$1.unstable_requestPaint = function() {
     };
-    exports.unstable_runWithPriority = function(a, b) {
+    exports$1.unstable_runWithPriority = function(a, b) {
       switch (a) {
         case 1:
         case 2:
@@ -544,8 +544,8 @@ function requireScheduler_production_min() {
         y = c;
       }
     };
-    exports.unstable_scheduleCallback = function(a, b, c) {
-      var d = exports.unstable_now();
+    exports$1.unstable_scheduleCallback = function(a, b, c) {
+      var d = exports$1.unstable_now();
       "object" === typeof c && null !== c ? (c = c.delay, c = "number" === typeof c && 0 < c ? d + c : d) : c = d;
       switch (a) {
         case 1:
@@ -568,8 +568,8 @@ function requireScheduler_production_min() {
       c > d ? (a.sortIndex = c, f(t2, a), null === h(r2) && a === h(t2) && (B ? (E(L), L = -1) : B = true, K(H, c - d))) : (a.sortIndex = e, f(r2, a), A || z || (A = true, I(J)));
       return a;
     };
-    exports.unstable_shouldYield = M;
-    exports.unstable_wrapCallback = function(a) {
+    exports$1.unstable_shouldYield = M;
+    exports$1.unstable_wrapCallback = function(a) {
       var b = y;
       return function() {
         var c = y;
@@ -1079,13 +1079,13 @@ function requireReactDom_production_min() {
   function lb(a, b) {
     return null == a || "http://www.w3.org/1999/xhtml" === a ? kb(b) : "http://www.w3.org/2000/svg" === a && "foreignObject" === b ? "http://www.w3.org/1999/xhtml" : a;
   }
-  var mb, nb = function(a) {
+  var mb, nb = (function(a) {
     return "undefined" !== typeof MSApp && MSApp.execUnsafeLocalFunction ? function(b, c, d, e) {
       MSApp.execUnsafeLocalFunction(function() {
         return a(b, c, d, e);
       });
     } : a;
-  }(function(a, b) {
+  })(function(a, b) {
     if ("http://www.w3.org/2000/svg" !== a.namespaceURI || "innerHTML" in a) a.innerHTML = b;
     else {
       mb = mb || document.createElement("div");
@@ -7038,7 +7038,7 @@ function requireClient() {
 }
 var clientExports = requireClient();
 const ReactDOM = /* @__PURE__ */ getDefaultExportFromCjs(clientExports);
-function isBrowser$2() {
+function isBrowser$3() {
   return Boolean(globalThis?.document);
 }
 function assignAfter(target, ...sources) {
@@ -7064,7 +7064,7 @@ const ariaAttr = (condition) => condition ? true : void 0;
 function isArray(value) {
   return Array.isArray(value);
 }
-function isObject(value) {
+function isObject$1(value) {
   const type = typeof value;
   return value != null && (type === "object" || type === "function") && !isArray(value);
 }
@@ -7152,7 +7152,7 @@ function analyzeBreakpoints(breakpoints2) {
      * toArrayValue({ base: 1, sm: 2, md: 3 }) // => [1, 2, 3]
      */
     toArrayValue(test2) {
-      if (!isObject(test2)) {
+      if (!isObject$1(test2)) {
         throw new Error("toArrayValue: value must be an object");
       }
       const result = _keysArr.map((bp) => test2[bp] ?? null);
@@ -7291,7 +7291,7 @@ function mapResponsive(prop, mapper) {
   if (Array.isArray(prop)) {
     return prop.map((item) => item === null ? null : mapper(item));
   }
-  if (isObject(prop)) {
+  if (isObject$1(prop)) {
     return Object.keys(prop).reduce((result, key) => {
       result[key] = mapper(prop[key]);
       return result;
@@ -7337,7 +7337,7 @@ function splitProps(props, ...keys2) {
 function walkObject(target, predicate, options = {}) {
   const { stop, getKey } = options;
   function inner(value, path = []) {
-    if (isObject(value) || Array.isArray(value)) {
+    if (isObject$1(value) || Array.isArray(value)) {
       const result = {};
       for (const [prop, child] of Object.entries(value)) {
         const key = getKey?.(prop) ?? prop;
@@ -7359,7 +7359,7 @@ var hasRequiredLodash_mergewith;
 function requireLodash_mergewith() {
   if (hasRequiredLodash_mergewith) return lodash_mergewith.exports;
   hasRequiredLodash_mergewith = 1;
-  (function(module, exports) {
+  (function(module, exports$1) {
     var LARGE_ARRAY_SIZE = 200;
     var HASH_UNDEFINED = "__lodash_hash_undefined__";
     var HOT_COUNT = 800, HOT_SPAN = 16;
@@ -7375,11 +7375,11 @@ function requireLodash_mergewith() {
     var freeGlobal = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
     var freeSelf = typeof self == "object" && self && self.Object === Object && self;
     var root = freeGlobal || freeSelf || Function("return this")();
-    var freeExports = exports && !exports.nodeType && exports;
+    var freeExports = exports$1 && !exports$1.nodeType && exports$1;
     var freeModule = freeExports && true && module && !module.nodeType && module;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var freeProcess = moduleExports && freeGlobal.process;
-    var nodeUtil = function() {
+    var nodeUtil = (function() {
       try {
         var types = freeModule && freeModule.require && freeModule.require("util").types;
         if (types) {
@@ -7388,7 +7388,7 @@ function requireLodash_mergewith() {
         return freeProcess && freeProcess.binding && freeProcess.binding("util");
       } catch (e) {
       }
-    }();
+    })();
     var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
     function apply(func, thisArg, args) {
       switch (args.length) {
@@ -7427,10 +7427,10 @@ function requireLodash_mergewith() {
     var coreJsData = root["__core-js_shared__"];
     var funcToString = funcProto.toString;
     var hasOwnProperty = objectProto.hasOwnProperty;
-    var maskSrcKey = function() {
+    var maskSrcKey = (function() {
       var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
       return uid ? "Symbol(src)_1." + uid : "";
-    }();
+    })();
     var nativeObjectToString = objectProto.toString;
     var objectCtorString = funcToString.call(Object);
     var reIsNative = RegExp(
@@ -7439,17 +7439,17 @@ function requireLodash_mergewith() {
     var Buffer = moduleExports ? root.Buffer : void 0, Symbol2 = root.Symbol, Uint8Array = root.Uint8Array;
     Buffer ? Buffer.allocUnsafe : void 0;
     var getPrototype = overArg(Object.getPrototypeOf, Object), objectCreate = Object.create, propertyIsEnumerable = objectProto.propertyIsEnumerable, splice = arrayProto.splice, symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
-    var defineProperty = function() {
+    var defineProperty = (function() {
       try {
         var func = getNative(Object, "defineProperty");
         func({}, "", {});
         return func;
       } catch (e) {
       }
-    }();
+    })();
     var nativeIsBuffer = Buffer ? Buffer.isBuffer : void 0, nativeMax = Math.max, nativeNow = Date.now;
     var Map2 = getNative(root, "Map"), nativeCreate = getNative(Object, "create");
-    var baseCreate = /* @__PURE__ */ function() {
+    var baseCreate = /* @__PURE__ */ (function() {
       function object() {
       }
       return function(proto) {
@@ -7464,7 +7464,7 @@ function requireLodash_mergewith() {
         object.prototype = void 0;
         return result;
       };
-    }();
+    })();
     function Hash(entries) {
       var index = -1, length2 = entries == null ? 0 : entries.length;
       this.clear();
@@ -7971,9 +7971,9 @@ function requireLodash_mergewith() {
     function eq(value, other) {
       return value === other || value !== value && other !== other;
     }
-    var isArguments = baseIsArguments(/* @__PURE__ */ function() {
+    var isArguments = baseIsArguments(/* @__PURE__ */ (function() {
       return arguments;
-    }()) ? baseIsArguments : function(value) {
+    })()) ? baseIsArguments : function(value) {
       return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
     };
     var isArray2 = Array.isArray;
@@ -8447,7 +8447,7 @@ const tokenToCSSVar = (scale2, value) => (theme2) => {
   const important = isImportant(valueStr);
   const valueWithoutImportant = withoutImportant(valueStr);
   const key = scale2 ? `${scale2}.${valueWithoutImportant}` : valueWithoutImportant;
-  let transformed = isObject(theme2.__cssMap) && key in theme2.__cssMap ? theme2.__cssMap[key].varRef : value;
+  let transformed = isObject$1(theme2.__cssMap) && key in theme2.__cssMap ? theme2.__cssMap[key].varRef : value;
   transformed = withoutImportant(transformed);
   return important ? `${transformed} !important` : transformed;
 };
@@ -9360,7 +9360,7 @@ const expandResponsive = (styles2) => (theme2) => {
     let value = runIfFn$1(styles2[key], theme2);
     if (value == null)
       continue;
-    value = isObject(value) && isResponsive(value) ? toArrayValue(value) : value;
+    value = isObject$1(value) && isResponsive(value) ? toArrayValue(value) : value;
     if (!Array.isArray(value)) {
       computedStyles[key] = value;
       continue;
@@ -9438,7 +9438,7 @@ function getCss(options) {
       if (config2 === true) {
         config2 = { property: key };
       }
-      if (isObject(value)) {
+      if (isObject$1(value)) {
         computedStyles[key] = computedStyles[key] ?? {};
         computedStyles[key] = mergeWith(
           {},
@@ -9461,14 +9461,14 @@ function getCss(options) {
         continue;
       }
       if (configProperty) {
-        if (configProperty === "&" && isObject(rawValue)) {
+        if (configProperty === "&" && isObject$1(rawValue)) {
           computedStyles = mergeWith({}, computedStyles, rawValue);
         } else {
           computedStyles[configProperty] = rawValue;
         }
         continue;
       }
-      if (isObject(rawValue)) {
+      if (isObject$1(rawValue)) {
         computedStyles = mergeWith({}, computedStyles, rawValue);
         continue;
       }
@@ -9505,7 +9505,7 @@ function createMultiStyleConfigHelpers(parts) {
 function normalize(value, toArray) {
   if (Array.isArray(value))
     return value;
-  if (isObject(value))
+  if (isObject$1(value))
     return toArray(value);
   if (value != null)
     return [value];
@@ -9572,7 +9572,7 @@ function omitThemingProps(props) {
   return omit(props, ["styleConfig", "size", "variant", "colorScheme"]);
 }
 function resolveReference(operand) {
-  if (isObject(operand) && operand.reference) {
+  if (isObject$1(operand) && operand.reference) {
     return operand.reference;
   }
   return String(operand);
@@ -9748,7 +9748,7 @@ function createThemeVars(theme2) {
       };
       continue;
     }
-    const normalizedValue = isObject(value) ? value : { default: value };
+    const normalizedValue = isObject$1(value) ? value : { default: value };
     cssVars = mergeWith(
       cssVars,
       Object.entries(normalizedValue).reduce(
@@ -10307,7 +10307,7 @@ function orient(options) {
   return orientation === "vertical" ? vertical : horizontal;
 }
 function toRef(operand) {
-  if (isObject(operand) && operand.reference) {
+  if (isObject$1(operand) && operand.reference) {
     return operand.reference;
   }
   return String(operand);
@@ -12383,20 +12383,8 @@ const baseStyleThumb$1 = defineStyle((props) => {
   const { orientation } = props;
   const orientationStyle = orient({
     orientation,
-    vertical: {
-      left: "50%",
-      transform: `translateX(-50%)`,
-      _active: {
-        transform: `translateX(-50%) scale(1.15)`
-      }
-    },
-    horizontal: {
-      top: "50%",
-      transform: `translateY(-50%)`,
-      _active: {
-        transform: `translateY(-50%) scale(1.15)`
-      }
-    }
+    vertical: { left: "50%" },
+    horizontal: { top: "50%" }
   });
   return {
     ...orientationStyle,
@@ -12417,6 +12405,9 @@ const baseStyleThumb$1 = defineStyle((props) => {
     transitionDuration: "normal",
     _focusVisible: {
       boxShadow: "outline"
+    },
+    _active: {
+      "--slider-thumb-scale": `1.15`
     },
     _disabled: {
       bg: "gray.300"
@@ -13677,7 +13668,7 @@ const requiredChakraThemeKeys = [
   "zIndices"
 ];
 function isChakraTheme(unit) {
-  if (!isObject(unit)) {
+  if (!isObject$1(unit)) {
     return false;
   }
   return requiredChakraThemeKeys.every(
@@ -13719,7 +13710,7 @@ function createStyleElement(options) {
   tag.setAttribute("data-s", "");
   return tag;
 }
-var StyleSheet = /* @__PURE__ */ function() {
+var StyleSheet = /* @__PURE__ */ (function() {
   function StyleSheet2(options) {
     var _this = this;
     this._insertTag = function(tag) {
@@ -13777,7 +13768,7 @@ var StyleSheet = /* @__PURE__ */ function() {
     this.ctr = 0;
   };
   return StyleSheet2;
-}();
+})();
 var MS = "-ms-";
 var MOZ = "-moz-";
 var WEBKIT = "-webkit-";
@@ -14708,7 +14699,7 @@ function requireHoistNonReactStatics_cjs() {
   return hoistNonReactStatics_cjs;
 }
 requireHoistNonReactStatics_cjs();
-var isBrowser$1 = true;
+var isBrowser$2 = true;
 function getRegisteredStyles(registered, registeredStyles, classNames2) {
   var rawClassName = "";
   classNames2.split(" ").forEach(function(className) {
@@ -14732,7 +14723,7 @@ var registerStyles = function registerStyles2(cache, serialized, isStringTag) {
     // in node since emotion-server relies on whether a style is in
     // the registered cache to know whether a style is global or not
     // also, note that this check will be dead code eliminated in the browser
-    isBrowser$1 === false) && cache.registered[className] === void 0
+    isBrowser$2 === false) && cache.registered[className] === void 0
   ) {
     cache.registered[className] = serialized.styles;
   }
@@ -15275,7 +15266,7 @@ function createLocalStorageManager(key) {
 const localStorageManager = createLocalStorageManager(STORAGE_KEY);
 const noop$1 = () => {
 };
-const useSafeLayoutEffect = isBrowser$2() ? reactExports.useLayoutEffect : reactExports.useEffect;
+const useSafeLayoutEffect = isBrowser$3() ? reactExports.useLayoutEffect : reactExports.useEffect;
 function getTheme2(manager, fallback) {
   return manager.type === "cookie" && manager.ssr ? manager.get(fallback) : fallback;
 }
@@ -15751,215 +15742,9 @@ function useConstant(init) {
   }
   return ref.current;
 }
-const isBrowser = typeof window !== "undefined";
-const useIsomorphicLayoutEffect = isBrowser ? reactExports.useLayoutEffect : reactExports.useEffect;
+const isBrowser$1 = typeof window !== "undefined";
+const useIsomorphicLayoutEffect = isBrowser$1 ? reactExports.useLayoutEffect : reactExports.useEffect;
 const PresenceContext = /* @__PURE__ */ reactExports.createContext(null);
-const MotionConfigContext = reactExports.createContext({
-  transformPagePoint: (p) => p,
-  isStatic: false,
-  reducedMotion: "never"
-});
-class PopChildMeasure extends reactExports.Component {
-  getSnapshotBeforeUpdate(prevProps) {
-    const element = this.props.childRef.current;
-    if (element && prevProps.isPresent && !this.props.isPresent) {
-      const parent = element.offsetParent;
-      const parentWidth = parent instanceof HTMLElement ? parent.offsetWidth || 0 : 0;
-      const size2 = this.props.sizeRef.current;
-      size2.height = element.offsetHeight || 0;
-      size2.width = element.offsetWidth || 0;
-      size2.top = element.offsetTop;
-      size2.left = element.offsetLeft;
-      size2.right = parentWidth - size2.width - size2.left;
-    }
-    return null;
-  }
-  /**
-   * Required with getSnapshotBeforeUpdate to stop React complaining.
-   */
-  componentDidUpdate() {
-  }
-  render() {
-    return this.props.children;
-  }
-}
-function PopChild({ children, isPresent: isPresent2, anchorX }) {
-  const id2 = reactExports.useId();
-  const ref = reactExports.useRef(null);
-  const size2 = reactExports.useRef({
-    width: 0,
-    height: 0,
-    top: 0,
-    left: 0,
-    right: 0
-  });
-  const { nonce } = reactExports.useContext(MotionConfigContext);
-  reactExports.useInsertionEffect(() => {
-    const { width, height, top, left, right } = size2.current;
-    if (isPresent2 || !ref.current || !width || !height)
-      return;
-    const x = anchorX === "left" ? `left: ${left}` : `right: ${right}`;
-    ref.current.dataset.motionPopId = id2;
-    const style = document.createElement("style");
-    if (nonce)
-      style.nonce = nonce;
-    document.head.appendChild(style);
-    if (style.sheet) {
-      style.sheet.insertRule(`
-          [data-motion-pop-id="${id2}"] {
-            position: absolute !important;
-            width: ${width}px !important;
-            height: ${height}px !important;
-            ${x}px !important;
-            top: ${top}px !important;
-          }
-        `);
-    }
-    return () => {
-      if (document.head.contains(style)) {
-        document.head.removeChild(style);
-      }
-    };
-  }, [isPresent2]);
-  return jsxRuntimeExports.jsx(PopChildMeasure, { isPresent: isPresent2, childRef: ref, sizeRef: size2, children: reactExports.cloneElement(children, { ref }) });
-}
-const PresenceChild = ({ children, initial, isPresent: isPresent2, onExitComplete, custom, presenceAffectsLayout, mode: mode2, anchorX }) => {
-  const presenceChildren = useConstant(newChildrenMap);
-  const id2 = reactExports.useId();
-  let isReusedContext = true;
-  let context = reactExports.useMemo(() => {
-    isReusedContext = false;
-    return {
-      id: id2,
-      initial,
-      isPresent: isPresent2,
-      custom,
-      onExitComplete: (childId) => {
-        presenceChildren.set(childId, true);
-        for (const isComplete of presenceChildren.values()) {
-          if (!isComplete)
-            return;
-        }
-        onExitComplete && onExitComplete();
-      },
-      register: (childId) => {
-        presenceChildren.set(childId, false);
-        return () => presenceChildren.delete(childId);
-      }
-    };
-  }, [isPresent2, presenceChildren, onExitComplete]);
-  if (presenceAffectsLayout && isReusedContext) {
-    context = { ...context };
-  }
-  reactExports.useMemo(() => {
-    presenceChildren.forEach((_, key) => presenceChildren.set(key, false));
-  }, [isPresent2]);
-  reactExports.useEffect(() => {
-    !isPresent2 && !presenceChildren.size && onExitComplete && onExitComplete();
-  }, [isPresent2]);
-  if (mode2 === "popLayout") {
-    children = jsxRuntimeExports.jsx(PopChild, { isPresent: isPresent2, anchorX, children });
-  }
-  return jsxRuntimeExports.jsx(PresenceContext.Provider, { value: context, children });
-};
-function newChildrenMap() {
-  return /* @__PURE__ */ new Map();
-}
-function usePresence(subscribe = true) {
-  const context = reactExports.useContext(PresenceContext);
-  if (context === null)
-    return [true, null];
-  const { isPresent: isPresent2, onExitComplete, register } = context;
-  const id2 = reactExports.useId();
-  reactExports.useEffect(() => {
-    if (subscribe) {
-      return register(id2);
-    }
-  }, [subscribe]);
-  const safeToRemove = reactExports.useCallback(() => subscribe && onExitComplete && onExitComplete(id2), [id2, onExitComplete, subscribe]);
-  return !isPresent2 && onExitComplete ? [false, safeToRemove] : [true];
-}
-function useIsPresent() {
-  return isPresent(reactExports.useContext(PresenceContext));
-}
-function isPresent(context) {
-  return context === null ? true : context.isPresent;
-}
-const getChildKey = (child) => child.key || "";
-function onlyElements(children) {
-  const filtered = [];
-  reactExports.Children.forEach(children, (child) => {
-    if (reactExports.isValidElement(child))
-      filtered.push(child);
-  });
-  return filtered;
-}
-const AnimatePresence = ({ children, custom, initial = true, onExitComplete, presenceAffectsLayout = true, mode: mode2 = "sync", propagate = false, anchorX = "left" }) => {
-  const [isParentPresent, safeToRemove] = usePresence(propagate);
-  const presentChildren = reactExports.useMemo(() => onlyElements(children), [children]);
-  const presentKeys = propagate && !isParentPresent ? [] : presentChildren.map(getChildKey);
-  const isInitialRender = reactExports.useRef(true);
-  const pendingPresentChildren = reactExports.useRef(presentChildren);
-  const exitComplete = useConstant(() => /* @__PURE__ */ new Map());
-  const [diffedChildren, setDiffedChildren] = reactExports.useState(presentChildren);
-  const [renderedChildren, setRenderedChildren] = reactExports.useState(presentChildren);
-  useIsomorphicLayoutEffect(() => {
-    isInitialRender.current = false;
-    pendingPresentChildren.current = presentChildren;
-    for (let i = 0; i < renderedChildren.length; i++) {
-      const key = getChildKey(renderedChildren[i]);
-      if (!presentKeys.includes(key)) {
-        if (exitComplete.get(key) !== true) {
-          exitComplete.set(key, false);
-        }
-      } else {
-        exitComplete.delete(key);
-      }
-    }
-  }, [renderedChildren, presentKeys.length, presentKeys.join("-")]);
-  const exitingChildren = [];
-  if (presentChildren !== diffedChildren) {
-    let nextChildren = [...presentChildren];
-    for (let i = 0; i < renderedChildren.length; i++) {
-      const child = renderedChildren[i];
-      const key = getChildKey(child);
-      if (!presentKeys.includes(key)) {
-        nextChildren.splice(i, 0, child);
-        exitingChildren.push(child);
-      }
-    }
-    if (mode2 === "wait" && exitingChildren.length) {
-      nextChildren = exitingChildren;
-    }
-    setRenderedChildren(onlyElements(nextChildren));
-    setDiffedChildren(presentChildren);
-    return null;
-  }
-  const { forceRender } = reactExports.useContext(LayoutGroupContext);
-  return jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: renderedChildren.map((child) => {
-    const key = getChildKey(child);
-    const isPresent2 = propagate && !isParentPresent ? false : presentChildren === renderedChildren || presentKeys.includes(key);
-    const onExit = () => {
-      if (exitComplete.has(key)) {
-        exitComplete.set(key, true);
-      } else {
-        return;
-      }
-      let isEveryExitComplete = true;
-      exitComplete.forEach((isExitComplete) => {
-        if (!isExitComplete)
-          isEveryExitComplete = false;
-      });
-      if (isEveryExitComplete) {
-        forceRender?.();
-        setRenderedChildren(pendingPresentChildren.current);
-        propagate && safeToRemove?.();
-        onExitComplete && onExitComplete();
-      }
-    };
-    return jsxRuntimeExports.jsx(PresenceChild, { isPresent: isPresent2, initial: !isInitialRender.current || initial ? void 0 : false, custom, presenceAffectsLayout, mode: mode2, onExitComplete: isPresent2 ? void 0 : onExit, anchorX, children: child }, key);
-  }) });
-};
 function addUniqueItem(arr, item) {
   if (arr.indexOf(item) === -1)
     arr.push(item);
@@ -15980,6 +15765,9 @@ let invariant = () => {
 };
 const MotionGlobalConfig = {};
 const isNumericalString = (v) => /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(v);
+function isObject(value) {
+  return typeof value === "object" && value !== null;
+}
 const isZeroValueString = (v) => /^0[^.\s]+$/u.test(v);
 // @__NO_SIDE_EFFECTS__
 function memo(callback) {
@@ -16114,9 +15902,6 @@ const stepsOrder = [
   "postRender"
   // Compute
 ];
-const statsBuffer = {
-  value: null
-};
 function createRenderStep(runNextFrame, stepName) {
   let thisFrame = /* @__PURE__ */ new Set();
   let nextFrame = /* @__PURE__ */ new Set();
@@ -16128,13 +15913,11 @@ function createRenderStep(runNextFrame, stepName) {
     timestamp: 0,
     isProcessing: false
   };
-  let numCalls = 0;
   function triggerCallback(callback) {
     if (toKeepAlive.has(callback)) {
       step.schedule(callback);
       runNextFrame();
     }
-    numCalls++;
     callback(latestFrameData);
   }
   const step = {
@@ -16169,10 +15952,6 @@ function createRenderStep(runNextFrame, stepName) {
       isProcessing = true;
       [thisFrame, nextFrame] = [nextFrame, thisFrame];
       thisFrame.forEach(triggerCallback);
-      if (stepName && statsBuffer.value) {
-        statsBuffer.value.frameloop[stepName].push(numCalls);
-      }
-      numCalls = 0;
       thisFrame.clear();
       isProcessing = false;
       if (flushNextFrame) {
@@ -16194,7 +15973,7 @@ function createRenderBatcher(scheduleNextBatch, allowKeepAlive) {
   };
   const flagRunNextFrame = () => runNextFrame = true;
   const steps = stepsOrder.reduce((acc, key) => {
-    acc[key] = createRenderStep(flagRunNextFrame, allowKeepAlive ? key : void 0);
+    acc[key] = createRenderStep(flagRunNextFrame);
     return acc;
   }, {});
   const { setup, read, resolveKeyframes, preUpdate, update, preRender, render, postRender } = steps;
@@ -16270,6 +16049,11 @@ const isCSSVariableToken = (value) => {
   return singleCssVariableRegex.test(value.split("/*")[0].trim());
 };
 const singleCssVariableRegex = /var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu;
+function containsCSSVariable(value) {
+  if (typeof value !== "string")
+    return false;
+  return value.split("/*")[0].includes("var(--");
+}
 const number = {
   test: (v) => typeof v === "number",
   parse: parseFloat,
@@ -16380,6 +16164,11 @@ const color = {
   },
   transform: (v) => {
     return typeof v === "string" ? v : v.hasOwnProperty("red") ? rgba.transform(v) : hsla.transform(v);
+  },
+  getAnimatableNone: (v) => {
+    const parsed = color.parse(v);
+    parsed.alpha = 0;
+    return color.transform(parsed);
   }
 };
 const colorRegex = /(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu;
@@ -16446,7 +16235,7 @@ function createTransformer(source) {
     return output;
   };
 }
-const convertNumbersToZero = (v) => typeof v === "number" ? 0 : v;
+const convertNumbersToZero = (v) => typeof v === "number" ? 0 : color.test(v) ? color.getAnimatableNone(v) : v;
 function getAnimatableNone$1(v) {
   const parsed = parseComplexValue(v);
   const transformer = createTransformer(v);
@@ -16630,7 +16419,7 @@ const generateLinearEasing = (easing, duration, resolution = 10) => {
   let points = "";
   const numPoints = Math.max(Math.round(duration / resolution), 2);
   for (let i = 0; i < numPoints; i++) {
-    points += easing(i / (numPoints - 1)) + ", ";
+    points += Math.round(easing(i / (numPoints - 1)) * 1e4) / 1e4 + ", ";
   }
   return `linear(${points.substring(0, points.length - 2)})`;
 };
@@ -16720,7 +16509,7 @@ function findSpring({ duration = springDefaults.duration, bounce = springDefault
     envelope = (undampedFreq2) => {
       const a = Math.exp(-undampedFreq2 * duration);
       const b = (undampedFreq2 - velocity) * duration + 1;
-      return -1e-3 + a * b;
+      return -safeMin + a * b;
     };
     derivative = (undampedFreq2) => {
       const a = Math.exp(-undampedFreq2 * duration);
@@ -17036,14 +16825,12 @@ function replaceTransitionType(transition2) {
 }
 class WithPromise {
   constructor() {
-    this.count = 0;
     this.updateFinished();
   }
   get finished() {
     return this._finished;
   }
   updateFinished() {
-    this.count++;
     this._finished = new Promise((resolve) => {
       this.resolve = resolve;
     });
@@ -17070,19 +16857,16 @@ class JSAnimation extends WithPromise {
     this.currentTime = 0;
     this.holdTime = null;
     this.playbackSpeed = 1;
-    this.stop = (sync = true) => {
-      if (sync) {
-        const { motionValue: motionValue2 } = this.options;
-        if (motionValue2 && motionValue2.updatedAt !== time.now()) {
-          this.tick(time.now());
-        }
+    this.stop = () => {
+      const { motionValue: motionValue2 } = this.options;
+      if (motionValue2 && motionValue2.updatedAt !== time.now()) {
+        this.tick(time.now());
       }
       this.isStopped = true;
       if (this.state === "idle")
         return;
       this.teardown();
-      const { onStop } = this.options;
-      onStop && onStop();
+      this.options.onStop?.();
     };
     this.options = options;
     this.initAnimation();
@@ -17201,6 +16985,10 @@ class JSAnimation extends WithPromise {
   get duration() {
     return /* @__PURE__ */ millisecondsToSeconds(this.calculatedDuration);
   }
+  get iterationDuration() {
+    const { delay: delay2 = 0 } = this.options || {};
+    return this.duration + /* @__PURE__ */ millisecondsToSeconds(delay2);
+  }
   get time() {
     return /* @__PURE__ */ millisecondsToSeconds(this.currentTime);
   }
@@ -17228,11 +17016,11 @@ class JSAnimation extends WithPromise {
   play() {
     if (this.isStopped)
       return;
-    const { driver = frameloopDriver, onPlay, startTime } = this.options;
+    const { driver = frameloopDriver, startTime } = this.options;
     if (!this.driver) {
       this.driver = driver((timestamp) => this.tick(timestamp));
     }
-    onPlay && onPlay();
+    this.options.onPlay?.();
     const now2 = this.driver.now();
     if (this.state === "finished") {
       this.updateFinished();
@@ -17262,19 +17050,19 @@ class JSAnimation extends WithPromise {
     this.holdTime = null;
   }
   finish() {
+    this.notifyFinished();
     this.teardown();
     this.state = "finished";
-    const { onComplete } = this.options;
-    onComplete && onComplete();
+    this.options.onComplete?.();
   }
   cancel() {
     this.holdTime = null;
     this.startTime = 0;
     this.tick(0);
     this.teardown();
+    this.options.onCancel?.();
   }
   teardown() {
-    this.notifyFinished();
     this.state = "idle";
     this.stopDriver();
     this.startTime = this.holdTime = null;
@@ -17636,6 +17424,7 @@ class NativeAnimation extends WithPromise {
     super();
     this.finishedTime = null;
     this.isStopped = false;
+    this.manualStartTime = null;
     if (!options)
       return;
     const { element, name, keyframes: keyframes2, pseudoElement, allowFlatten = false, finalKeyframe, onComplete } = options;
@@ -17662,11 +17451,11 @@ class NativeAnimation extends WithPromise {
       onComplete?.();
       this.notifyFinished();
     };
-    this.animation.oncancel = () => this.notifyFinished();
   }
   play() {
     if (this.isStopped)
       return;
+    this.manualStartTime = null;
     this.animation.play();
     if (this.state === "finished") {
       this.updateFinished();
@@ -17721,10 +17510,15 @@ class NativeAnimation extends WithPromise {
     const duration = this.animation.effect?.getComputedTiming?.().duration || 0;
     return /* @__PURE__ */ millisecondsToSeconds(Number(duration));
   }
+  get iterationDuration() {
+    const { delay: delay2 = 0 } = this.options || {};
+    return this.duration + /* @__PURE__ */ millisecondsToSeconds(delay2);
+  }
   get time() {
     return /* @__PURE__ */ millisecondsToSeconds(Number(this.animation.currentTime) || 0);
   }
   set time(newTime) {
+    this.manualStartTime = null;
     this.finishedTime = null;
     this.animation.currentTime = /* @__PURE__ */ secondsToMilliseconds(newTime);
   }
@@ -17744,10 +17538,10 @@ class NativeAnimation extends WithPromise {
     return this.finishedTime !== null ? "finished" : this.animation.playState;
   }
   get startTime() {
-    return Number(this.animation.startTime);
+    return this.manualStartTime ?? Number(this.animation.startTime);
   }
   set startTime(newStartTime) {
-    this.animation.startTime = newStartTime;
+    this.manualStartTime = this.animation.startTime = newStartTime;
   }
   /**
    * Attaches a timeline to the animation, for instance the `ScrollTimeline`.
@@ -17784,7 +17578,7 @@ class NativeAnimationExtended extends NativeAnimation {
     replaceStringEasing(options);
     replaceTransitionType(options);
     super(options);
-    if (options.startTime) {
+    if (options.startTime !== void 0) {
       this.startTime = options.startTime;
     }
     this.options = options;
@@ -17792,7 +17586,7 @@ class NativeAnimationExtended extends NativeAnimation {
   /**
    * WAAPI doesn't natively have any interruption capabilities.
    *
-   * Rather than read commited styles back out of the DOM, we can
+   * Rather than read committed styles back out of the DOM, we can
    * create a renderless JS animation and sample it twice to calculate
    * its current value, "previous" value, and therefore allow
    * Motion to calculate velocity for any subsequent animation.
@@ -17809,8 +17603,9 @@ class NativeAnimationExtended extends NativeAnimation {
       ...options,
       autoplay: false
     });
-    const sampleTime = /* @__PURE__ */ secondsToMilliseconds(this.finishedTime ?? this.time);
-    motionValue2.setWithVelocity(sampleAnimation.sample(sampleTime - sampleDelta).value, sampleAnimation.sample(sampleTime).value, sampleDelta);
+    const sampleTime = Math.max(sampleDelta, time.now() - this.startTime);
+    const delta = clamp(0, sampleDelta, sampleTime - sampleDelta);
+    motionValue2.setWithVelocity(sampleAnimation.sample(Math.max(0, sampleTime - delta)).value, sampleAnimation.sample(sampleTime).value, delta);
     sampleAnimation.stop();
   }
 }
@@ -17837,8 +17632,9 @@ function hasKeyframesChanged(keyframes2) {
 }
 function canAnimate(keyframes2, name, type, velocity) {
   const originKeyframe = keyframes2[0];
-  if (originKeyframe === null)
+  if (originKeyframe === null) {
     return false;
+  }
   if (name === "display" || name === "visibility")
     return true;
   const targetKeyframe = keyframes2[keyframes2.length - 1];
@@ -17849,19 +17645,23 @@ function canAnimate(keyframes2, name, type, velocity) {
   }
   return hasKeyframesChanged(keyframes2) || (type === "spring" || isGenerator(type)) && velocity;
 }
+function makeAnimationInstant(options) {
+  options.duration = 0;
+  options.type = "keyframes";
+}
 const acceleratedValues = /* @__PURE__ */ new Set([
   "opacity",
   "clipPath",
   "filter",
   "transform"
-  // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
-  // or until we implement support for linear() easing.
+  // TODO: Could be re-enabled now we have support for linear() easing
   // "background-color"
 ]);
 const supportsWaapi = /* @__PURE__ */ memo(() => Object.hasOwnProperty.call(Element.prototype, "animate"));
 function supportsBrowserAnimation(options) {
   const { motionValue: motionValue2, name, repeatDelay, repeatType, damping, type } = options;
-  if (!motionValue2 || !motionValue2.owner || !(motionValue2.owner.current instanceof HTMLElement)) {
+  const subject = motionValue2?.owner?.current;
+  if (!(subject instanceof HTMLElement)) {
     return false;
   }
   const { onUpdate, transformTemplate: transformTemplate2 } = motionValue2.owner.getProps();
@@ -17908,7 +17708,7 @@ class AsyncMotionValueAnimation extends WithPromise {
         onUpdate?.(getFinalKeyframe$1(keyframes2, options, finalKeyframe));
       }
       keyframes2[0] = keyframes2[keyframes2.length - 1];
-      options.duration = 0;
+      makeAnimationInstant(options);
       options.repeat = 0;
     }
     const startTime = sync ? !this.resolvedAt ? this.createdAt : this.resolvedAt - this.createdAt > MAX_RESOLVE_DELAY ? this.resolvedAt : this.createdAt : void 0;
@@ -17918,11 +17718,15 @@ class AsyncMotionValueAnimation extends WithPromise {
       ...options,
       keyframes: keyframes2
     };
-    const animation = !isHandoff && supportsBrowserAnimation(resolvedOptions) ? new NativeAnimationExtended({
+    const useWaapi = !isHandoff && supportsBrowserAnimation(resolvedOptions);
+    const element = resolvedOptions.motionValue?.owner?.current;
+    const animation = useWaapi ? new NativeAnimationExtended({
       ...resolvedOptions,
-      element: resolvedOptions.motionValue.owner.current
+      element
     }) : new JSAnimation(resolvedOptions);
-    animation.finished.then(() => this.notifyFinished()).catch(noop);
+    animation.finished.then(() => {
+      this.notifyFinished();
+    }).catch(noop);
     if (this.pendingTimeline) {
       this.stopTimeline = animation.attachTimeline(this.pendingTimeline);
       this.pendingTimeline = void 0;
@@ -17949,6 +17753,9 @@ class AsyncMotionValueAnimation extends WithPromise {
   }
   get duration() {
     return this.animation.duration;
+  }
+  get iterationDuration() {
+    return this.animation.iterationDuration;
   }
   get time() {
     return this.animation.time;
@@ -17992,6 +17799,13 @@ class AsyncMotionValueAnimation extends WithPromise {
     this.keyframeResolver?.cancel();
   }
 }
+function calcChildStagger(children, child, delayChildren, staggerChildren = 0, staggerDirection = 1) {
+  const index = Array.from(children).sort((a, b) => a.sortNodePosition(b)).indexOf(child);
+  const numChildren = children.size;
+  const maxStaggerDuration = (numChildren - 1) * staggerChildren;
+  const delayIsFunction = typeof delayChildren === "function";
+  return delayIsFunction ? delayChildren(index, numChildren) : staggerDirection === 1 ? index * staggerChildren : maxStaggerDuration - index * staggerChildren;
+}
 const splitCSSVariableRegex = (
   // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
   /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u
@@ -18014,8 +17828,128 @@ function getVariableValue(current, element, depth = 1) {
   }
   return isCSSVariableToken(fallback) ? getVariableValue(fallback, element, depth + 1) : fallback;
 }
+const underDampedSpring = {
+  type: "spring",
+  stiffness: 500,
+  damping: 25,
+  restSpeed: 10
+};
+const criticallyDampedSpring = (target) => ({
+  type: "spring",
+  stiffness: 550,
+  damping: target === 0 ? 2 * Math.sqrt(550) : 30,
+  restSpeed: 10
+});
+const keyframesTransition = {
+  type: "keyframes",
+  duration: 0.8
+};
+const ease = {
+  type: "keyframes",
+  ease: [0.25, 0.1, 0.35, 1],
+  duration: 0.3
+};
+const getDefaultTransition = (valueKey, { keyframes: keyframes2 }) => {
+  if (keyframes2.length > 2) {
+    return keyframesTransition;
+  } else if (transformProps.has(valueKey)) {
+    return valueKey.startsWith("scale") ? criticallyDampedSpring(keyframes2[1]) : underDampedSpring;
+  }
+  return ease;
+};
+const isNotNull = (value) => value !== null;
+function getFinalKeyframe(keyframes2, { repeat, repeatType = "loop" }, finalKeyframe) {
+  const resolvedKeyframes = keyframes2.filter(isNotNull);
+  const index = repeat && repeatType !== "loop" && repeat % 2 === 1 ? 0 : resolvedKeyframes.length - 1;
+  return resolvedKeyframes[index];
+}
 function getValueTransition(transition2, key) {
   return transition2?.[key] ?? transition2?.["default"] ?? transition2;
+}
+function isTransitionDefined({ when, delay: _delay, delayChildren, staggerChildren, staggerDirection, repeat, repeatType, repeatDelay, from: from2, elapsed, ...transition2 }) {
+  return !!Object.keys(transition2).length;
+}
+const animateMotionValue = (name, value, target, transition2 = {}, element, isHandoff) => (onComplete) => {
+  const valueTransition = getValueTransition(transition2, name) || {};
+  const delay2 = valueTransition.delay || transition2.delay || 0;
+  let { elapsed = 0 } = transition2;
+  elapsed = elapsed - /* @__PURE__ */ secondsToMilliseconds(delay2);
+  const options = {
+    keyframes: Array.isArray(target) ? target : [null, target],
+    ease: "easeOut",
+    velocity: value.getVelocity(),
+    ...valueTransition,
+    delay: -elapsed,
+    onUpdate: (v) => {
+      value.set(v);
+      valueTransition.onUpdate && valueTransition.onUpdate(v);
+    },
+    onComplete: () => {
+      onComplete();
+      valueTransition.onComplete && valueTransition.onComplete();
+    },
+    name,
+    motionValue: value,
+    element: isHandoff ? void 0 : element
+  };
+  if (!isTransitionDefined(valueTransition)) {
+    Object.assign(options, getDefaultTransition(name, options));
+  }
+  options.duration && (options.duration = /* @__PURE__ */ secondsToMilliseconds(options.duration));
+  options.repeatDelay && (options.repeatDelay = /* @__PURE__ */ secondsToMilliseconds(options.repeatDelay));
+  if (options.from !== void 0) {
+    options.keyframes[0] = options.from;
+  }
+  let shouldSkip = false;
+  if (options.type === false || options.duration === 0 && !options.repeatDelay) {
+    makeAnimationInstant(options);
+    if (options.delay === 0) {
+      shouldSkip = true;
+    }
+  }
+  if (MotionGlobalConfig.instantAnimations || MotionGlobalConfig.skipAnimations) {
+    shouldSkip = true;
+    makeAnimationInstant(options);
+    options.delay = 0;
+  }
+  options.allowFlatten = !valueTransition.type && !valueTransition.ease;
+  if (shouldSkip && !isHandoff && value.get() !== void 0) {
+    const finalKeyframe = getFinalKeyframe(options.keyframes, valueTransition);
+    if (finalKeyframe !== void 0) {
+      frame.update(() => {
+        options.onUpdate(finalKeyframe);
+        options.onComplete();
+      });
+      return;
+    }
+  }
+  return valueTransition.isSync ? new JSAnimation(options) : new AsyncMotionValueAnimation(options);
+};
+function getValueState(visualElement) {
+  const state2 = [{}, {}];
+  visualElement?.values.forEach((value, key) => {
+    state2[0][key] = value.get();
+    state2[1][key] = value.getVelocity();
+  });
+  return state2;
+}
+function resolveVariantFromProps(props, definition, custom, visualElement) {
+  if (typeof definition === "function") {
+    const [current, velocity] = getValueState(visualElement);
+    definition = definition(custom !== void 0 ? custom : props.custom, current, velocity);
+  }
+  if (typeof definition === "string") {
+    definition = props.variants && props.variants[definition];
+  }
+  if (typeof definition === "function") {
+    const [current, velocity] = getValueState(visualElement);
+    definition = definition(custom !== void 0 ? custom : props.custom, current, velocity);
+  }
+  return definition;
+}
+function resolveVariant(visualElement, definition, custom) {
+  const props = visualElement.getProps();
+  return resolveVariantFromProps(props, definition, custom !== void 0 ? custom : props.custom, visualElement);
 }
 const positionalKeys = /* @__PURE__ */ new Set([
   "width",
@@ -18026,258 +17960,6 @@ const positionalKeys = /* @__PURE__ */ new Set([
   "bottom",
   ...transformPropOrder
 ]);
-const auto = {
-  test: (v) => v === "auto",
-  parse: (v) => v
-};
-const testValueType = (v) => (type) => type.test(v);
-const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
-const findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
-function isNone(value) {
-  if (typeof value === "number") {
-    return value === 0;
-  } else if (value !== null) {
-    return value === "none" || value === "0" || isZeroValueString(value);
-  } else {
-    return true;
-  }
-}
-const maxDefaults = /* @__PURE__ */ new Set(["brightness", "contrast", "saturate", "opacity"]);
-function applyDefaultFilter(v) {
-  const [name, value] = v.slice(0, -1).split("(");
-  if (name === "drop-shadow")
-    return v;
-  const [number2] = value.match(floatRegex) || [];
-  if (!number2)
-    return v;
-  const unit = value.replace(number2, "");
-  let defaultValue = maxDefaults.has(name) ? 1 : 0;
-  if (number2 !== value)
-    defaultValue *= 100;
-  return name + "(" + defaultValue + unit + ")";
-}
-const functionRegex = /\b([a-z-]*)\(.*?\)/gu;
-const filter = {
-  ...complex,
-  getAnimatableNone: (v) => {
-    const functions = v.match(functionRegex);
-    return functions ? functions.map(applyDefaultFilter).join(" ") : v;
-  }
-};
-const int = {
-  ...number,
-  transform: Math.round
-};
-const transformValueTypes = {
-  rotate: degrees,
-  rotateX: degrees,
-  rotateY: degrees,
-  rotateZ: degrees,
-  scale,
-  scaleX: scale,
-  scaleY: scale,
-  scaleZ: scale,
-  skew: degrees,
-  skewX: degrees,
-  skewY: degrees,
-  distance: px,
-  translateX: px,
-  translateY: px,
-  translateZ: px,
-  x: px,
-  y: px,
-  z: px,
-  perspective: px,
-  transformPerspective: px,
-  opacity: alpha,
-  originX: progressPercentage,
-  originY: progressPercentage,
-  originZ: px
-};
-const numberValueTypes = {
-  // Border props
-  borderWidth: px,
-  borderTopWidth: px,
-  borderRightWidth: px,
-  borderBottomWidth: px,
-  borderLeftWidth: px,
-  borderRadius: px,
-  radius: px,
-  borderTopLeftRadius: px,
-  borderTopRightRadius: px,
-  borderBottomRightRadius: px,
-  borderBottomLeftRadius: px,
-  // Positioning props
-  width: px,
-  maxWidth: px,
-  height: px,
-  maxHeight: px,
-  top: px,
-  right: px,
-  bottom: px,
-  left: px,
-  // Spacing props
-  padding: px,
-  paddingTop: px,
-  paddingRight: px,
-  paddingBottom: px,
-  paddingLeft: px,
-  margin: px,
-  marginTop: px,
-  marginRight: px,
-  marginBottom: px,
-  marginLeft: px,
-  // Misc
-  backgroundPositionX: px,
-  backgroundPositionY: px,
-  ...transformValueTypes,
-  zIndex: int,
-  // SVG
-  fillOpacity: alpha,
-  strokeOpacity: alpha,
-  numOctaves: int
-};
-const defaultValueTypes = {
-  ...numberValueTypes,
-  // Color props
-  color,
-  backgroundColor: color,
-  outlineColor: color,
-  fill: color,
-  stroke: color,
-  // Border props
-  borderColor: color,
-  borderTopColor: color,
-  borderRightColor: color,
-  borderBottomColor: color,
-  borderLeftColor: color,
-  filter,
-  WebkitFilter: filter
-};
-const getDefaultValueType = (key) => defaultValueTypes[key];
-function getAnimatableNone(key, value) {
-  let defaultValueType = getDefaultValueType(key);
-  if (defaultValueType !== filter)
-    defaultValueType = complex;
-  return defaultValueType.getAnimatableNone ? defaultValueType.getAnimatableNone(value) : void 0;
-}
-const invalidTemplates = /* @__PURE__ */ new Set(["auto", "none", "0"]);
-function makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name) {
-  let i = 0;
-  let animatableTemplate = void 0;
-  while (i < unresolvedKeyframes.length && !animatableTemplate) {
-    const keyframe = unresolvedKeyframes[i];
-    if (typeof keyframe === "string" && !invalidTemplates.has(keyframe) && analyseComplexValue(keyframe).values.length) {
-      animatableTemplate = unresolvedKeyframes[i];
-    }
-    i++;
-  }
-  if (animatableTemplate && name) {
-    for (const noneIndex of noneKeyframeIndexes) {
-      unresolvedKeyframes[noneIndex] = getAnimatableNone(name, animatableTemplate);
-    }
-  }
-}
-class DOMKeyframesResolver extends KeyframeResolver {
-  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element) {
-    super(unresolvedKeyframes, onComplete, name, motionValue2, element, true);
-  }
-  readKeyframes() {
-    const { unresolvedKeyframes, element, name } = this;
-    if (!element || !element.current)
-      return;
-    super.readKeyframes();
-    for (let i = 0; i < unresolvedKeyframes.length; i++) {
-      let keyframe = unresolvedKeyframes[i];
-      if (typeof keyframe === "string") {
-        keyframe = keyframe.trim();
-        if (isCSSVariableToken(keyframe)) {
-          const resolved = getVariableValue(keyframe, element.current);
-          if (resolved !== void 0) {
-            unresolvedKeyframes[i] = resolved;
-          }
-          if (i === unresolvedKeyframes.length - 1) {
-            this.finalKeyframe = keyframe;
-          }
-        }
-      }
-    }
-    this.resolveNoneKeyframes();
-    if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
-      return;
-    }
-    const [origin, target] = unresolvedKeyframes;
-    const originType = findDimensionValueType(origin);
-    const targetType = findDimensionValueType(target);
-    if (originType === targetType)
-      return;
-    if (isNumOrPxType(originType) && isNumOrPxType(targetType)) {
-      for (let i = 0; i < unresolvedKeyframes.length; i++) {
-        const value = unresolvedKeyframes[i];
-        if (typeof value === "string") {
-          unresolvedKeyframes[i] = parseFloat(value);
-        }
-      }
-    } else if (positionalValues[name]) {
-      this.needsMeasurement = true;
-    }
-  }
-  resolveNoneKeyframes() {
-    const { unresolvedKeyframes, name } = this;
-    const noneKeyframeIndexes = [];
-    for (let i = 0; i < unresolvedKeyframes.length; i++) {
-      if (unresolvedKeyframes[i] === null || isNone(unresolvedKeyframes[i])) {
-        noneKeyframeIndexes.push(i);
-      }
-    }
-    if (noneKeyframeIndexes.length) {
-      makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name);
-    }
-  }
-  measureInitialState() {
-    const { element, unresolvedKeyframes, name } = this;
-    if (!element || !element.current)
-      return;
-    if (name === "height") {
-      this.suspendedScrollY = window.pageYOffset;
-    }
-    this.measuredOrigin = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
-    unresolvedKeyframes[0] = this.measuredOrigin;
-    const measureKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
-    if (measureKeyframe !== void 0) {
-      element.getValue(name, measureKeyframe).jump(measureKeyframe, false);
-    }
-  }
-  measureEndState() {
-    const { element, name, unresolvedKeyframes } = this;
-    if (!element || !element.current)
-      return;
-    const value = element.getValue(name);
-    value && value.jump(this.measuredOrigin, false);
-    const finalKeyframeIndex = unresolvedKeyframes.length - 1;
-    const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex];
-    unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
-    if (finalKeyframe !== null && this.finalKeyframe === void 0) {
-      this.finalKeyframe = finalKeyframe;
-    }
-    if (this.removedTransforms?.length) {
-      this.removedTransforms.forEach(([unsetTransformName, unsetTransformValue]) => {
-        element.getValue(unsetTransformName).set(unsetTransformValue);
-      });
-    }
-    this.resolveNoneKeyframes();
-  }
-}
-function resolveElements(elementOrSelector, scope, selectorCache) {
-  if (elementOrSelector instanceof EventTarget) {
-    return [elementOrSelector];
-  } else if (typeof elementOrSelector === "string") {
-    let root = document;
-    const elements = selectorCache?.[elementOrSelector] ?? root.querySelectorAll(elementOrSelector);
-    return elements ? Array.from(elements) : [];
-  }
-  return Array.from(elementOrSelector);
-}
 const MAX_VELOCITY_DELTA = 30;
 const isFloat = (value) => {
   return !isNaN(parseFloat(value));
@@ -18290,10 +17972,9 @@ class MotionValue {
    * -  `transformer`: A function to transform incoming values with.
    */
   constructor(init, options = {}) {
-    this.version = "__VERSION__";
     this.canTrackVelocity = null;
     this.events = {};
-    this.updateAndNotify = (v, render = true) => {
+    this.updateAndNotify = (v) => {
       const currentTime = time.now();
       if (this.updatedAt !== currentTime) {
         this.setPrevFrameValue();
@@ -18307,9 +17988,6 @@ class MotionValue {
             dependent.dirty();
           }
         }
-      }
-      if (render) {
-        this.events.renderRequest?.notify(this.current);
       }
     };
     this.hasAnimated = false;
@@ -18414,9 +18092,9 @@ class MotionValue {
    *
    * @public
    */
-  set(v, render = true) {
-    if (!render || !this.passiveEffect) {
-      this.updateAndNotify(v, render);
+  set(v) {
+    if (!this.passiveEffect) {
+      this.updateAndNotify(v);
     } else {
       this.passiveEffect(v, this.updateAndNotify);
     }
@@ -18556,9 +18234,434 @@ class MotionValue {
 function motionValue(init, options) {
   return new MotionValue(init, options);
 }
+const isKeyframesTarget = (v) => {
+  return Array.isArray(v);
+};
+function setMotionValue(visualElement, key, value) {
+  if (visualElement.hasValue(key)) {
+    visualElement.getValue(key).set(value);
+  } else {
+    visualElement.addValue(key, motionValue(value));
+  }
+}
+function resolveFinalValueInKeyframes(v) {
+  return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
+}
+function setTarget(visualElement, definition) {
+  const resolved = resolveVariant(visualElement, definition);
+  let { transitionEnd = {}, transition: transition2 = {}, ...target } = resolved || {};
+  target = { ...target, ...transitionEnd };
+  for (const key in target) {
+    const value = resolveFinalValueInKeyframes(target[key]);
+    setMotionValue(visualElement, key, value);
+  }
+}
+const isMotionValue = (value) => Boolean(value && value.getVelocity);
+function isWillChangeMotionValue(value) {
+  return Boolean(isMotionValue(value) && value.add);
+}
+function addValueToWillChange(visualElement, key) {
+  const willChange = visualElement.getValue("willChange");
+  if (isWillChangeMotionValue(willChange)) {
+    return willChange.add(key);
+  } else if (!willChange && MotionGlobalConfig.WillChange) {
+    const newWillChange = new MotionGlobalConfig.WillChange("auto");
+    visualElement.addValue("willChange", newWillChange);
+    newWillChange.add(key);
+  }
+}
+function camelToDash(str) {
+  return str.replace(/([A-Z])/g, (match2) => `-${match2.toLowerCase()}`);
+}
+const optimizedAppearDataId = "framerAppearId";
+const optimizedAppearDataAttribute = "data-" + camelToDash(optimizedAppearDataId);
+function getOptimisedAppearId(visualElement) {
+  return visualElement.props[optimizedAppearDataAttribute];
+}
+function shouldBlockAnimation({ protectedKeys, needsAnimating }, key) {
+  const shouldBlock = protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true;
+  needsAnimating[key] = false;
+  return shouldBlock;
+}
+function animateTarget(visualElement, targetAndTransition, { delay: delay2 = 0, transitionOverride, type } = {}) {
+  let { transition: transition2 = visualElement.getDefaultTransition(), transitionEnd, ...target } = targetAndTransition;
+  if (transitionOverride)
+    transition2 = transitionOverride;
+  const animations2 = [];
+  const animationTypeState = type && visualElement.animationState && visualElement.animationState.getState()[type];
+  for (const key in target) {
+    const value = visualElement.getValue(key, visualElement.latestValues[key] ?? null);
+    const valueTarget = target[key];
+    if (valueTarget === void 0 || animationTypeState && shouldBlockAnimation(animationTypeState, key)) {
+      continue;
+    }
+    const valueTransition = {
+      delay: delay2,
+      ...getValueTransition(transition2 || {}, key)
+    };
+    const currentValue = value.get();
+    if (currentValue !== void 0 && !value.isAnimating && !Array.isArray(valueTarget) && valueTarget === currentValue && !valueTransition.velocity) {
+      continue;
+    }
+    let isHandoff = false;
+    if (window.MotionHandoffAnimation) {
+      const appearId = getOptimisedAppearId(visualElement);
+      if (appearId) {
+        const startTime = window.MotionHandoffAnimation(appearId, key, frame);
+        if (startTime !== null) {
+          valueTransition.startTime = startTime;
+          isHandoff = true;
+        }
+      }
+    }
+    addValueToWillChange(visualElement, key);
+    value.start(animateMotionValue(key, value, valueTarget, visualElement.shouldReduceMotion && positionalKeys.has(key) ? { type: false } : valueTransition, visualElement, isHandoff));
+    const animation = value.animation;
+    if (animation) {
+      animations2.push(animation);
+    }
+  }
+  if (transitionEnd) {
+    Promise.all(animations2).then(() => {
+      frame.update(() => {
+        transitionEnd && setTarget(visualElement, transitionEnd);
+      });
+    });
+  }
+  return animations2;
+}
+function animateVariant(visualElement, variant, options = {}) {
+  const resolved = resolveVariant(visualElement, variant, options.type === "exit" ? visualElement.presenceContext?.custom : void 0);
+  let { transition: transition2 = visualElement.getDefaultTransition() || {} } = resolved || {};
+  if (options.transitionOverride) {
+    transition2 = options.transitionOverride;
+  }
+  const getAnimation = resolved ? () => Promise.all(animateTarget(visualElement, resolved, options)) : () => Promise.resolve();
+  const getChildAnimations = visualElement.variantChildren && visualElement.variantChildren.size ? (forwardDelay = 0) => {
+    const { delayChildren = 0, staggerChildren, staggerDirection } = transition2;
+    return animateChildren(visualElement, variant, forwardDelay, delayChildren, staggerChildren, staggerDirection, options);
+  } : () => Promise.resolve();
+  const { when } = transition2;
+  if (when) {
+    const [first, last] = when === "beforeChildren" ? [getAnimation, getChildAnimations] : [getChildAnimations, getAnimation];
+    return first().then(() => last());
+  } else {
+    return Promise.all([getAnimation(), getChildAnimations(options.delay)]);
+  }
+}
+function animateChildren(visualElement, variant, delay2 = 0, delayChildren = 0, staggerChildren = 0, staggerDirection = 1, options) {
+  const animations2 = [];
+  for (const child of visualElement.variantChildren) {
+    child.notify("AnimationStart", variant);
+    animations2.push(animateVariant(child, variant, {
+      ...options,
+      delay: delay2 + (typeof delayChildren === "function" ? 0 : delayChildren) + calcChildStagger(visualElement.variantChildren, child, delayChildren, staggerChildren, staggerDirection)
+    }).then(() => child.notify("AnimationComplete", variant)));
+  }
+  return Promise.all(animations2);
+}
+function animateVisualElement(visualElement, definition, options = {}) {
+  visualElement.notify("AnimationStart", definition);
+  let animation;
+  if (Array.isArray(definition)) {
+    const animations2 = definition.map((variant) => animateVariant(visualElement, variant, options));
+    animation = Promise.all(animations2);
+  } else if (typeof definition === "string") {
+    animation = animateVariant(visualElement, definition, options);
+  } else {
+    const resolvedDefinition = typeof definition === "function" ? resolveVariant(visualElement, definition, options.custom) : definition;
+    animation = Promise.all(animateTarget(visualElement, resolvedDefinition, options));
+  }
+  return animation.then(() => {
+    visualElement.notify("AnimationComplete", definition);
+  });
+}
+const auto = {
+  test: (v) => v === "auto",
+  parse: (v) => v
+};
+const testValueType = (v) => (type) => type.test(v);
+const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
+const findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
+function isNone(value) {
+  if (typeof value === "number") {
+    return value === 0;
+  } else if (value !== null) {
+    return value === "none" || value === "0" || isZeroValueString(value);
+  } else {
+    return true;
+  }
+}
+const maxDefaults = /* @__PURE__ */ new Set(["brightness", "contrast", "saturate", "opacity"]);
+function applyDefaultFilter(v) {
+  const [name, value] = v.slice(0, -1).split("(");
+  if (name === "drop-shadow")
+    return v;
+  const [number2] = value.match(floatRegex) || [];
+  if (!number2)
+    return v;
+  const unit = value.replace(number2, "");
+  let defaultValue = maxDefaults.has(name) ? 1 : 0;
+  if (number2 !== value)
+    defaultValue *= 100;
+  return name + "(" + defaultValue + unit + ")";
+}
+const functionRegex = /\b([a-z-]*)\(.*?\)/gu;
+const filter = {
+  ...complex,
+  getAnimatableNone: (v) => {
+    const functions = v.match(functionRegex);
+    return functions ? functions.map(applyDefaultFilter).join(" ") : v;
+  }
+};
+const int = {
+  ...number,
+  transform: Math.round
+};
+const transformValueTypes = {
+  rotate: degrees,
+  rotateX: degrees,
+  rotateY: degrees,
+  rotateZ: degrees,
+  scale,
+  scaleX: scale,
+  scaleY: scale,
+  scaleZ: scale,
+  skew: degrees,
+  skewX: degrees,
+  skewY: degrees,
+  distance: px,
+  translateX: px,
+  translateY: px,
+  translateZ: px,
+  x: px,
+  y: px,
+  z: px,
+  perspective: px,
+  transformPerspective: px,
+  opacity: alpha,
+  originX: progressPercentage,
+  originY: progressPercentage,
+  originZ: px
+};
+const numberValueTypes = {
+  // Border props
+  borderWidth: px,
+  borderTopWidth: px,
+  borderRightWidth: px,
+  borderBottomWidth: px,
+  borderLeftWidth: px,
+  borderRadius: px,
+  radius: px,
+  borderTopLeftRadius: px,
+  borderTopRightRadius: px,
+  borderBottomRightRadius: px,
+  borderBottomLeftRadius: px,
+  // Positioning props
+  width: px,
+  maxWidth: px,
+  height: px,
+  maxHeight: px,
+  top: px,
+  right: px,
+  bottom: px,
+  left: px,
+  inset: px,
+  insetBlock: px,
+  insetBlockStart: px,
+  insetBlockEnd: px,
+  insetInline: px,
+  insetInlineStart: px,
+  insetInlineEnd: px,
+  // Spacing props
+  padding: px,
+  paddingTop: px,
+  paddingRight: px,
+  paddingBottom: px,
+  paddingLeft: px,
+  paddingBlock: px,
+  paddingBlockStart: px,
+  paddingBlockEnd: px,
+  paddingInline: px,
+  paddingInlineStart: px,
+  paddingInlineEnd: px,
+  margin: px,
+  marginTop: px,
+  marginRight: px,
+  marginBottom: px,
+  marginLeft: px,
+  marginBlock: px,
+  marginBlockStart: px,
+  marginBlockEnd: px,
+  marginInline: px,
+  marginInlineStart: px,
+  marginInlineEnd: px,
+  // Misc
+  backgroundPositionX: px,
+  backgroundPositionY: px,
+  ...transformValueTypes,
+  zIndex: int,
+  // SVG
+  fillOpacity: alpha,
+  strokeOpacity: alpha,
+  numOctaves: int
+};
+const defaultValueTypes = {
+  ...numberValueTypes,
+  // Color props
+  color,
+  backgroundColor: color,
+  outlineColor: color,
+  fill: color,
+  stroke: color,
+  // Border props
+  borderColor: color,
+  borderTopColor: color,
+  borderRightColor: color,
+  borderBottomColor: color,
+  borderLeftColor: color,
+  filter,
+  WebkitFilter: filter
+};
+const getDefaultValueType = (key) => defaultValueTypes[key];
+function getAnimatableNone(key, value) {
+  let defaultValueType = getDefaultValueType(key);
+  if (defaultValueType !== filter)
+    defaultValueType = complex;
+  return defaultValueType.getAnimatableNone ? defaultValueType.getAnimatableNone(value) : void 0;
+}
+const invalidTemplates = /* @__PURE__ */ new Set(["auto", "none", "0"]);
+function makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name) {
+  let i = 0;
+  let animatableTemplate = void 0;
+  while (i < unresolvedKeyframes.length && !animatableTemplate) {
+    const keyframe = unresolvedKeyframes[i];
+    if (typeof keyframe === "string" && !invalidTemplates.has(keyframe) && analyseComplexValue(keyframe).values.length) {
+      animatableTemplate = unresolvedKeyframes[i];
+    }
+    i++;
+  }
+  if (animatableTemplate && name) {
+    for (const noneIndex of noneKeyframeIndexes) {
+      unresolvedKeyframes[noneIndex] = getAnimatableNone(name, animatableTemplate);
+    }
+  }
+}
+class DOMKeyframesResolver extends KeyframeResolver {
+  constructor(unresolvedKeyframes, onComplete, name, motionValue2, element) {
+    super(unresolvedKeyframes, onComplete, name, motionValue2, element, true);
+  }
+  readKeyframes() {
+    const { unresolvedKeyframes, element, name } = this;
+    if (!element || !element.current)
+      return;
+    super.readKeyframes();
+    for (let i = 0; i < unresolvedKeyframes.length; i++) {
+      let keyframe = unresolvedKeyframes[i];
+      if (typeof keyframe === "string") {
+        keyframe = keyframe.trim();
+        if (isCSSVariableToken(keyframe)) {
+          const resolved = getVariableValue(keyframe, element.current);
+          if (resolved !== void 0) {
+            unresolvedKeyframes[i] = resolved;
+          }
+          if (i === unresolvedKeyframes.length - 1) {
+            this.finalKeyframe = keyframe;
+          }
+        }
+      }
+    }
+    this.resolveNoneKeyframes();
+    if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
+      return;
+    }
+    const [origin, target] = unresolvedKeyframes;
+    const originType = findDimensionValueType(origin);
+    const targetType = findDimensionValueType(target);
+    const originHasVar = containsCSSVariable(origin);
+    const targetHasVar = containsCSSVariable(target);
+    if (originHasVar !== targetHasVar && positionalValues[name]) {
+      this.needsMeasurement = true;
+      return;
+    }
+    if (originType === targetType)
+      return;
+    if (isNumOrPxType(originType) && isNumOrPxType(targetType)) {
+      for (let i = 0; i < unresolvedKeyframes.length; i++) {
+        const value = unresolvedKeyframes[i];
+        if (typeof value === "string") {
+          unresolvedKeyframes[i] = parseFloat(value);
+        }
+      }
+    } else if (positionalValues[name]) {
+      this.needsMeasurement = true;
+    }
+  }
+  resolveNoneKeyframes() {
+    const { unresolvedKeyframes, name } = this;
+    const noneKeyframeIndexes = [];
+    for (let i = 0; i < unresolvedKeyframes.length; i++) {
+      if (unresolvedKeyframes[i] === null || isNone(unresolvedKeyframes[i])) {
+        noneKeyframeIndexes.push(i);
+      }
+    }
+    if (noneKeyframeIndexes.length) {
+      makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name);
+    }
+  }
+  measureInitialState() {
+    const { element, unresolvedKeyframes, name } = this;
+    if (!element || !element.current)
+      return;
+    if (name === "height") {
+      this.suspendedScrollY = window.pageYOffset;
+    }
+    this.measuredOrigin = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+    unresolvedKeyframes[0] = this.measuredOrigin;
+    const measureKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
+    if (measureKeyframe !== void 0) {
+      element.getValue(name, measureKeyframe).jump(measureKeyframe, false);
+    }
+  }
+  measureEndState() {
+    const { element, name, unresolvedKeyframes } = this;
+    if (!element || !element.current)
+      return;
+    const value = element.getValue(name);
+    value && value.jump(this.measuredOrigin, false);
+    const finalKeyframeIndex = unresolvedKeyframes.length - 1;
+    const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex];
+    unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+    if (finalKeyframe !== null && this.finalKeyframe === void 0) {
+      this.finalKeyframe = finalKeyframe;
+    }
+    if (this.removedTransforms?.length) {
+      this.removedTransforms.forEach(([unsetTransformName, unsetTransformValue]) => {
+        element.getValue(unsetTransformName).set(unsetTransformValue);
+      });
+    }
+    this.resolveNoneKeyframes();
+  }
+}
+function resolveElements(elementOrSelector, scope, selectorCache) {
+  if (elementOrSelector == null) {
+    return [];
+  }
+  if (elementOrSelector instanceof EventTarget) {
+    return [elementOrSelector];
+  } else if (typeof elementOrSelector === "string") {
+    let root = document;
+    const elements = selectorCache?.[elementOrSelector] ?? root.querySelectorAll(elementOrSelector);
+    return elements ? Array.from(elements) : [];
+  }
+  return Array.from(elementOrSelector).filter((element) => element != null);
+}
 const getValueAsType = (value, type) => {
   return type && typeof value === "number" ? type.transform(value) : value;
 };
+function isHTMLElement(element) {
+  return isObject(element) && "offsetHeight" in element;
+}
 const { schedule: microtask } = /* @__PURE__ */ createRenderBatcher(queueMicrotask, false);
 const isDragging = {
   x: false,
@@ -18640,7 +18743,7 @@ const isPrimaryPointer = (event) => {
     return event.isPrimary !== false;
   }
 };
-const focusableElements = /* @__PURE__ */ new Set([
+const interactiveElements = /* @__PURE__ */ new Set([
   "BUTTON",
   "INPUT",
   "SELECT",
@@ -18648,7 +18751,7 @@ const focusableElements = /* @__PURE__ */ new Set([
   "A"
 ]);
 function isElementKeyboardAccessible(element) {
-  return focusableElements.has(element.tagName) || element.tabIndex !== -1;
+  return interactiveElements.has(element.tagName) || element.isContentEditable === true;
 }
 const isPressing = /* @__PURE__ */ new WeakSet();
 function filterEvents(callback) {
@@ -18686,7 +18789,7 @@ function press(targetOrSelector, onPressStart, options = {}) {
   const [targets, eventOptions, cancelEvents] = setupGesture(targetOrSelector, options);
   const startPress = (startEvent) => {
     const target = startEvent.currentTarget;
-    if (!isValidPressEvent(startEvent) || isPressing.has(target))
+    if (!isValidPressEvent(startEvent))
       return;
     isPressing.add(target);
     const onPressEnd = onPressStart(target, startEvent);
@@ -18715,7 +18818,7 @@ function press(targetOrSelector, onPressStart, options = {}) {
   targets.forEach((target) => {
     const pointerDownTarget = options.useGlobalTarget ? window : target;
     pointerDownTarget.addEventListener("pointerdown", startPress, eventOptions);
-    if (target instanceof HTMLElement) {
+    if (isHTMLElement(target)) {
       target.addEventListener("focus", (event) => enableKeyboardPress(event, eventOptions));
       if (!isElementKeyboardAccessible(target) && !target.hasAttribute("tabindex")) {
         target.tabIndex = 0;
@@ -18724,125 +18827,46 @@ function press(targetOrSelector, onPressStart, options = {}) {
   });
   return cancelEvents;
 }
+function isSVGElement(element) {
+  return isObject(element) && "ownerSVGElement" in element;
+}
+function isSVGSVGElement(element) {
+  return isSVGElement(element) && element.tagName === "svg";
+}
 const valueTypes = [...dimensionValueTypes, color, complex];
 const findValueType = (v) => valueTypes.find(testValueType(v));
-const LazyContext = reactExports.createContext({ strict: false });
-const featureProps = {
-  animation: [
-    "animate",
-    "variants",
-    "whileHover",
-    "whileTap",
-    "exit",
-    "whileInView",
-    "whileFocus",
-    "whileDrag"
-  ],
-  exit: ["exit"],
-  drag: ["drag", "dragControls"],
-  focus: ["whileFocus"],
-  hover: ["whileHover", "onHoverStart", "onHoverEnd"],
-  tap: ["whileTap", "onTap", "onTapStart", "onTapCancel"],
-  pan: ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"],
-  inView: ["whileInView", "onViewportEnter", "onViewportLeave"],
-  layout: ["layout", "layoutId"]
-};
-const featureDefinitions = {};
-for (const key in featureProps) {
-  featureDefinitions[key] = {
-    isEnabled: (props) => featureProps[key].some((name) => !!props[name])
-  };
-}
-function loadFeatures(features) {
-  for (const key in features) {
-    featureDefinitions[key] = {
-      ...featureDefinitions[key],
-      ...features[key]
-    };
-  }
-}
-const validMotionProps = /* @__PURE__ */ new Set([
-  "animate",
-  "exit",
-  "variants",
-  "initial",
-  "style",
-  "values",
-  "variants",
-  "transition",
-  "transformTemplate",
-  "custom",
-  "inherit",
-  "onBeforeLayoutMeasure",
-  "onAnimationStart",
-  "onAnimationComplete",
-  "onUpdate",
-  "onDragStart",
-  "onDrag",
-  "onDragEnd",
-  "onMeasureDragConstraints",
-  "onDirectionLock",
-  "onDragTransitionEnd",
-  "_dragX",
-  "_dragY",
-  "onHoverStart",
-  "onHoverEnd",
-  "onViewportEnter",
-  "onViewportLeave",
-  "globalTapTarget",
-  "ignoreStrict",
-  "viewport"
-]);
-function isValidMotionProp(key) {
-  return key.startsWith("while") || key.startsWith("drag") && key !== "draggable" || key.startsWith("layout") || key.startsWith("onTap") || key.startsWith("onPan") || key.startsWith("onLayout") || validMotionProps.has(key);
-}
-let shouldForward = (key) => !isValidMotionProp(key);
-function loadExternalIsValidProp(isValidProp) {
-  if (!isValidProp)
+const createAxisDelta = () => ({
+  translate: 0,
+  scale: 1,
+  origin: 0,
+  originPoint: 0
+});
+const createDelta = () => ({
+  x: createAxisDelta(),
+  y: createAxisDelta()
+});
+const createAxis = () => ({ min: 0, max: 0 });
+const createBox = () => ({
+  x: createAxis(),
+  y: createAxis()
+});
+const prefersReducedMotion = { current: null };
+const hasReducedMotionListener = { current: false };
+const isBrowser = typeof window !== "undefined";
+function initPrefersReducedMotion() {
+  hasReducedMotionListener.current = true;
+  if (!isBrowser)
     return;
-  shouldForward = (key) => key.startsWith("on") ? !isValidMotionProp(key) : isValidProp(key);
-}
-try {
-  loadExternalIsValidProp(require("@emotion/is-prop-valid").default);
-} catch {
-}
-function filterProps(props, isDom, forwardMotionProps) {
-  const filteredProps = {};
-  for (const key in props) {
-    if (key === "values" && typeof props.values === "object")
-      continue;
-    if (shouldForward(key) || forwardMotionProps === true && isValidMotionProp(key) || !isDom && !isValidMotionProp(key) || // If trying to use native HTML drag events, forward drag listeners
-    props["draggable"] && key.startsWith("onDrag")) {
-      filteredProps[key] = props[key];
-    }
+  if (window.matchMedia) {
+    const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)");
+    const setReducedMotionPreferences = () => prefersReducedMotion.current = motionMediaQuery.matches;
+    motionMediaQuery.addEventListener("change", setReducedMotionPreferences);
+    setReducedMotionPreferences();
+  } else {
+    prefersReducedMotion.current = false;
   }
-  return filteredProps;
 }
-function createDOMMotionComponentProxy(componentFactory) {
-  if (typeof Proxy === "undefined") {
-    return componentFactory;
-  }
-  const componentCache = /* @__PURE__ */ new Map();
-  const deprecatedFactoryFunction = (...args) => {
-    return componentFactory(...args);
-  };
-  return new Proxy(deprecatedFactoryFunction, {
-    /**
-     * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
-     * The prop name is passed through as `key` and we can use that to generate a `motion`
-     * DOM component with that name.
-     */
-    get: (_target, key) => {
-      if (key === "create")
-        return componentFactory;
-      if (!componentCache.has(key)) {
-        componentCache.set(key, componentFactory(key));
-      }
-      return componentCache.get(key);
-    }
-  });
-}
-const MotionContext = /* @__PURE__ */ reactExports.createContext({});
+const visualElementStore = /* @__PURE__ */ new WeakMap();
 function isAnimationControls(v) {
   return v !== null && typeof v === "object" && typeof v.start === "function";
 }
@@ -18865,198 +18889,558 @@ function isControllingVariants(props) {
 function isVariantNode(props) {
   return Boolean(isControllingVariants(props) || props.variants);
 }
-function getCurrentTreeVariants(props, context) {
-  if (isControllingVariants(props)) {
-    const { initial, animate } = props;
-    return {
-      initial: initial === false || isVariantLabel(initial) ? initial : void 0,
-      animate: isVariantLabel(animate) ? animate : void 0
-    };
+function updateMotionValuesFromProps(element, next2, prev2) {
+  for (const key in next2) {
+    const nextValue = next2[key];
+    const prevValue = prev2[key];
+    if (isMotionValue(nextValue)) {
+      element.addValue(key, nextValue);
+    } else if (isMotionValue(prevValue)) {
+      element.addValue(key, motionValue(nextValue, { owner: element }));
+    } else if (prevValue !== nextValue) {
+      if (element.hasValue(key)) {
+        const existingValue = element.getValue(key);
+        if (existingValue.liveStyle === true) {
+          existingValue.jump(nextValue);
+        } else if (!existingValue.hasAnimated) {
+          existingValue.set(nextValue);
+        }
+      } else {
+        const latestValue = element.getStaticValue(key);
+        element.addValue(key, motionValue(latestValue !== void 0 ? latestValue : nextValue, { owner: element }));
+      }
+    }
   }
-  return props.inherit !== false ? context : {};
+  for (const key in prev2) {
+    if (next2[key] === void 0)
+      element.removeValue(key);
+  }
+  return next2;
 }
-function useCreateMotionContext(props) {
-  const { initial, animate } = getCurrentTreeVariants(props, reactExports.useContext(MotionContext));
-  return reactExports.useMemo(() => ({ initial, animate }), [variantLabelsAsDependency(initial), variantLabelsAsDependency(animate)]);
+const propEventHandlers = [
+  "AnimationStart",
+  "AnimationComplete",
+  "Update",
+  "BeforeLayoutMeasure",
+  "LayoutMeasure",
+  "LayoutAnimationStart",
+  "LayoutAnimationComplete"
+];
+let featureDefinitions = {};
+function setFeatureDefinitions(definitions) {
+  featureDefinitions = definitions;
 }
-function variantLabelsAsDependency(prop) {
-  return Array.isArray(prop) ? prop.join(" ") : prop;
+function getFeatureDefinitions() {
+  return featureDefinitions;
 }
-const motionComponentSymbol = Symbol.for("motionComponentSymbol");
-function isRefObject(ref) {
-  return ref && typeof ref === "object" && Object.prototype.hasOwnProperty.call(ref, "current");
-}
-function useMotionRef(visualState, visualElement, externalRef) {
-  return reactExports.useCallback(
-    (instance) => {
-      if (instance) {
-        visualState.onMount && visualState.onMount(instance);
+class VisualElement {
+  /**
+   * This method takes React props and returns found MotionValues. For example, HTML
+   * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
+   *
+   * This isn't an abstract method as it needs calling in the constructor, but it is
+   * intended to be one.
+   */
+  scrapeMotionValuesFromProps(_props, _prevProps, _visualElement) {
+    return {};
+  }
+  constructor({ parent, props, presenceContext, reducedMotionConfig, blockInitialAnimation, visualState }, options = {}) {
+    this.current = null;
+    this.children = /* @__PURE__ */ new Set();
+    this.isVariantNode = false;
+    this.isControllingVariants = false;
+    this.shouldReduceMotion = null;
+    this.values = /* @__PURE__ */ new Map();
+    this.KeyframeResolver = KeyframeResolver;
+    this.features = {};
+    this.valueSubscriptions = /* @__PURE__ */ new Map();
+    this.prevMotionValues = {};
+    this.events = {};
+    this.propEventSubscriptions = {};
+    this.notifyUpdate = () => this.notify("Update", this.latestValues);
+    this.render = () => {
+      if (!this.current)
+        return;
+      this.triggerBuild();
+      this.renderInstance(this.current, this.renderState, this.props.style, this.projection);
+    };
+    this.renderScheduledAt = 0;
+    this.scheduleRender = () => {
+      const now2 = time.now();
+      if (this.renderScheduledAt < now2) {
+        this.renderScheduledAt = now2;
+        frame.render(this.render, false, true);
       }
-      if (visualElement) {
-        if (instance) {
-          visualElement.mount(instance);
-        } else {
-          visualElement.unmount();
-        }
+    };
+    const { latestValues, renderState } = visualState;
+    this.latestValues = latestValues;
+    this.baseTarget = { ...latestValues };
+    this.initialValues = props.initial ? { ...latestValues } : {};
+    this.renderState = renderState;
+    this.parent = parent;
+    this.props = props;
+    this.presenceContext = presenceContext;
+    this.depth = parent ? parent.depth + 1 : 0;
+    this.reducedMotionConfig = reducedMotionConfig;
+    this.options = options;
+    this.blockInitialAnimation = Boolean(blockInitialAnimation);
+    this.isControllingVariants = isControllingVariants(props);
+    this.isVariantNode = isVariantNode(props);
+    if (this.isVariantNode) {
+      this.variantChildren = /* @__PURE__ */ new Set();
+    }
+    this.manuallyAnimateOnMount = Boolean(parent && parent.current);
+    const { willChange, ...initialMotionValues } = this.scrapeMotionValuesFromProps(props, {}, this);
+    for (const key in initialMotionValues) {
+      const value = initialMotionValues[key];
+      if (latestValues[key] !== void 0 && isMotionValue(value)) {
+        value.set(latestValues[key]);
       }
-      if (externalRef) {
-        if (typeof externalRef === "function") {
-          externalRef(instance);
-        } else if (isRefObject(externalRef)) {
-          externalRef.current = instance;
-        }
+    }
+  }
+  mount(instance) {
+    this.current = instance;
+    visualElementStore.set(instance, this);
+    if (this.projection && !this.projection.instance) {
+      this.projection.mount(instance);
+    }
+    if (this.parent && this.isVariantNode && !this.isControllingVariants) {
+      this.removeFromVariantTree = this.parent.addVariantChild(this);
+    }
+    this.values.forEach((value, key) => this.bindToMotionValue(key, value));
+    if (this.reducedMotionConfig === "never") {
+      this.shouldReduceMotion = false;
+    } else if (this.reducedMotionConfig === "always") {
+      this.shouldReduceMotion = true;
+    } else {
+      if (!hasReducedMotionListener.current) {
+        initPrefersReducedMotion();
       }
-    },
-    /**
-     * Only pass a new ref callback to React if we've received a visual element
-     * factory. Otherwise we'll be mounting/remounting every time externalRef
-     * or other dependencies change.
-     */
-    [visualElement]
-  );
-}
-const camelToDash = (str) => str.replace(/([a-z])([A-Z])/gu, "$1-$2").toLowerCase();
-const optimizedAppearDataId = "framerAppearId";
-const optimizedAppearDataAttribute = "data-" + camelToDash(optimizedAppearDataId);
-const SwitchLayoutGroupContext = reactExports.createContext({});
-function useVisualElement(Component, visualState, props, createVisualElement, ProjectionNodeConstructor) {
-  const { visualElement: parent } = reactExports.useContext(MotionContext);
-  const lazyContext = reactExports.useContext(LazyContext);
-  const presenceContext = reactExports.useContext(PresenceContext);
-  const reducedMotionConfig = reactExports.useContext(MotionConfigContext).reducedMotion;
-  const visualElementRef = reactExports.useRef(null);
-  createVisualElement = createVisualElement || lazyContext.renderer;
-  if (!visualElementRef.current && createVisualElement) {
-    visualElementRef.current = createVisualElement(Component, {
-      visualState,
-      parent,
-      props,
-      presenceContext,
-      blockInitialAnimation: presenceContext ? presenceContext.initial === false : false,
-      reducedMotionConfig
+      this.shouldReduceMotion = prefersReducedMotion.current;
+    }
+    this.parent?.addChild(this);
+    this.update(this.props, this.presenceContext);
+  }
+  unmount() {
+    this.projection && this.projection.unmount();
+    cancelFrame(this.notifyUpdate);
+    cancelFrame(this.render);
+    this.valueSubscriptions.forEach((remove) => remove());
+    this.valueSubscriptions.clear();
+    this.removeFromVariantTree && this.removeFromVariantTree();
+    this.parent?.removeChild(this);
+    for (const key in this.events) {
+      this.events[key].clear();
+    }
+    for (const key in this.features) {
+      const feature = this.features[key];
+      if (feature) {
+        feature.unmount();
+        feature.isMounted = false;
+      }
+    }
+    this.current = null;
+  }
+  addChild(child) {
+    this.children.add(child);
+    this.enteringChildren ?? (this.enteringChildren = /* @__PURE__ */ new Set());
+    this.enteringChildren.add(child);
+  }
+  removeChild(child) {
+    this.children.delete(child);
+    this.enteringChildren && this.enteringChildren.delete(child);
+  }
+  bindToMotionValue(key, value) {
+    if (this.valueSubscriptions.has(key)) {
+      this.valueSubscriptions.get(key)();
+    }
+    const valueIsTransform = transformProps.has(key);
+    if (valueIsTransform && this.onBindTransform) {
+      this.onBindTransform();
+    }
+    const removeOnChange = value.on("change", (latestValue) => {
+      this.latestValues[key] = latestValue;
+      this.props.onUpdate && frame.preRender(this.notifyUpdate);
+      if (valueIsTransform && this.projection) {
+        this.projection.isTransformDirty = true;
+      }
+      this.scheduleRender();
+    });
+    let removeSyncCheck;
+    if (typeof window !== "undefined" && window.MotionCheckAppearSync) {
+      removeSyncCheck = window.MotionCheckAppearSync(this, key, value);
+    }
+    this.valueSubscriptions.set(key, () => {
+      removeOnChange();
+      if (removeSyncCheck)
+        removeSyncCheck();
+      if (value.owner)
+        value.stop();
     });
   }
-  const visualElement = visualElementRef.current;
-  const initialLayoutGroupConfig = reactExports.useContext(SwitchLayoutGroupContext);
-  if (visualElement && !visualElement.projection && ProjectionNodeConstructor && (visualElement.type === "html" || visualElement.type === "svg")) {
-    createProjectionNode$1(visualElementRef.current, props, ProjectionNodeConstructor, initialLayoutGroupConfig);
+  sortNodePosition(other) {
+    if (!this.current || !this.sortInstanceNodePosition || this.type !== other.type) {
+      return 0;
+    }
+    return this.sortInstanceNodePosition(this.current, other.current);
   }
-  const isMounted = reactExports.useRef(false);
-  reactExports.useInsertionEffect(() => {
-    if (visualElement && isMounted.current) {
-      visualElement.update(props, presenceContext);
+  updateFeatures() {
+    let key = "animation";
+    for (key in featureDefinitions) {
+      const featureDefinition = featureDefinitions[key];
+      if (!featureDefinition)
+        continue;
+      const { isEnabled, Feature: FeatureConstructor } = featureDefinition;
+      if (!this.features[key] && FeatureConstructor && isEnabled(this.props)) {
+        this.features[key] = new FeatureConstructor(this);
+      }
+      if (this.features[key]) {
+        const feature = this.features[key];
+        if (feature.isMounted) {
+          feature.update();
+        } else {
+          feature.mount();
+          feature.isMounted = true;
+        }
+      }
     }
-  });
-  const optimisedAppearId = props[optimizedAppearDataAttribute];
-  const wantsHandoff = reactExports.useRef(Boolean(optimisedAppearId) && !window.MotionHandoffIsComplete?.(optimisedAppearId) && window.MotionHasOptimisedAnimation?.(optimisedAppearId));
-  useIsomorphicLayoutEffect(() => {
-    if (!visualElement)
-      return;
-    isMounted.current = true;
-    window.MotionIsMounted = true;
-    visualElement.updateFeatures();
-    microtask.render(visualElement.render);
-    if (wantsHandoff.current && visualElement.animationState) {
-      visualElement.animationState.animateChanges();
+  }
+  triggerBuild() {
+    this.build(this.renderState, this.latestValues, this.props);
+  }
+  /**
+   * Measure the current viewport box with or without transforms.
+   * Only measures axis-aligned boxes, rotate and skew must be manually
+   * removed with a re-render to work.
+   */
+  measureViewportBox() {
+    return this.current ? this.measureInstanceViewportBox(this.current, this.props) : createBox();
+  }
+  getStaticValue(key) {
+    return this.latestValues[key];
+  }
+  setStaticValue(key, value) {
+    this.latestValues[key] = value;
+  }
+  /**
+   * Update the provided props. Ensure any newly-added motion values are
+   * added to our map, old ones removed, and listeners updated.
+   */
+  update(props, presenceContext) {
+    if (props.transformTemplate || this.props.transformTemplate) {
+      this.scheduleRender();
     }
-  });
-  reactExports.useEffect(() => {
-    if (!visualElement)
-      return;
-    if (!wantsHandoff.current && visualElement.animationState) {
-      visualElement.animationState.animateChanges();
+    this.prevProps = this.props;
+    this.props = props;
+    this.prevPresenceContext = this.presenceContext;
+    this.presenceContext = presenceContext;
+    for (let i = 0; i < propEventHandlers.length; i++) {
+      const key = propEventHandlers[i];
+      if (this.propEventSubscriptions[key]) {
+        this.propEventSubscriptions[key]();
+        delete this.propEventSubscriptions[key];
+      }
+      const listenerName = "on" + key;
+      const listener = props[listenerName];
+      if (listener) {
+        this.propEventSubscriptions[key] = this.on(key, listener);
+      }
     }
-    if (wantsHandoff.current) {
-      queueMicrotask(() => {
-        window.MotionHandoffMarkAsComplete?.(optimisedAppearId);
+    this.prevMotionValues = updateMotionValuesFromProps(this, this.scrapeMotionValuesFromProps(props, this.prevProps || {}, this), this.prevMotionValues);
+    if (this.handleChildMotionValue) {
+      this.handleChildMotionValue();
+    }
+  }
+  getProps() {
+    return this.props;
+  }
+  /**
+   * Returns the variant definition with a given name.
+   */
+  getVariant(name) {
+    return this.props.variants ? this.props.variants[name] : void 0;
+  }
+  /**
+   * Returns the defined default transition on this component.
+   */
+  getDefaultTransition() {
+    return this.props.transition;
+  }
+  getTransformPagePoint() {
+    return this.props.transformPagePoint;
+  }
+  getClosestVariantNode() {
+    return this.isVariantNode ? this : this.parent ? this.parent.getClosestVariantNode() : void 0;
+  }
+  /**
+   * Add a child visual element to our set of children.
+   */
+  addVariantChild(child) {
+    const closestVariantNode = this.getClosestVariantNode();
+    if (closestVariantNode) {
+      closestVariantNode.variantChildren && closestVariantNode.variantChildren.add(child);
+      return () => closestVariantNode.variantChildren.delete(child);
+    }
+  }
+  /**
+   * Add a motion value and bind it to this visual element.
+   */
+  addValue(key, value) {
+    const existingValue = this.values.get(key);
+    if (value !== existingValue) {
+      if (existingValue)
+        this.removeValue(key);
+      this.bindToMotionValue(key, value);
+      this.values.set(key, value);
+      this.latestValues[key] = value.get();
+    }
+  }
+  /**
+   * Remove a motion value and unbind any active subscriptions.
+   */
+  removeValue(key) {
+    this.values.delete(key);
+    const unsubscribe = this.valueSubscriptions.get(key);
+    if (unsubscribe) {
+      unsubscribe();
+      this.valueSubscriptions.delete(key);
+    }
+    delete this.latestValues[key];
+    this.removeValueFromRenderState(key, this.renderState);
+  }
+  /**
+   * Check whether we have a motion value for this key
+   */
+  hasValue(key) {
+    return this.values.has(key);
+  }
+  getValue(key, defaultValue) {
+    if (this.props.values && this.props.values[key]) {
+      return this.props.values[key];
+    }
+    let value = this.values.get(key);
+    if (value === void 0 && defaultValue !== void 0) {
+      value = motionValue(defaultValue === null ? void 0 : defaultValue, { owner: this });
+      this.addValue(key, value);
+    }
+    return value;
+  }
+  /**
+   * If we're trying to animate to a previously unencountered value,
+   * we need to check for it in our state and as a last resort read it
+   * directly from the instance (which might have performance implications).
+   */
+  readValue(key, target) {
+    let value = this.latestValues[key] !== void 0 || !this.current ? this.latestValues[key] : this.getBaseTargetFromProps(this.props, key) ?? this.readValueFromInstance(this.current, key, this.options);
+    if (value !== void 0 && value !== null) {
+      if (typeof value === "string" && (isNumericalString(value) || isZeroValueString(value))) {
+        value = parseFloat(value);
+      } else if (!findValueType(value) && complex.test(target)) {
+        value = getAnimatableNone(key, target);
+      }
+      this.setBaseTarget(key, isMotionValue(value) ? value.get() : value);
+    }
+    return isMotionValue(value) ? value.get() : value;
+  }
+  /**
+   * Set the base target to later animate back to. This is currently
+   * only hydrated on creation and when we first read a value.
+   */
+  setBaseTarget(key, value) {
+    this.baseTarget[key] = value;
+  }
+  /**
+   * Find the base target for a value thats been removed from all animation
+   * props.
+   */
+  getBaseTarget(key) {
+    const { initial } = this.props;
+    let valueFromInitial;
+    if (typeof initial === "string" || typeof initial === "object") {
+      const variant = resolveVariantFromProps(this.props, initial, this.presenceContext?.custom);
+      if (variant) {
+        valueFromInitial = variant[key];
+      }
+    }
+    if (initial && valueFromInitial !== void 0) {
+      return valueFromInitial;
+    }
+    const target = this.getBaseTargetFromProps(this.props, key);
+    if (target !== void 0 && !isMotionValue(target))
+      return target;
+    return this.initialValues[key] !== void 0 && valueFromInitial === void 0 ? void 0 : this.baseTarget[key];
+  }
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = new SubscriptionManager();
+    }
+    return this.events[eventName].add(callback);
+  }
+  notify(eventName, ...args) {
+    if (this.events[eventName]) {
+      this.events[eventName].notify(...args);
+    }
+  }
+  scheduleRenderMicrotask() {
+    microtask.render(this.render);
+  }
+}
+class DOMVisualElement extends VisualElement {
+  constructor() {
+    super(...arguments);
+    this.KeyframeResolver = DOMKeyframesResolver;
+  }
+  sortInstanceNodePosition(a, b) {
+    return a.compareDocumentPosition(b) & 2 ? 1 : -1;
+  }
+  getBaseTargetFromProps(props, key) {
+    const style = props.style;
+    return style ? style[key] : void 0;
+  }
+  removeValueFromRenderState(key, { vars: vars2, style }) {
+    delete vars2[key];
+    delete style[key];
+  }
+  handleChildMotionValue() {
+    if (this.childSubscription) {
+      this.childSubscription();
+      delete this.childSubscription;
+    }
+    const { children } = this.props;
+    if (isMotionValue(children)) {
+      this.childSubscription = children.on("change", (latest) => {
+        if (this.current) {
+          this.current.textContent = `${latest}`;
+        }
       });
-      wantsHandoff.current = false;
     }
-  });
-  return visualElement;
-}
-function createProjectionNode$1(visualElement, props, ProjectionNodeConstructor, initialPromotionConfig) {
-  const { layoutId, layout: layout2, drag: drag2, dragConstraints, layoutScroll, layoutRoot, layoutCrossfade } = props;
-  visualElement.projection = new ProjectionNodeConstructor(visualElement.latestValues, props["data-framer-portal-id"] ? void 0 : getClosestProjectingNode(visualElement.parent));
-  visualElement.projection.setOptions({
-    layoutId,
-    layout: layout2,
-    alwaysMeasureLayout: Boolean(drag2) || dragConstraints && isRefObject(dragConstraints),
-    visualElement,
-    /**
-     * TODO: Update options in an effect. This could be tricky as it'll be too late
-     * to update by the time layout animations run.
-     * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
-     * ensuring it gets called if there's no potential layout animations.
-     *
-     */
-    animationType: typeof layout2 === "string" ? layout2 : "both",
-    initialPromotionConfig,
-    crossfade: layoutCrossfade,
-    layoutScroll,
-    layoutRoot
-  });
-}
-function getClosestProjectingNode(visualElement) {
-  if (!visualElement)
-    return void 0;
-  return visualElement.options.allowProjection !== false ? visualElement.projection : getClosestProjectingNode(visualElement.parent);
-}
-function createRendererMotionComponent({ preloadedFeatures, createVisualElement, useRender, useVisualState, Component }) {
-  preloadedFeatures && loadFeatures(preloadedFeatures);
-  function MotionComponent(props, externalRef) {
-    let MeasureLayout2;
-    const configAndProps = {
-      ...reactExports.useContext(MotionConfigContext),
-      ...props,
-      layoutId: useLayoutId(props)
-    };
-    const { isStatic } = configAndProps;
-    const context = useCreateMotionContext(props);
-    const visualState = useVisualState(props, isStatic);
-    if (!isStatic && isBrowser) {
-      useStrictMode();
-      const layoutProjection = getProjectionFunctionality(configAndProps);
-      MeasureLayout2 = layoutProjection.MeasureLayout;
-      context.visualElement = useVisualElement(Component, visualState, configAndProps, createVisualElement, layoutProjection.ProjectionNode);
-    }
-    return jsxRuntimeExports.jsxs(MotionContext.Provider, { value: context, children: [MeasureLayout2 && context.visualElement ? jsxRuntimeExports.jsx(MeasureLayout2, { visualElement: context.visualElement, ...configAndProps }) : null, useRender(Component, props, useMotionRef(visualState, context.visualElement, externalRef), visualState, isStatic, context.visualElement)] });
   }
-  MotionComponent.displayName = `motion.${typeof Component === "string" ? Component : `create(${Component.displayName ?? Component.name ?? ""})`}`;
-  const ForwardRefMotionComponent = reactExports.forwardRef(MotionComponent);
-  ForwardRefMotionComponent[motionComponentSymbol] = Component;
-  return ForwardRefMotionComponent;
 }
-function useLayoutId({ layoutId }) {
-  const layoutGroupId = reactExports.useContext(LayoutGroupContext).id;
-  return layoutGroupId && layoutId !== void 0 ? layoutGroupId + "-" + layoutId : layoutId;
+class Feature {
+  constructor(node2) {
+    this.isMounted = false;
+    this.node = node2;
+  }
+  update() {
+  }
 }
-function useStrictMode(configAndProps, preloadedFeatures) {
-  reactExports.useContext(LazyContext).strict;
-}
-function getProjectionFunctionality(props) {
-  const { drag: drag2, layout: layout2 } = featureDefinitions;
-  if (!drag2 && !layout2)
-    return {};
-  const combined = { ...drag2, ...layout2 };
+function convertBoundingBoxToBox({ top, left, right, bottom }) {
   return {
-    MeasureLayout: drag2?.isEnabled(props) || layout2?.isEnabled(props) ? combined.MeasureLayout : void 0,
-    ProjectionNode: combined.ProjectionNode
+    x: { min: left, max: right },
+    y: { min: top, max: bottom }
   };
 }
-const scaleCorrectors = {};
-function addScaleCorrector(correctors) {
-  for (const key in correctors) {
-    scaleCorrectors[key] = correctors[key];
-    if (isCSSVariableName(key)) {
-      scaleCorrectors[key].isCSSVariable = true;
+function convertBoxToBoundingBox({ x, y }) {
+  return { top: y.min, right: x.max, bottom: y.max, left: x.min };
+}
+function transformBoxPoints(point, transformPoint2) {
+  if (!transformPoint2)
+    return point;
+  const topLeft = transformPoint2({ x: point.left, y: point.top });
+  const bottomRight = transformPoint2({ x: point.right, y: point.bottom });
+  return {
+    top: topLeft.y,
+    left: topLeft.x,
+    bottom: bottomRight.y,
+    right: bottomRight.x
+  };
+}
+function isIdentityScale(scale2) {
+  return scale2 === void 0 || scale2 === 1;
+}
+function hasScale({ scale: scale2, scaleX: scaleX2, scaleY: scaleY2 }) {
+  return !isIdentityScale(scale2) || !isIdentityScale(scaleX2) || !isIdentityScale(scaleY2);
+}
+function hasTransform(values) {
+  return hasScale(values) || has2DTranslate(values) || values.z || values.rotate || values.rotateX || values.rotateY || values.skewX || values.skewY;
+}
+function has2DTranslate(values) {
+  return is2DTranslate(values.x) || is2DTranslate(values.y);
+}
+function is2DTranslate(value) {
+  return value && value !== "0%";
+}
+function scalePoint(point, scale2, originPoint) {
+  const distanceFromOrigin = point - originPoint;
+  const scaled = scale2 * distanceFromOrigin;
+  return originPoint + scaled;
+}
+function applyPointDelta(point, translate, scale2, originPoint, boxScale) {
+  if (boxScale !== void 0) {
+    point = scalePoint(point, boxScale, originPoint);
+  }
+  return scalePoint(point, scale2, originPoint) + translate;
+}
+function applyAxisDelta(axis, translate = 0, scale2 = 1, originPoint, boxScale) {
+  axis.min = applyPointDelta(axis.min, translate, scale2, originPoint, boxScale);
+  axis.max = applyPointDelta(axis.max, translate, scale2, originPoint, boxScale);
+}
+function applyBoxDelta(box, { x, y }) {
+  applyAxisDelta(box.x, x.translate, x.scale, x.originPoint);
+  applyAxisDelta(box.y, y.translate, y.scale, y.originPoint);
+}
+const TREE_SCALE_SNAP_MIN = 0.999999999999;
+const TREE_SCALE_SNAP_MAX = 1.0000000000001;
+function applyTreeDeltas(box, treeScale, treePath, isSharedTransition = false) {
+  const treeLength = treePath.length;
+  if (!treeLength)
+    return;
+  treeScale.x = treeScale.y = 1;
+  let node2;
+  let delta;
+  for (let i = 0; i < treeLength; i++) {
+    node2 = treePath[i];
+    delta = node2.projectionDelta;
+    const { visualElement } = node2.options;
+    if (visualElement && visualElement.props.style && visualElement.props.style.display === "contents") {
+      continue;
+    }
+    if (isSharedTransition && node2.options.layoutScroll && node2.scroll && node2 !== node2.root) {
+      transformBox(box, {
+        x: -node2.scroll.offset.x,
+        y: -node2.scroll.offset.y
+      });
+    }
+    if (delta) {
+      treeScale.x *= delta.x.scale;
+      treeScale.y *= delta.y.scale;
+      applyBoxDelta(box, delta);
+    }
+    if (isSharedTransition && hasTransform(node2.latestValues)) {
+      transformBox(box, node2.latestValues);
     }
   }
+  if (treeScale.x < TREE_SCALE_SNAP_MAX && treeScale.x > TREE_SCALE_SNAP_MIN) {
+    treeScale.x = 1;
+  }
+  if (treeScale.y < TREE_SCALE_SNAP_MAX && treeScale.y > TREE_SCALE_SNAP_MIN) {
+    treeScale.y = 1;
+  }
 }
-function isForcedMotionValue(key, { layout: layout2, layoutId }) {
-  return transformProps.has(key) || key.startsWith("origin") || (layout2 || layoutId !== void 0) && (!!scaleCorrectors[key] || key === "opacity");
+function translateAxis(axis, distance2) {
+  axis.min = axis.min + distance2;
+  axis.max = axis.max + distance2;
 }
-const isMotionValue = (value) => Boolean(value && value.getVelocity);
+function transformAxis(axis, axisTranslate, axisScale, boxScale, axisOrigin = 0.5) {
+  const originPoint = mixNumber$1(axis.min, axis.max, axisOrigin);
+  applyAxisDelta(axis, axisTranslate, axisScale, originPoint, boxScale);
+}
+function transformBox(box, transform2) {
+  transformAxis(box.x, transform2.x, transform2.scaleX, transform2.scale, transform2.originX);
+  transformAxis(box.y, transform2.y, transform2.scaleY, transform2.scale, transform2.originY);
+}
+function measureViewportBox(instance, transformPoint2) {
+  return convertBoundingBoxToBox(transformBoxPoints(instance.getBoundingClientRect(), transformPoint2));
+}
+function measurePageBox(element, rootProjectionNode2, transformPagePoint) {
+  const viewportBox = measureViewportBox(element, transformPagePoint);
+  const { scroll: scroll2 } = rootProjectionNode2;
+  if (scroll2) {
+    translateAxis(viewportBox.x, scroll2.offset.x);
+    translateAxis(viewportBox.y, scroll2.offset.y);
+  }
+  return viewportBox;
+}
 const translateAlias = {
   x: "translateX",
   y: "translateY",
@@ -19132,98 +19516,117 @@ function buildHTMLStyles(state2, latestValues, transformTemplate2) {
     style.transformOrigin = `${originX} ${originY} ${originZ}`;
   }
 }
-const createHtmlRenderState = () => ({
-  style: {},
-  transform: {},
-  transformOrigin: {},
-  vars: {}
-});
-function copyRawValuesOnly(target, source, props) {
-  for (const key in source) {
-    if (!isMotionValue(source[key]) && !isForcedMotionValue(key, props)) {
-      target[key] = source[key];
+function renderHTML(element, { style, vars: vars2 }, styleProp, projection) {
+  const elementStyle = element.style;
+  let key;
+  for (key in style) {
+    elementStyle[key] = style[key];
+  }
+  projection?.applyProjectionStyles(elementStyle, styleProp);
+  for (key in vars2) {
+    elementStyle.setProperty(key, vars2[key]);
+  }
+}
+function pixelsToPercent(pixels, axis) {
+  if (axis.max === axis.min)
+    return 0;
+  return pixels / (axis.max - axis.min) * 100;
+}
+const correctBorderRadius = {
+  correct: (latest, node2) => {
+    if (!node2.target)
+      return latest;
+    if (typeof latest === "string") {
+      if (px.test(latest)) {
+        latest = parseFloat(latest);
+      } else {
+        return latest;
+      }
+    }
+    const x = pixelsToPercent(latest, node2.target.x);
+    const y = pixelsToPercent(latest, node2.target.y);
+    return `${x}% ${y}%`;
+  }
+};
+const correctBoxShadow = {
+  correct: (latest, { treeScale, projectionDelta }) => {
+    const original = latest;
+    const shadow = complex.parse(latest);
+    if (shadow.length > 5)
+      return original;
+    const template = complex.createTransformer(latest);
+    const offset = typeof shadow[0] !== "number" ? 1 : 0;
+    const xScale = projectionDelta.x.scale * treeScale.x;
+    const yScale = projectionDelta.y.scale * treeScale.y;
+    shadow[0 + offset] /= xScale;
+    shadow[1 + offset] /= yScale;
+    const averageScale = mixNumber$1(xScale, yScale, 0.5);
+    if (typeof shadow[2 + offset] === "number")
+      shadow[2 + offset] /= averageScale;
+    if (typeof shadow[3 + offset] === "number")
+      shadow[3 + offset] /= averageScale;
+    return template(shadow);
+  }
+};
+const scaleCorrectors = {
+  borderRadius: {
+    ...correctBorderRadius,
+    applyTo: [
+      "borderTopLeftRadius",
+      "borderTopRightRadius",
+      "borderBottomLeftRadius",
+      "borderBottomRightRadius"
+    ]
+  },
+  borderTopLeftRadius: correctBorderRadius,
+  borderTopRightRadius: correctBorderRadius,
+  borderBottomLeftRadius: correctBorderRadius,
+  borderBottomRightRadius: correctBorderRadius,
+  boxShadow: correctBoxShadow
+};
+function isForcedMotionValue(key, { layout: layout2, layoutId }) {
+  return transformProps.has(key) || key.startsWith("origin") || (layout2 || layoutId !== void 0) && (!!scaleCorrectors[key] || key === "opacity");
+}
+function scrapeMotionValuesFromProps$1(props, prevProps, visualElement) {
+  const style = props.style;
+  const prevStyle = prevProps?.style;
+  const newValues = {};
+  if (!style)
+    return newValues;
+  for (const key in style) {
+    if (isMotionValue(style[key]) || prevStyle && isMotionValue(prevStyle[key]) || isForcedMotionValue(key, props) || visualElement?.getValue(key)?.liveStyle !== void 0) {
+      newValues[key] = style[key];
     }
   }
+  return newValues;
 }
-function useInitialMotionValues({ transformTemplate: transformTemplate2 }, visualState) {
-  return reactExports.useMemo(() => {
-    const state2 = createHtmlRenderState();
-    buildHTMLStyles(state2, visualState, transformTemplate2);
-    return Object.assign({}, state2.vars, state2.style);
-  }, [visualState]);
+function getComputedStyle$1(element) {
+  return window.getComputedStyle(element);
 }
-function useStyle(props, visualState) {
-  const styleProp = props.style || {};
-  const style = {};
-  copyRawValuesOnly(style, styleProp, props);
-  Object.assign(style, useInitialMotionValues(props, visualState));
-  return style;
-}
-function useHTMLProps(props, visualState) {
-  const htmlProps = {};
-  const style = useStyle(props, visualState);
-  if (props.drag && props.dragListener !== false) {
-    htmlProps.draggable = false;
-    style.userSelect = style.WebkitUserSelect = style.WebkitTouchCallout = "none";
-    style.touchAction = props.drag === true ? "none" : `pan-${props.drag === "x" ? "y" : "x"}`;
+class HTMLVisualElement extends DOMVisualElement {
+  constructor() {
+    super(...arguments);
+    this.type = "html";
+    this.renderInstance = renderHTML;
   }
-  if (props.tabIndex === void 0 && (props.onTap || props.onTapStart || props.whileTap)) {
-    htmlProps.tabIndex = 0;
+  readValueFromInstance(instance, key) {
+    if (transformProps.has(key)) {
+      return this.projection?.isProjecting ? defaultTransformValue(key) : readTransformValue(instance, key);
+    } else {
+      const computedStyle = getComputedStyle$1(instance);
+      const value = (isCSSVariableName(key) ? computedStyle.getPropertyValue(key) : computedStyle[key]) || 0;
+      return typeof value === "string" ? value.trim() : value;
+    }
   }
-  htmlProps.style = style;
-  return htmlProps;
-}
-const lowercaseSVGElements = [
-  "animate",
-  "circle",
-  "defs",
-  "desc",
-  "ellipse",
-  "g",
-  "image",
-  "line",
-  "filter",
-  "marker",
-  "mask",
-  "metadata",
-  "path",
-  "pattern",
-  "polygon",
-  "polyline",
-  "rect",
-  "stop",
-  "switch",
-  "symbol",
-  "svg",
-  "text",
-  "tspan",
-  "use",
-  "view"
-];
-function isSVGComponent(Component) {
-  if (
-    /**
-     * If it's not a string, it's a custom React component. Currently we only support
-     * HTML custom React components.
-     */
-    typeof Component !== "string" || /**
-     * If it contains a dash, the element is a custom HTML webcomponent.
-     */
-    Component.includes("-")
-  ) {
-    return false;
-  } else if (
-    /**
-     * If it's in our list of lowercase SVG tags, it's an SVG component
-     */
-    lowercaseSVGElements.indexOf(Component) > -1 || /**
-     * If it contains a capital letter, it's an SVG component
-     */
-    /[A-Z]/u.test(Component)
-  ) {
-    return true;
+  measureInstanceViewportBox(instance, { transformPagePoint }) {
+    return measureViewportBox(instance, transformPagePoint);
   }
-  return false;
+  build(renderState, latestValues, props) {
+    buildHTMLStyles(renderState, latestValues, props.transformTemplate);
+  }
+  scrapeMotionValuesFromProps(props, prevProps, visualElement) {
+    return scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
+  }
 }
 const dashKeys = {
   offset: "stroke-dashoffset",
@@ -19236,11 +19639,15 @@ const camelKeys = {
 function buildSVGPath(attrs, length2, spacing2 = 1, offset = 0, useDashCase = true) {
   attrs.pathLength = 1;
   const keys2 = useDashCase ? dashKeys : camelKeys;
-  attrs[keys2.offset] = px.transform(-offset);
-  const pathLength = px.transform(length2);
-  const pathSpacing = px.transform(spacing2);
-  attrs[keys2.array] = `${pathLength} ${pathSpacing}`;
+  attrs[keys2.offset] = `${-offset}`;
+  attrs[keys2.array] = `${length2} ${spacing2}`;
 }
+const cssMotionPathProperties = [
+  "offsetDistance",
+  "offsetPath",
+  "offsetRotate",
+  "offsetAnchor"
+];
 function buildSVGAttrs(state2, {
   attrX,
   attrY,
@@ -19273,6 +19680,12 @@ function buildSVGAttrs(state2, {
     style.transformBox = styleProp?.transformBox ?? "fill-box";
     delete attrs.transformBox;
   }
+  for (const key of cssMotionPathProperties) {
+    if (attrs[key] !== void 0) {
+      style[key] = attrs[key];
+      delete attrs[key];
+    }
+  }
   if (attrX !== void 0)
     attrs.x = attrX;
   if (attrY !== void 0)
@@ -19283,138 +19696,38 @@ function buildSVGAttrs(state2, {
     buildSVGPath(attrs, pathLength, pathSpacing, pathOffset, false);
   }
 }
-const createSvgRenderState = () => ({
-  ...createHtmlRenderState(),
-  attrs: {}
-});
+const camelCaseAttributes = /* @__PURE__ */ new Set([
+  "baseFrequency",
+  "diffuseConstant",
+  "kernelMatrix",
+  "kernelUnitLength",
+  "keySplines",
+  "keyTimes",
+  "limitingConeAngle",
+  "markerHeight",
+  "markerWidth",
+  "numOctaves",
+  "targetX",
+  "targetY",
+  "surfaceScale",
+  "specularConstant",
+  "specularExponent",
+  "stdDeviation",
+  "tableValues",
+  "viewBox",
+  "gradientTransform",
+  "pathLength",
+  "startOffset",
+  "textLength",
+  "lengthAdjust"
+]);
 const isSVGTag = (tag) => typeof tag === "string" && tag.toLowerCase() === "svg";
-function useSVGProps(props, visualState, _isStatic, Component) {
-  const visualProps = reactExports.useMemo(() => {
-    const state2 = createSvgRenderState();
-    buildSVGAttrs(state2, visualState, isSVGTag(Component), props.transformTemplate, props.style);
-    return {
-      ...state2.attrs,
-      style: { ...state2.style }
-    };
-  }, [visualState]);
-  if (props.style) {
-    const rawStyles = {};
-    copyRawValuesOnly(rawStyles, props.style, props);
-    visualProps.style = { ...rawStyles, ...visualProps.style };
+function renderSVG(element, renderState, _styleProp, projection) {
+  renderHTML(element, renderState, void 0, projection);
+  for (const key in renderState.attrs) {
+    element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
   }
-  return visualProps;
 }
-function createUseRender(forwardMotionProps = false) {
-  const useRender = (Component, props, ref, { latestValues }, isStatic) => {
-    const useVisualProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps;
-    const visualProps = useVisualProps(props, latestValues, isStatic, Component);
-    const filteredProps = filterProps(props, typeof Component === "string", forwardMotionProps);
-    const elementProps = Component !== reactExports.Fragment ? { ...filteredProps, ...visualProps, ref } : {};
-    const { children } = props;
-    const renderedChildren = reactExports.useMemo(() => isMotionValue(children) ? children.get() : children, [children]);
-    return reactExports.createElement(Component, {
-      ...elementProps,
-      children: renderedChildren
-    });
-  };
-  return useRender;
-}
-function getValueState(visualElement) {
-  const state2 = [{}, {}];
-  visualElement?.values.forEach((value, key) => {
-    state2[0][key] = value.get();
-    state2[1][key] = value.getVelocity();
-  });
-  return state2;
-}
-function resolveVariantFromProps(props, definition, custom, visualElement) {
-  if (typeof definition === "function") {
-    const [current, velocity] = getValueState(visualElement);
-    definition = definition(custom !== void 0 ? custom : props.custom, current, velocity);
-  }
-  if (typeof definition === "string") {
-    definition = props.variants && props.variants[definition];
-  }
-  if (typeof definition === "function") {
-    const [current, velocity] = getValueState(visualElement);
-    definition = definition(custom !== void 0 ? custom : props.custom, current, velocity);
-  }
-  return definition;
-}
-function resolveMotionValue(value) {
-  return isMotionValue(value) ? value.get() : value;
-}
-function makeState({ scrapeMotionValuesFromProps: scrapeMotionValuesFromProps2, createRenderState }, props, context, presenceContext) {
-  const state2 = {
-    latestValues: makeLatestValues(props, context, presenceContext, scrapeMotionValuesFromProps2),
-    renderState: createRenderState()
-  };
-  return state2;
-}
-const makeUseVisualState = (config2) => (props, isStatic) => {
-  const context = reactExports.useContext(MotionContext);
-  const presenceContext = reactExports.useContext(PresenceContext);
-  const make = () => makeState(config2, props, context, presenceContext);
-  return isStatic ? make() : useConstant(make);
-};
-function makeLatestValues(props, context, presenceContext, scrapeMotionValues) {
-  const values = {};
-  const motionValues = scrapeMotionValues(props, {});
-  for (const key in motionValues) {
-    values[key] = resolveMotionValue(motionValues[key]);
-  }
-  let { initial, animate } = props;
-  const isControllingVariants$1 = isControllingVariants(props);
-  const isVariantNode$1 = isVariantNode(props);
-  if (context && isVariantNode$1 && !isControllingVariants$1 && props.inherit !== false) {
-    if (initial === void 0)
-      initial = context.initial;
-    if (animate === void 0)
-      animate = context.animate;
-  }
-  let isInitialAnimationBlocked = presenceContext ? presenceContext.initial === false : false;
-  isInitialAnimationBlocked = isInitialAnimationBlocked || initial === false;
-  const variantToSet = isInitialAnimationBlocked ? animate : initial;
-  if (variantToSet && typeof variantToSet !== "boolean" && !isAnimationControls(variantToSet)) {
-    const list2 = Array.isArray(variantToSet) ? variantToSet : [variantToSet];
-    for (let i = 0; i < list2.length; i++) {
-      const resolved = resolveVariantFromProps(props, list2[i]);
-      if (resolved) {
-        const { transitionEnd, transition: transition2, ...target } = resolved;
-        for (const key in target) {
-          let valueTarget = target[key];
-          if (Array.isArray(valueTarget)) {
-            const index = isInitialAnimationBlocked ? valueTarget.length - 1 : 0;
-            valueTarget = valueTarget[index];
-          }
-          if (valueTarget !== null) {
-            values[key] = valueTarget;
-          }
-        }
-        for (const key in transitionEnd) {
-          values[key] = transitionEnd[key];
-        }
-      }
-    }
-  }
-  return values;
-}
-function scrapeMotionValuesFromProps$1(props, prevProps, visualElement) {
-  const { style } = props;
-  const newValues = {};
-  for (const key in style) {
-    if (isMotionValue(style[key]) || prevProps.style && isMotionValue(prevProps.style[key]) || isForcedMotionValue(key, props) || visualElement?.getValue(key)?.liveStyle !== void 0) {
-      newValues[key] = style[key];
-    }
-  }
-  return newValues;
-}
-const htmlMotionConfig = {
-  useVisualState: makeUseVisualState({
-    scrapeMotionValuesFromProps: scrapeMotionValuesFromProps$1,
-    createRenderState: createHtmlRenderState
-  })
-};
 function scrapeMotionValuesFromProps(props, prevProps, visualElement) {
   const newValues = scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
   for (const key in props) {
@@ -19425,275 +19738,37 @@ function scrapeMotionValuesFromProps(props, prevProps, visualElement) {
   }
   return newValues;
 }
-const svgMotionConfig = {
-  useVisualState: makeUseVisualState({
-    scrapeMotionValuesFromProps,
-    createRenderState: createSvgRenderState
-  })
-};
-function createMotionComponentFactory(preloadedFeatures, createVisualElement) {
-  return function createMotionComponent2(Component, { forwardMotionProps } = { forwardMotionProps: false }) {
-    const baseConfig = isSVGComponent(Component) ? svgMotionConfig : htmlMotionConfig;
-    const config2 = {
-      ...baseConfig,
-      preloadedFeatures,
-      useRender: createUseRender(forwardMotionProps),
-      createVisualElement,
-      Component
-    };
-    return createRendererMotionComponent(config2);
-  };
-}
-function resolveVariant(visualElement, definition, custom) {
-  const props = visualElement.getProps();
-  return resolveVariantFromProps(props, definition, custom !== void 0 ? custom : props.custom, visualElement);
-}
-const isKeyframesTarget = (v) => {
-  return Array.isArray(v);
-};
-function setMotionValue(visualElement, key, value) {
-  if (visualElement.hasValue(key)) {
-    visualElement.getValue(key).set(value);
-  } else {
-    visualElement.addValue(key, motionValue(value));
+class SVGVisualElement extends DOMVisualElement {
+  constructor() {
+    super(...arguments);
+    this.type = "svg";
+    this.isSVGTag = false;
+    this.measureInstanceViewportBox = createBox;
   }
-}
-function resolveFinalValueInKeyframes(v) {
-  return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
-}
-function setTarget(visualElement, definition) {
-  const resolved = resolveVariant(visualElement, definition);
-  let { transitionEnd = {}, transition: transition2 = {}, ...target } = resolved || {};
-  target = { ...target, ...transitionEnd };
-  for (const key in target) {
-    const value = resolveFinalValueInKeyframes(target[key]);
-    setMotionValue(visualElement, key, value);
+  getBaseTargetFromProps(props, key) {
+    return props[key];
   }
-}
-function isWillChangeMotionValue(value) {
-  return Boolean(isMotionValue(value) && value.add);
-}
-function addValueToWillChange(visualElement, key) {
-  const willChange = visualElement.getValue("willChange");
-  if (isWillChangeMotionValue(willChange)) {
-    return willChange.add(key);
-  } else if (!willChange && MotionGlobalConfig.WillChange) {
-    const newWillChange = new MotionGlobalConfig.WillChange("auto");
-    visualElement.addValue("willChange", newWillChange);
-    newWillChange.add(key);
-  }
-}
-function getOptimisedAppearId(visualElement) {
-  return visualElement.props[optimizedAppearDataAttribute];
-}
-const isNotNull = (value) => value !== null;
-function getFinalKeyframe(keyframes2, { repeat, repeatType = "loop" }, finalKeyframe) {
-  const resolvedKeyframes = keyframes2.filter(isNotNull);
-  const index = repeat && repeatType !== "loop" && repeat % 2 === 1 ? 0 : resolvedKeyframes.length - 1;
-  return resolvedKeyframes[index];
-}
-const underDampedSpring = {
-  type: "spring",
-  stiffness: 500,
-  damping: 25,
-  restSpeed: 10
-};
-const criticallyDampedSpring = (target) => ({
-  type: "spring",
-  stiffness: 550,
-  damping: target === 0 ? 2 * Math.sqrt(550) : 30,
-  restSpeed: 10
-});
-const keyframesTransition = {
-  type: "keyframes",
-  duration: 0.8
-};
-const ease = {
-  type: "keyframes",
-  ease: [0.25, 0.1, 0.35, 1],
-  duration: 0.3
-};
-const getDefaultTransition = (valueKey, { keyframes: keyframes2 }) => {
-  if (keyframes2.length > 2) {
-    return keyframesTransition;
-  } else if (transformProps.has(valueKey)) {
-    return valueKey.startsWith("scale") ? criticallyDampedSpring(keyframes2[1]) : underDampedSpring;
-  }
-  return ease;
-};
-function isTransitionDefined({ when, delay: _delay, delayChildren, staggerChildren, staggerDirection, repeat, repeatType, repeatDelay, from: from2, elapsed, ...transition2 }) {
-  return !!Object.keys(transition2).length;
-}
-const animateMotionValue = (name, value, target, transition2 = {}, element, isHandoff) => (onComplete) => {
-  const valueTransition = getValueTransition(transition2, name) || {};
-  const delay2 = valueTransition.delay || transition2.delay || 0;
-  let { elapsed = 0 } = transition2;
-  elapsed = elapsed - /* @__PURE__ */ secondsToMilliseconds(delay2);
-  const options = {
-    keyframes: Array.isArray(target) ? target : [null, target],
-    ease: "easeOut",
-    velocity: value.getVelocity(),
-    ...valueTransition,
-    delay: -elapsed,
-    onUpdate: (v) => {
-      value.set(v);
-      valueTransition.onUpdate && valueTransition.onUpdate(v);
-    },
-    onComplete: () => {
-      onComplete();
-      valueTransition.onComplete && valueTransition.onComplete();
-    },
-    name,
-    motionValue: value,
-    element: isHandoff ? void 0 : element
-  };
-  if (!isTransitionDefined(valueTransition)) {
-    Object.assign(options, getDefaultTransition(name, options));
-  }
-  options.duration && (options.duration = /* @__PURE__ */ secondsToMilliseconds(options.duration));
-  options.repeatDelay && (options.repeatDelay = /* @__PURE__ */ secondsToMilliseconds(options.repeatDelay));
-  if (options.from !== void 0) {
-    options.keyframes[0] = options.from;
-  }
-  let shouldSkip = false;
-  if (options.type === false || options.duration === 0 && !options.repeatDelay) {
-    options.duration = 0;
-    if (options.delay === 0) {
-      shouldSkip = true;
+  readValueFromInstance(instance, key) {
+    if (transformProps.has(key)) {
+      const defaultType = getDefaultValueType(key);
+      return defaultType ? defaultType.default || 0 : 0;
     }
+    key = !camelCaseAttributes.has(key) ? camelToDash(key) : key;
+    return instance.getAttribute(key);
   }
-  if (MotionGlobalConfig.instantAnimations || MotionGlobalConfig.skipAnimations) {
-    shouldSkip = true;
-    options.duration = 0;
-    options.delay = 0;
+  scrapeMotionValuesFromProps(props, prevProps, visualElement) {
+    return scrapeMotionValuesFromProps(props, prevProps, visualElement);
   }
-  options.allowFlatten = !valueTransition.type && !valueTransition.ease;
-  if (shouldSkip && !isHandoff && value.get() !== void 0) {
-    const finalKeyframe = getFinalKeyframe(options.keyframes, valueTransition);
-    if (finalKeyframe !== void 0) {
-      frame.update(() => {
-        options.onUpdate(finalKeyframe);
-        options.onComplete();
-      });
-      return;
-    }
+  build(renderState, latestValues, props) {
+    buildSVGAttrs(renderState, latestValues, this.isSVGTag, props.transformTemplate, props.style);
   }
-  return valueTransition.isSync ? new JSAnimation(options) : new AsyncMotionValueAnimation(options);
-};
-function shouldBlockAnimation({ protectedKeys, needsAnimating }, key) {
-  const shouldBlock = protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true;
-  needsAnimating[key] = false;
-  return shouldBlock;
-}
-function animateTarget(visualElement, targetAndTransition, { delay: delay2 = 0, transitionOverride, type } = {}) {
-  let { transition: transition2 = visualElement.getDefaultTransition(), transitionEnd, ...target } = targetAndTransition;
-  if (transitionOverride)
-    transition2 = transitionOverride;
-  const animations2 = [];
-  const animationTypeState = type && visualElement.animationState && visualElement.animationState.getState()[type];
-  for (const key in target) {
-    const value = visualElement.getValue(key, visualElement.latestValues[key] ?? null);
-    const valueTarget = target[key];
-    if (valueTarget === void 0 || animationTypeState && shouldBlockAnimation(animationTypeState, key)) {
-      continue;
-    }
-    const valueTransition = {
-      delay: delay2,
-      ...getValueTransition(transition2 || {}, key)
-    };
-    const currentValue = value.get();
-    if (currentValue !== void 0 && !value.isAnimating && !Array.isArray(valueTarget) && valueTarget === currentValue && !valueTransition.velocity) {
-      continue;
-    }
-    let isHandoff = false;
-    if (window.MotionHandoffAnimation) {
-      const appearId = getOptimisedAppearId(visualElement);
-      if (appearId) {
-        const startTime = window.MotionHandoffAnimation(appearId, key, frame);
-        if (startTime !== null) {
-          valueTransition.startTime = startTime;
-          isHandoff = true;
-        }
-      }
-    }
-    addValueToWillChange(visualElement, key);
-    value.start(animateMotionValue(key, value, valueTarget, visualElement.shouldReduceMotion && positionalKeys.has(key) ? { type: false } : valueTransition, visualElement, isHandoff));
-    const animation = value.animation;
-    if (animation) {
-      animations2.push(animation);
-    }
+  renderInstance(instance, renderState, styleProp, projection) {
+    renderSVG(instance, renderState, styleProp, projection);
   }
-  if (transitionEnd) {
-    Promise.all(animations2).then(() => {
-      frame.update(() => {
-        transitionEnd && setTarget(visualElement, transitionEnd);
-      });
-    });
+  mount(instance) {
+    this.isSVGTag = isSVGTag(instance.tagName);
+    super.mount(instance);
   }
-  return animations2;
-}
-function animateVariant(visualElement, variant, options = {}) {
-  const resolved = resolveVariant(visualElement, variant, options.type === "exit" ? visualElement.presenceContext?.custom : void 0);
-  let { transition: transition2 = visualElement.getDefaultTransition() || {} } = resolved || {};
-  if (options.transitionOverride) {
-    transition2 = options.transitionOverride;
-  }
-  const getAnimation = resolved ? () => Promise.all(animateTarget(visualElement, resolved, options)) : () => Promise.resolve();
-  const getChildAnimations = visualElement.variantChildren && visualElement.variantChildren.size ? (forwardDelay = 0) => {
-    const { delayChildren = 0, staggerChildren, staggerDirection } = transition2;
-    return animateChildren(visualElement, variant, delayChildren + forwardDelay, staggerChildren, staggerDirection, options);
-  } : () => Promise.resolve();
-  const { when } = transition2;
-  if (when) {
-    const [first, last] = when === "beforeChildren" ? [getAnimation, getChildAnimations] : [getChildAnimations, getAnimation];
-    return first().then(() => last());
-  } else {
-    return Promise.all([getAnimation(), getChildAnimations(options.delay)]);
-  }
-}
-function animateChildren(visualElement, variant, delayChildren = 0, staggerChildren = 0, staggerDirection = 1, options) {
-  const animations2 = [];
-  const maxStaggerDuration = (visualElement.variantChildren.size - 1) * staggerChildren;
-  const generateStaggerDuration = staggerDirection === 1 ? (i = 0) => i * staggerChildren : (i = 0) => maxStaggerDuration - i * staggerChildren;
-  Array.from(visualElement.variantChildren).sort(sortByTreeOrder).forEach((child, i) => {
-    child.notify("AnimationStart", variant);
-    animations2.push(animateVariant(child, variant, {
-      ...options,
-      delay: delayChildren + generateStaggerDuration(i)
-    }).then(() => child.notify("AnimationComplete", variant)));
-  });
-  return Promise.all(animations2);
-}
-function sortByTreeOrder(a, b) {
-  return a.sortNodePosition(b);
-}
-function animateVisualElement(visualElement, definition, options = {}) {
-  visualElement.notify("AnimationStart", definition);
-  let animation;
-  if (Array.isArray(definition)) {
-    const animations2 = definition.map((variant) => animateVariant(visualElement, variant, options));
-    animation = Promise.all(animations2);
-  } else if (typeof definition === "string") {
-    animation = animateVariant(visualElement, definition, options);
-  } else {
-    const resolvedDefinition = typeof definition === "function" ? resolveVariant(visualElement, definition, options.custom) : definition;
-    animation = Promise.all(animateTarget(visualElement, resolvedDefinition, options));
-  }
-  return animation.then(() => {
-    visualElement.notify("AnimationComplete", definition);
-  });
-}
-function shallowCompare(next2, prev2) {
-  if (!Array.isArray(prev2))
-    return false;
-  const prevLength = prev2.length;
-  if (prevLength !== next2.length)
-    return false;
-  for (let i = 0; i < prevLength; i++) {
-    if (prev2[i] !== next2[i])
-      return false;
-  }
-  return true;
 }
 const numVariantProps = variantProps.length;
 function getVariantContext(visualElement) {
@@ -19716,13 +19791,27 @@ function getVariantContext(visualElement) {
   }
   return context;
 }
+function shallowCompare(next2, prev2) {
+  if (!Array.isArray(prev2))
+    return false;
+  const prevLength = prev2.length;
+  if (prevLength !== next2.length)
+    return false;
+  for (let i = 0; i < prevLength; i++) {
+    if (prev2[i] !== next2[i])
+      return false;
+  }
+  return true;
+}
 const reversePriorityOrder = [...variantPriorityOrder].reverse();
 const numAnimationTypes = variantPriorityOrder.length;
-function animateList(visualElement) {
-  return (animations2) => Promise.all(animations2.map(({ animation, options }) => animateVisualElement(visualElement, animation, options)));
+function createAnimateFunction(visualElement) {
+  return (animations2) => {
+    return Promise.all(animations2.map(({ animation, options }) => animateVisualElement(visualElement, animation, options)));
+  };
 }
 function createAnimationState(visualElement) {
-  let animate = animateList(visualElement);
+  let animate = createAnimateFunction(visualElement);
   let state2 = createState();
   let isInitialRender = true;
   const buildResolvedTypeValues = (type) => (acc, definition) => {
@@ -19823,10 +19912,21 @@ function createAnimationState(visualElement) {
       const willAnimateViaParent = isInherited && variantDidChange;
       const needsAnimating = !willAnimateViaParent || handledRemovedValues;
       if (shouldAnimateType && needsAnimating) {
-        animations2.push(...definitionList.map((animation) => ({
-          animation,
-          options: { type }
-        })));
+        animations2.push(...definitionList.map((animation) => {
+          const options = { type };
+          if (typeof animation === "string" && isInitialRender && !willAnimateViaParent && visualElement.manuallyAnimateOnMount && visualElement.parent) {
+            const { parent } = visualElement;
+            const parentVariant = resolveVariant(parent, animation);
+            if (parent.enteringChildren && parentVariant) {
+              const { delayChildren } = parentVariant.transition || {};
+              options.delay = calcChildStagger(parent.enteringChildren, visualElement, delayChildren);
+            }
+          }
+          return {
+            animation,
+            options
+          };
+        }));
       }
     }
     if (removedKeys.size) {
@@ -19871,7 +19971,6 @@ function createAnimationState(visualElement) {
     getState: () => state2,
     reset: () => {
       state2 = createState();
-      isInitialRender = true;
     }
   };
 }
@@ -19902,127 +20001,19 @@ function createState() {
     exit: createTypeState()
   };
 }
-class Feature {
-  constructor(node2) {
-    this.isMounted = false;
-    this.node = node2;
-  }
-  update() {
-  }
+function copyAxisInto(axis, originAxis) {
+  axis.min = originAxis.min;
+  axis.max = originAxis.max;
 }
-class AnimationFeature extends Feature {
-  /**
-   * We dynamically generate the AnimationState manager as it contains a reference
-   * to the underlying animation library. We only want to load that if we load this,
-   * so people can optionally code split it out using the `m` component.
-   */
-  constructor(node2) {
-    super(node2);
-    node2.animationState || (node2.animationState = createAnimationState(node2));
-  }
-  updateAnimationControlsSubscription() {
-    const { animate } = this.node.getProps();
-    if (isAnimationControls(animate)) {
-      this.unmountControls = animate.subscribe(this.node);
-    }
-  }
-  /**
-   * Subscribe any provided AnimationControls to the component's VisualElement
-   */
-  mount() {
-    this.updateAnimationControlsSubscription();
-  }
-  update() {
-    const { animate } = this.node.getProps();
-    const { animate: prevAnimate } = this.node.prevProps || {};
-    if (animate !== prevAnimate) {
-      this.updateAnimationControlsSubscription();
-    }
-  }
-  unmount() {
-    this.node.animationState.reset();
-    this.unmountControls?.();
-  }
+function copyBoxInto(box, originBox) {
+  copyAxisInto(box.x, originBox.x);
+  copyAxisInto(box.y, originBox.y);
 }
-let id$1 = 0;
-class ExitAnimationFeature extends Feature {
-  constructor() {
-    super(...arguments);
-    this.id = id$1++;
-  }
-  update() {
-    if (!this.node.presenceContext)
-      return;
-    const { isPresent: isPresent2, onExitComplete } = this.node.presenceContext;
-    const { isPresent: prevIsPresent } = this.node.prevPresenceContext || {};
-    if (!this.node.animationState || isPresent2 === prevIsPresent) {
-      return;
-    }
-    const exitAnimation = this.node.animationState.setActive("exit", !isPresent2);
-    if (onExitComplete && !isPresent2) {
-      exitAnimation.then(() => {
-        onExitComplete(this.id);
-      });
-    }
-  }
-  mount() {
-    const { register, onExitComplete } = this.node.presenceContext || {};
-    if (onExitComplete) {
-      onExitComplete(this.id);
-    }
-    if (register) {
-      this.unmount = register(this.id);
-    }
-  }
-  unmount() {
-  }
-}
-const animations = {
-  animation: {
-    Feature: AnimationFeature
-  },
-  exit: {
-    Feature: ExitAnimationFeature
-  }
-};
-function addDomEvent(target, eventName, handler, options = { passive: true }) {
-  target.addEventListener(eventName, handler, options);
-  return () => target.removeEventListener(eventName, handler);
-}
-function extractEventInfo(event) {
-  return {
-    point: {
-      x: event.pageX,
-      y: event.pageY
-    }
-  };
-}
-const addPointerInfo = (handler) => {
-  return (event) => isPrimaryPointer(event) && handler(event, extractEventInfo(event));
-};
-function addPointerEvent(target, eventName, handler, options) {
-  return addDomEvent(target, eventName, addPointerInfo(handler), options);
-}
-function convertBoundingBoxToBox({ top, left, right, bottom }) {
-  return {
-    x: { min: left, max: right },
-    y: { min: top, max: bottom }
-  };
-}
-function convertBoxToBoundingBox({ x, y }) {
-  return { top: y.min, right: x.max, bottom: y.max, left: x.min };
-}
-function transformBoxPoints(point, transformPoint2) {
-  if (!transformPoint2)
-    return point;
-  const topLeft = transformPoint2({ x: point.left, y: point.top });
-  const bottomRight = transformPoint2({ x: point.right, y: point.bottom });
-  return {
-    top: topLeft.y,
-    left: topLeft.x,
-    bottom: bottomRight.y,
-    right: bottomRight.x
-  };
+function copyAxisDeltaInto(delta, originDelta) {
+  delta.translate = originDelta.translate;
+  delta.scale = originDelta.scale;
+  delta.originPoint = originDelta.originPoint;
+  delta.origin = originDelta.origin;
 }
 const SCALE_PRECISION = 1e-4;
 const SCALE_MIN = 1 - SCALE_PRECISION;
@@ -20067,982 +20058,6 @@ function calcRelativeAxisPosition(target, layout2, parent) {
 function calcRelativePosition(target, layout2, parent) {
   calcRelativeAxisPosition(target.x, layout2.x, parent.x);
   calcRelativeAxisPosition(target.y, layout2.y, parent.y);
-}
-const createAxisDelta = () => ({
-  translate: 0,
-  scale: 1,
-  origin: 0,
-  originPoint: 0
-});
-const createDelta = () => ({
-  x: createAxisDelta(),
-  y: createAxisDelta()
-});
-const createAxis = () => ({ min: 0, max: 0 });
-const createBox = () => ({
-  x: createAxis(),
-  y: createAxis()
-});
-function eachAxis(callback) {
-  return [callback("x"), callback("y")];
-}
-function isIdentityScale(scale2) {
-  return scale2 === void 0 || scale2 === 1;
-}
-function hasScale({ scale: scale2, scaleX: scaleX2, scaleY: scaleY2 }) {
-  return !isIdentityScale(scale2) || !isIdentityScale(scaleX2) || !isIdentityScale(scaleY2);
-}
-function hasTransform(values) {
-  return hasScale(values) || has2DTranslate(values) || values.z || values.rotate || values.rotateX || values.rotateY || values.skewX || values.skewY;
-}
-function has2DTranslate(values) {
-  return is2DTranslate(values.x) || is2DTranslate(values.y);
-}
-function is2DTranslate(value) {
-  return value && value !== "0%";
-}
-function scalePoint(point, scale2, originPoint) {
-  const distanceFromOrigin = point - originPoint;
-  const scaled = scale2 * distanceFromOrigin;
-  return originPoint + scaled;
-}
-function applyPointDelta(point, translate, scale2, originPoint, boxScale) {
-  if (boxScale !== void 0) {
-    point = scalePoint(point, boxScale, originPoint);
-  }
-  return scalePoint(point, scale2, originPoint) + translate;
-}
-function applyAxisDelta(axis, translate = 0, scale2 = 1, originPoint, boxScale) {
-  axis.min = applyPointDelta(axis.min, translate, scale2, originPoint, boxScale);
-  axis.max = applyPointDelta(axis.max, translate, scale2, originPoint, boxScale);
-}
-function applyBoxDelta(box, { x, y }) {
-  applyAxisDelta(box.x, x.translate, x.scale, x.originPoint);
-  applyAxisDelta(box.y, y.translate, y.scale, y.originPoint);
-}
-const TREE_SCALE_SNAP_MIN = 0.999999999999;
-const TREE_SCALE_SNAP_MAX = 1.0000000000001;
-function applyTreeDeltas(box, treeScale, treePath, isSharedTransition = false) {
-  const treeLength = treePath.length;
-  if (!treeLength)
-    return;
-  treeScale.x = treeScale.y = 1;
-  let node2;
-  let delta;
-  for (let i = 0; i < treeLength; i++) {
-    node2 = treePath[i];
-    delta = node2.projectionDelta;
-    const { visualElement } = node2.options;
-    if (visualElement && visualElement.props.style && visualElement.props.style.display === "contents") {
-      continue;
-    }
-    if (isSharedTransition && node2.options.layoutScroll && node2.scroll && node2 !== node2.root) {
-      transformBox(box, {
-        x: -node2.scroll.offset.x,
-        y: -node2.scroll.offset.y
-      });
-    }
-    if (delta) {
-      treeScale.x *= delta.x.scale;
-      treeScale.y *= delta.y.scale;
-      applyBoxDelta(box, delta);
-    }
-    if (isSharedTransition && hasTransform(node2.latestValues)) {
-      transformBox(box, node2.latestValues);
-    }
-  }
-  if (treeScale.x < TREE_SCALE_SNAP_MAX && treeScale.x > TREE_SCALE_SNAP_MIN) {
-    treeScale.x = 1;
-  }
-  if (treeScale.y < TREE_SCALE_SNAP_MAX && treeScale.y > TREE_SCALE_SNAP_MIN) {
-    treeScale.y = 1;
-  }
-}
-function translateAxis(axis, distance2) {
-  axis.min = axis.min + distance2;
-  axis.max = axis.max + distance2;
-}
-function transformAxis(axis, axisTranslate, axisScale, boxScale, axisOrigin = 0.5) {
-  const originPoint = mixNumber$1(axis.min, axis.max, axisOrigin);
-  applyAxisDelta(axis, axisTranslate, axisScale, originPoint, boxScale);
-}
-function transformBox(box, transform2) {
-  transformAxis(box.x, transform2.x, transform2.scaleX, transform2.scale, transform2.originX);
-  transformAxis(box.y, transform2.y, transform2.scaleY, transform2.scale, transform2.originY);
-}
-function measureViewportBox(instance, transformPoint2) {
-  return convertBoundingBoxToBox(transformBoxPoints(instance.getBoundingClientRect(), transformPoint2));
-}
-function measurePageBox(element, rootProjectionNode2, transformPagePoint) {
-  const viewportBox = measureViewportBox(element, transformPagePoint);
-  const { scroll: scroll2 } = rootProjectionNode2;
-  if (scroll2) {
-    translateAxis(viewportBox.x, scroll2.offset.x);
-    translateAxis(viewportBox.y, scroll2.offset.y);
-  }
-  return viewportBox;
-}
-const getContextWindow = ({ current }) => {
-  return current ? current.ownerDocument.defaultView : null;
-};
-const distance = (a, b) => Math.abs(a - b);
-function distance2D(a, b) {
-  const xDelta = distance(a.x, b.x);
-  const yDelta = distance(a.y, b.y);
-  return Math.sqrt(xDelta ** 2 + yDelta ** 2);
-}
-class PanSession {
-  constructor(event, handlers, { transformPagePoint, contextWindow, dragSnapToOrigin = false } = {}) {
-    this.startEvent = null;
-    this.lastMoveEvent = null;
-    this.lastMoveEventInfo = null;
-    this.handlers = {};
-    this.contextWindow = window;
-    this.updatePoint = () => {
-      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
-        return;
-      const info2 = getPanInfo(this.lastMoveEventInfo, this.history);
-      const isPanStarted = this.startEvent !== null;
-      const isDistancePastThreshold = distance2D(info2.offset, { x: 0, y: 0 }) >= 3;
-      if (!isPanStarted && !isDistancePastThreshold)
-        return;
-      const { point: point2 } = info2;
-      const { timestamp: timestamp2 } = frameData;
-      this.history.push({ ...point2, timestamp: timestamp2 });
-      const { onStart, onMove } = this.handlers;
-      if (!isPanStarted) {
-        onStart && onStart(this.lastMoveEvent, info2);
-        this.startEvent = this.lastMoveEvent;
-      }
-      onMove && onMove(this.lastMoveEvent, info2);
-    };
-    this.handlePointerMove = (event2, info2) => {
-      this.lastMoveEvent = event2;
-      this.lastMoveEventInfo = transformPoint(info2, this.transformPagePoint);
-      frame.update(this.updatePoint, true);
-    };
-    this.handlePointerUp = (event2, info2) => {
-      this.end();
-      const { onEnd, onSessionEnd, resumeAnimation } = this.handlers;
-      if (this.dragSnapToOrigin)
-        resumeAnimation && resumeAnimation();
-      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
-        return;
-      const panInfo = getPanInfo(event2.type === "pointercancel" ? this.lastMoveEventInfo : transformPoint(info2, this.transformPagePoint), this.history);
-      if (this.startEvent && onEnd) {
-        onEnd(event2, panInfo);
-      }
-      onSessionEnd && onSessionEnd(event2, panInfo);
-    };
-    if (!isPrimaryPointer(event))
-      return;
-    this.dragSnapToOrigin = dragSnapToOrigin;
-    this.handlers = handlers;
-    this.transformPagePoint = transformPagePoint;
-    this.contextWindow = contextWindow || window;
-    const info = extractEventInfo(event);
-    const initialInfo = transformPoint(info, this.transformPagePoint);
-    const { point } = initialInfo;
-    const { timestamp } = frameData;
-    this.history = [{ ...point, timestamp }];
-    const { onSessionStart } = handlers;
-    onSessionStart && onSessionStart(event, getPanInfo(initialInfo, this.history));
-    this.removeListeners = pipe$1(addPointerEvent(this.contextWindow, "pointermove", this.handlePointerMove), addPointerEvent(this.contextWindow, "pointerup", this.handlePointerUp), addPointerEvent(this.contextWindow, "pointercancel", this.handlePointerUp));
-  }
-  updateHandlers(handlers) {
-    this.handlers = handlers;
-  }
-  end() {
-    this.removeListeners && this.removeListeners();
-    cancelFrame(this.updatePoint);
-  }
-}
-function transformPoint(info, transformPagePoint) {
-  return transformPagePoint ? { point: transformPagePoint(info.point) } : info;
-}
-function subtractPoint(a, b) {
-  return { x: a.x - b.x, y: a.y - b.y };
-}
-function getPanInfo({ point }, history) {
-  return {
-    point,
-    delta: subtractPoint(point, lastDevicePoint(history)),
-    offset: subtractPoint(point, startDevicePoint(history)),
-    velocity: getVelocity(history, 0.1)
-  };
-}
-function startDevicePoint(history) {
-  return history[0];
-}
-function lastDevicePoint(history) {
-  return history[history.length - 1];
-}
-function getVelocity(history, timeDelta) {
-  if (history.length < 2) {
-    return { x: 0, y: 0 };
-  }
-  let i = history.length - 1;
-  let timestampedPoint = null;
-  const lastPoint = lastDevicePoint(history);
-  while (i >= 0) {
-    timestampedPoint = history[i];
-    if (lastPoint.timestamp - timestampedPoint.timestamp > /* @__PURE__ */ secondsToMilliseconds(timeDelta)) {
-      break;
-    }
-    i--;
-  }
-  if (!timestampedPoint) {
-    return { x: 0, y: 0 };
-  }
-  const time2 = /* @__PURE__ */ millisecondsToSeconds(lastPoint.timestamp - timestampedPoint.timestamp);
-  if (time2 === 0) {
-    return { x: 0, y: 0 };
-  }
-  const currentVelocity = {
-    x: (lastPoint.x - timestampedPoint.x) / time2,
-    y: (lastPoint.y - timestampedPoint.y) / time2
-  };
-  if (currentVelocity.x === Infinity) {
-    currentVelocity.x = 0;
-  }
-  if (currentVelocity.y === Infinity) {
-    currentVelocity.y = 0;
-  }
-  return currentVelocity;
-}
-function applyConstraints(point, { min, max }, elastic) {
-  if (min !== void 0 && point < min) {
-    point = elastic ? mixNumber$1(min, point, elastic.min) : Math.max(point, min);
-  } else if (max !== void 0 && point > max) {
-    point = elastic ? mixNumber$1(max, point, elastic.max) : Math.min(point, max);
-  }
-  return point;
-}
-function calcRelativeAxisConstraints(axis, min, max) {
-  return {
-    min: min !== void 0 ? axis.min + min : void 0,
-    max: max !== void 0 ? axis.max + max - (axis.max - axis.min) : void 0
-  };
-}
-function calcRelativeConstraints(layoutBox, { top, left, bottom, right }) {
-  return {
-    x: calcRelativeAxisConstraints(layoutBox.x, left, right),
-    y: calcRelativeAxisConstraints(layoutBox.y, top, bottom)
-  };
-}
-function calcViewportAxisConstraints(layoutAxis, constraintsAxis) {
-  let min = constraintsAxis.min - layoutAxis.min;
-  let max = constraintsAxis.max - layoutAxis.max;
-  if (constraintsAxis.max - constraintsAxis.min < layoutAxis.max - layoutAxis.min) {
-    [min, max] = [max, min];
-  }
-  return { min, max };
-}
-function calcViewportConstraints(layoutBox, constraintsBox) {
-  return {
-    x: calcViewportAxisConstraints(layoutBox.x, constraintsBox.x),
-    y: calcViewportAxisConstraints(layoutBox.y, constraintsBox.y)
-  };
-}
-function calcOrigin(source, target) {
-  let origin = 0.5;
-  const sourceLength = calcLength(source);
-  const targetLength = calcLength(target);
-  if (targetLength > sourceLength) {
-    origin = /* @__PURE__ */ progress(target.min, target.max - sourceLength, source.min);
-  } else if (sourceLength > targetLength) {
-    origin = /* @__PURE__ */ progress(source.min, source.max - targetLength, target.min);
-  }
-  return clamp(0, 1, origin);
-}
-function rebaseAxisConstraints(layout2, constraints) {
-  const relativeConstraints = {};
-  if (constraints.min !== void 0) {
-    relativeConstraints.min = constraints.min - layout2.min;
-  }
-  if (constraints.max !== void 0) {
-    relativeConstraints.max = constraints.max - layout2.min;
-  }
-  return relativeConstraints;
-}
-const defaultElastic = 0.35;
-function resolveDragElastic(dragElastic = defaultElastic) {
-  if (dragElastic === false) {
-    dragElastic = 0;
-  } else if (dragElastic === true) {
-    dragElastic = defaultElastic;
-  }
-  return {
-    x: resolveAxisElastic(dragElastic, "left", "right"),
-    y: resolveAxisElastic(dragElastic, "top", "bottom")
-  };
-}
-function resolveAxisElastic(dragElastic, minLabel, maxLabel) {
-  return {
-    min: resolvePointElastic(dragElastic, minLabel),
-    max: resolvePointElastic(dragElastic, maxLabel)
-  };
-}
-function resolvePointElastic(dragElastic, label) {
-  return typeof dragElastic === "number" ? dragElastic : dragElastic[label] || 0;
-}
-const elementDragControls = /* @__PURE__ */ new WeakMap();
-class VisualElementDragControls {
-  constructor(visualElement) {
-    this.openDragLock = null;
-    this.isDragging = false;
-    this.currentDirection = null;
-    this.originPoint = { x: 0, y: 0 };
-    this.constraints = false;
-    this.hasMutatedConstraints = false;
-    this.elastic = createBox();
-    this.visualElement = visualElement;
-  }
-  start(originEvent, { snapToCursor = false } = {}) {
-    const { presenceContext } = this.visualElement;
-    if (presenceContext && presenceContext.isPresent === false)
-      return;
-    const onSessionStart = (event) => {
-      const { dragSnapToOrigin: dragSnapToOrigin2 } = this.getProps();
-      dragSnapToOrigin2 ? this.pauseAnimation() : this.stopAnimation();
-      if (snapToCursor) {
-        this.snapToCursor(extractEventInfo(event).point);
-      }
-    };
-    const onStart = (event, info) => {
-      const { drag: drag2, dragPropagation, onDragStart } = this.getProps();
-      if (drag2 && !dragPropagation) {
-        if (this.openDragLock)
-          this.openDragLock();
-        this.openDragLock = setDragLock(drag2);
-        if (!this.openDragLock)
-          return;
-      }
-      this.isDragging = true;
-      this.currentDirection = null;
-      this.resolveConstraints();
-      if (this.visualElement.projection) {
-        this.visualElement.projection.isAnimationBlocked = true;
-        this.visualElement.projection.target = void 0;
-      }
-      eachAxis((axis) => {
-        let current = this.getAxisMotionValue(axis).get() || 0;
-        if (percent.test(current)) {
-          const { projection } = this.visualElement;
-          if (projection && projection.layout) {
-            const measuredAxis = projection.layout.layoutBox[axis];
-            if (measuredAxis) {
-              const length2 = calcLength(measuredAxis);
-              current = length2 * (parseFloat(current) / 100);
-            }
-          }
-        }
-        this.originPoint[axis] = current;
-      });
-      if (onDragStart) {
-        frame.postRender(() => onDragStart(event, info));
-      }
-      addValueToWillChange(this.visualElement, "transform");
-      const { animationState } = this.visualElement;
-      animationState && animationState.setActive("whileDrag", true);
-    };
-    const onMove = (event, info) => {
-      const { dragPropagation, dragDirectionLock, onDirectionLock, onDrag } = this.getProps();
-      if (!dragPropagation && !this.openDragLock)
-        return;
-      const { offset } = info;
-      if (dragDirectionLock && this.currentDirection === null) {
-        this.currentDirection = getCurrentDirection(offset);
-        if (this.currentDirection !== null) {
-          onDirectionLock && onDirectionLock(this.currentDirection);
-        }
-        return;
-      }
-      this.updateAxis("x", info.point, offset);
-      this.updateAxis("y", info.point, offset);
-      this.visualElement.render();
-      onDrag && onDrag(event, info);
-    };
-    const onSessionEnd = (event, info) => this.stop(event, info);
-    const resumeAnimation = () => eachAxis((axis) => this.getAnimationState(axis) === "paused" && this.getAxisMotionValue(axis).animation?.play());
-    const { dragSnapToOrigin } = this.getProps();
-    this.panSession = new PanSession(originEvent, {
-      onSessionStart,
-      onStart,
-      onMove,
-      onSessionEnd,
-      resumeAnimation
-    }, {
-      transformPagePoint: this.visualElement.getTransformPagePoint(),
-      dragSnapToOrigin,
-      contextWindow: getContextWindow(this.visualElement)
-    });
-  }
-  stop(event, info) {
-    const isDragging2 = this.isDragging;
-    this.cancel();
-    if (!isDragging2)
-      return;
-    const { velocity } = info;
-    this.startAnimation(velocity);
-    const { onDragEnd } = this.getProps();
-    if (onDragEnd) {
-      frame.postRender(() => onDragEnd(event, info));
-    }
-  }
-  cancel() {
-    this.isDragging = false;
-    const { projection, animationState } = this.visualElement;
-    if (projection) {
-      projection.isAnimationBlocked = false;
-    }
-    this.panSession && this.panSession.end();
-    this.panSession = void 0;
-    const { dragPropagation } = this.getProps();
-    if (!dragPropagation && this.openDragLock) {
-      this.openDragLock();
-      this.openDragLock = null;
-    }
-    animationState && animationState.setActive("whileDrag", false);
-  }
-  updateAxis(axis, _point, offset) {
-    const { drag: drag2 } = this.getProps();
-    if (!offset || !shouldDrag(axis, drag2, this.currentDirection))
-      return;
-    const axisValue = this.getAxisMotionValue(axis);
-    let next2 = this.originPoint[axis] + offset[axis];
-    if (this.constraints && this.constraints[axis]) {
-      next2 = applyConstraints(next2, this.constraints[axis], this.elastic[axis]);
-    }
-    axisValue.set(next2);
-  }
-  resolveConstraints() {
-    const { dragConstraints, dragElastic } = this.getProps();
-    const layout2 = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(false) : this.visualElement.projection?.layout;
-    const prevConstraints = this.constraints;
-    if (dragConstraints && isRefObject(dragConstraints)) {
-      if (!this.constraints) {
-        this.constraints = this.resolveRefConstraints();
-      }
-    } else {
-      if (dragConstraints && layout2) {
-        this.constraints = calcRelativeConstraints(layout2.layoutBox, dragConstraints);
-      } else {
-        this.constraints = false;
-      }
-    }
-    this.elastic = resolveDragElastic(dragElastic);
-    if (prevConstraints !== this.constraints && layout2 && this.constraints && !this.hasMutatedConstraints) {
-      eachAxis((axis) => {
-        if (this.constraints !== false && this.getAxisMotionValue(axis)) {
-          this.constraints[axis] = rebaseAxisConstraints(layout2.layoutBox[axis], this.constraints[axis]);
-        }
-      });
-    }
-  }
-  resolveRefConstraints() {
-    const { dragConstraints: constraints, onMeasureDragConstraints } = this.getProps();
-    if (!constraints || !isRefObject(constraints))
-      return false;
-    const constraintsElement = constraints.current;
-    const { projection } = this.visualElement;
-    if (!projection || !projection.layout)
-      return false;
-    const constraintsBox = measurePageBox(constraintsElement, projection.root, this.visualElement.getTransformPagePoint());
-    let measuredConstraints = calcViewportConstraints(projection.layout.layoutBox, constraintsBox);
-    if (onMeasureDragConstraints) {
-      const userConstraints = onMeasureDragConstraints(convertBoxToBoundingBox(measuredConstraints));
-      this.hasMutatedConstraints = !!userConstraints;
-      if (userConstraints) {
-        measuredConstraints = convertBoundingBoxToBox(userConstraints);
-      }
-    }
-    return measuredConstraints;
-  }
-  startAnimation(velocity) {
-    const { drag: drag2, dragMomentum, dragElastic, dragTransition, dragSnapToOrigin, onDragTransitionEnd } = this.getProps();
-    const constraints = this.constraints || {};
-    const momentumAnimations = eachAxis((axis) => {
-      if (!shouldDrag(axis, drag2, this.currentDirection)) {
-        return;
-      }
-      let transition2 = constraints && constraints[axis] || {};
-      if (dragSnapToOrigin)
-        transition2 = { min: 0, max: 0 };
-      const bounceStiffness = dragElastic ? 200 : 1e6;
-      const bounceDamping = dragElastic ? 40 : 1e7;
-      const inertia2 = {
-        type: "inertia",
-        velocity: dragMomentum ? velocity[axis] : 0,
-        bounceStiffness,
-        bounceDamping,
-        timeConstant: 750,
-        restDelta: 1,
-        restSpeed: 10,
-        ...dragTransition,
-        ...transition2
-      };
-      return this.startAxisValueAnimation(axis, inertia2);
-    });
-    return Promise.all(momentumAnimations).then(onDragTransitionEnd);
-  }
-  startAxisValueAnimation(axis, transition2) {
-    const axisValue = this.getAxisMotionValue(axis);
-    addValueToWillChange(this.visualElement, axis);
-    return axisValue.start(animateMotionValue(axis, axisValue, 0, transition2, this.visualElement, false));
-  }
-  stopAnimation() {
-    eachAxis((axis) => this.getAxisMotionValue(axis).stop());
-  }
-  pauseAnimation() {
-    eachAxis((axis) => this.getAxisMotionValue(axis).animation?.pause());
-  }
-  getAnimationState(axis) {
-    return this.getAxisMotionValue(axis).animation?.state;
-  }
-  /**
-   * Drag works differently depending on which props are provided.
-   *
-   * - If _dragX and _dragY are provided, we output the gesture delta directly to those motion values.
-   * - Otherwise, we apply the delta to the x/y motion values.
-   */
-  getAxisMotionValue(axis) {
-    const dragKey = `_drag${axis.toUpperCase()}`;
-    const props = this.visualElement.getProps();
-    const externalMotionValue = props[dragKey];
-    return externalMotionValue ? externalMotionValue : this.visualElement.getValue(axis, (props.initial ? props.initial[axis] : void 0) || 0);
-  }
-  snapToCursor(point) {
-    eachAxis((axis) => {
-      const { drag: drag2 } = this.getProps();
-      if (!shouldDrag(axis, drag2, this.currentDirection))
-        return;
-      const { projection } = this.visualElement;
-      const axisValue = this.getAxisMotionValue(axis);
-      if (projection && projection.layout) {
-        const { min, max } = projection.layout.layoutBox[axis];
-        axisValue.set(point[axis] - mixNumber$1(min, max, 0.5));
-      }
-    });
-  }
-  /**
-   * When the viewport resizes we want to check if the measured constraints
-   * have changed and, if so, reposition the element within those new constraints
-   * relative to where it was before the resize.
-   */
-  scalePositionWithinConstraints() {
-    if (!this.visualElement.current)
-      return;
-    const { drag: drag2, dragConstraints } = this.getProps();
-    const { projection } = this.visualElement;
-    if (!isRefObject(dragConstraints) || !projection || !this.constraints)
-      return;
-    this.stopAnimation();
-    const boxProgress = { x: 0, y: 0 };
-    eachAxis((axis) => {
-      const axisValue = this.getAxisMotionValue(axis);
-      if (axisValue && this.constraints !== false) {
-        const latest = axisValue.get();
-        boxProgress[axis] = calcOrigin({ min: latest, max: latest }, this.constraints[axis]);
-      }
-    });
-    const { transformTemplate: transformTemplate2 } = this.visualElement.getProps();
-    this.visualElement.current.style.transform = transformTemplate2 ? transformTemplate2({}, "") : "none";
-    projection.root && projection.root.updateScroll();
-    projection.updateLayout();
-    this.resolveConstraints();
-    eachAxis((axis) => {
-      if (!shouldDrag(axis, drag2, null))
-        return;
-      const axisValue = this.getAxisMotionValue(axis);
-      const { min, max } = this.constraints[axis];
-      axisValue.set(mixNumber$1(min, max, boxProgress[axis]));
-    });
-  }
-  addListeners() {
-    if (!this.visualElement.current)
-      return;
-    elementDragControls.set(this.visualElement, this);
-    const element = this.visualElement.current;
-    const stopPointerListener = addPointerEvent(element, "pointerdown", (event) => {
-      const { drag: drag2, dragListener = true } = this.getProps();
-      drag2 && dragListener && this.start(event);
-    });
-    const measureDragConstraints = () => {
-      const { dragConstraints } = this.getProps();
-      if (isRefObject(dragConstraints) && dragConstraints.current) {
-        this.constraints = this.resolveRefConstraints();
-      }
-    };
-    const { projection } = this.visualElement;
-    const stopMeasureLayoutListener = projection.addEventListener("measure", measureDragConstraints);
-    if (projection && !projection.layout) {
-      projection.root && projection.root.updateScroll();
-      projection.updateLayout();
-    }
-    frame.read(measureDragConstraints);
-    const stopResizeListener = addDomEvent(window, "resize", () => this.scalePositionWithinConstraints());
-    const stopLayoutUpdateListener = projection.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
-      if (this.isDragging && hasLayoutChanged) {
-        eachAxis((axis) => {
-          const motionValue2 = this.getAxisMotionValue(axis);
-          if (!motionValue2)
-            return;
-          this.originPoint[axis] += delta[axis].translate;
-          motionValue2.set(motionValue2.get() + delta[axis].translate);
-        });
-        this.visualElement.render();
-      }
-    });
-    return () => {
-      stopResizeListener();
-      stopPointerListener();
-      stopMeasureLayoutListener();
-      stopLayoutUpdateListener && stopLayoutUpdateListener();
-    };
-  }
-  getProps() {
-    const props = this.visualElement.getProps();
-    const { drag: drag2 = false, dragDirectionLock = false, dragPropagation = false, dragConstraints = false, dragElastic = defaultElastic, dragMomentum = true } = props;
-    return {
-      ...props,
-      drag: drag2,
-      dragDirectionLock,
-      dragPropagation,
-      dragConstraints,
-      dragElastic,
-      dragMomentum
-    };
-  }
-}
-function shouldDrag(direction2, drag2, currentDirection) {
-  return (drag2 === true || drag2 === direction2) && (currentDirection === null || currentDirection === direction2);
-}
-function getCurrentDirection(offset, lockThreshold = 10) {
-  let direction2 = null;
-  if (Math.abs(offset.y) > lockThreshold) {
-    direction2 = "y";
-  } else if (Math.abs(offset.x) > lockThreshold) {
-    direction2 = "x";
-  }
-  return direction2;
-}
-class DragGesture extends Feature {
-  constructor(node2) {
-    super(node2);
-    this.removeGroupControls = noop;
-    this.removeListeners = noop;
-    this.controls = new VisualElementDragControls(node2);
-  }
-  mount() {
-    const { dragControls } = this.node.getProps();
-    if (dragControls) {
-      this.removeGroupControls = dragControls.subscribe(this.controls);
-    }
-    this.removeListeners = this.controls.addListeners() || noop;
-  }
-  unmount() {
-    this.removeGroupControls();
-    this.removeListeners();
-  }
-}
-const asyncHandler = (handler) => (event, info) => {
-  if (handler) {
-    frame.postRender(() => handler(event, info));
-  }
-};
-class PanGesture extends Feature {
-  constructor() {
-    super(...arguments);
-    this.removePointerDownListener = noop;
-  }
-  onPointerDown(pointerDownEvent) {
-    this.session = new PanSession(pointerDownEvent, this.createPanHandlers(), {
-      transformPagePoint: this.node.getTransformPagePoint(),
-      contextWindow: getContextWindow(this.node)
-    });
-  }
-  createPanHandlers() {
-    const { onPanSessionStart, onPanStart, onPan, onPanEnd } = this.node.getProps();
-    return {
-      onSessionStart: asyncHandler(onPanSessionStart),
-      onStart: asyncHandler(onPanStart),
-      onMove: onPan,
-      onEnd: (event, info) => {
-        delete this.session;
-        if (onPanEnd) {
-          frame.postRender(() => onPanEnd(event, info));
-        }
-      }
-    };
-  }
-  mount() {
-    this.removePointerDownListener = addPointerEvent(this.node.current, "pointerdown", (event) => this.onPointerDown(event));
-  }
-  update() {
-    this.session && this.session.updateHandlers(this.createPanHandlers());
-  }
-  unmount() {
-    this.removePointerDownListener();
-    this.session && this.session.end();
-  }
-}
-const globalProjectionState = {
-  /**
-   * Global flag as to whether the tree has animated since the last time
-   * we resized the window
-   */
-  hasAnimatedSinceResize: true,
-  /**
-   * We set this to true once, on the first update. Any nodes added to the tree beyond that
-   * update will be given a `data-projection-id` attribute.
-   */
-  hasEverUpdated: false
-};
-function pixelsToPercent(pixels, axis) {
-  if (axis.max === axis.min)
-    return 0;
-  return pixels / (axis.max - axis.min) * 100;
-}
-const correctBorderRadius = {
-  correct: (latest, node2) => {
-    if (!node2.target)
-      return latest;
-    if (typeof latest === "string") {
-      if (px.test(latest)) {
-        latest = parseFloat(latest);
-      } else {
-        return latest;
-      }
-    }
-    const x = pixelsToPercent(latest, node2.target.x);
-    const y = pixelsToPercent(latest, node2.target.y);
-    return `${x}% ${y}%`;
-  }
-};
-const correctBoxShadow = {
-  correct: (latest, { treeScale, projectionDelta }) => {
-    const original = latest;
-    const shadow = complex.parse(latest);
-    if (shadow.length > 5)
-      return original;
-    const template = complex.createTransformer(latest);
-    const offset = typeof shadow[0] !== "number" ? 1 : 0;
-    const xScale = projectionDelta.x.scale * treeScale.x;
-    const yScale = projectionDelta.y.scale * treeScale.y;
-    shadow[0 + offset] /= xScale;
-    shadow[1 + offset] /= yScale;
-    const averageScale = mixNumber$1(xScale, yScale, 0.5);
-    if (typeof shadow[2 + offset] === "number")
-      shadow[2 + offset] /= averageScale;
-    if (typeof shadow[3 + offset] === "number")
-      shadow[3 + offset] /= averageScale;
-    return template(shadow);
-  }
-};
-class MeasureLayoutWithContext extends reactExports.Component {
-  /**
-   * This only mounts projection nodes for components that
-   * need measuring, we might want to do it for all components
-   * in order to incorporate transforms
-   */
-  componentDidMount() {
-    const { visualElement, layoutGroup, switchLayoutGroup, layoutId } = this.props;
-    const { projection } = visualElement;
-    addScaleCorrector(defaultScaleCorrectors);
-    if (projection) {
-      if (layoutGroup.group)
-        layoutGroup.group.add(projection);
-      if (switchLayoutGroup && switchLayoutGroup.register && layoutId) {
-        switchLayoutGroup.register(projection);
-      }
-      projection.root.didUpdate();
-      projection.addEventListener("animationComplete", () => {
-        this.safeToRemove();
-      });
-      projection.setOptions({
-        ...projection.options,
-        onExitComplete: () => this.safeToRemove()
-      });
-    }
-    globalProjectionState.hasEverUpdated = true;
-  }
-  getSnapshotBeforeUpdate(prevProps) {
-    const { layoutDependency, visualElement, drag: drag2, isPresent: isPresent2 } = this.props;
-    const { projection } = visualElement;
-    if (!projection)
-      return null;
-    projection.isPresent = isPresent2;
-    if (drag2 || prevProps.layoutDependency !== layoutDependency || layoutDependency === void 0 || prevProps.isPresent !== isPresent2) {
-      projection.willUpdate();
-    } else {
-      this.safeToRemove();
-    }
-    if (prevProps.isPresent !== isPresent2) {
-      if (isPresent2) {
-        projection.promote();
-      } else if (!projection.relegate()) {
-        frame.postRender(() => {
-          const stack = projection.getStack();
-          if (!stack || !stack.members.length) {
-            this.safeToRemove();
-          }
-        });
-      }
-    }
-    return null;
-  }
-  componentDidUpdate() {
-    const { projection } = this.props.visualElement;
-    if (projection) {
-      projection.root.didUpdate();
-      microtask.postRender(() => {
-        if (!projection.currentAnimation && projection.isLead()) {
-          this.safeToRemove();
-        }
-      });
-    }
-  }
-  componentWillUnmount() {
-    const { visualElement, layoutGroup, switchLayoutGroup: promoteContext } = this.props;
-    const { projection } = visualElement;
-    if (projection) {
-      projection.scheduleCheckAfterUnmount();
-      if (layoutGroup && layoutGroup.group)
-        layoutGroup.group.remove(projection);
-      if (promoteContext && promoteContext.deregister)
-        promoteContext.deregister(projection);
-    }
-  }
-  safeToRemove() {
-    const { safeToRemove } = this.props;
-    safeToRemove && safeToRemove();
-  }
-  render() {
-    return null;
-  }
-}
-function MeasureLayout(props) {
-  const [isPresent2, safeToRemove] = usePresence();
-  const layoutGroup = reactExports.useContext(LayoutGroupContext);
-  return jsxRuntimeExports.jsx(MeasureLayoutWithContext, { ...props, layoutGroup, switchLayoutGroup: reactExports.useContext(SwitchLayoutGroupContext), isPresent: isPresent2, safeToRemove });
-}
-const defaultScaleCorrectors = {
-  borderRadius: {
-    ...correctBorderRadius,
-    applyTo: [
-      "borderTopLeftRadius",
-      "borderTopRightRadius",
-      "borderBottomLeftRadius",
-      "borderBottomRightRadius"
-    ]
-  },
-  borderTopLeftRadius: correctBorderRadius,
-  borderTopRightRadius: correctBorderRadius,
-  borderBottomLeftRadius: correctBorderRadius,
-  borderBottomRightRadius: correctBorderRadius,
-  boxShadow: correctBoxShadow
-};
-function animateSingleValue(value, keyframes2, options) {
-  const motionValue$1 = isMotionValue(value) ? value : motionValue(value);
-  motionValue$1.start(animateMotionValue("", motionValue$1, keyframes2, options));
-  return motionValue$1.animation;
-}
-function isSVGElement(element) {
-  return element instanceof SVGElement && element.tagName !== "svg";
-}
-const compareByDepth = (a, b) => a.depth - b.depth;
-class FlatTree {
-  constructor() {
-    this.children = [];
-    this.isDirty = false;
-  }
-  add(child) {
-    addUniqueItem(this.children, child);
-    this.isDirty = true;
-  }
-  remove(child) {
-    removeItem(this.children, child);
-    this.isDirty = true;
-  }
-  forEach(callback) {
-    this.isDirty && this.children.sort(compareByDepth);
-    this.isDirty = false;
-    this.children.forEach(callback);
-  }
-}
-function delay(callback, timeout) {
-  const start = time.now();
-  const checkElapsed = ({ timestamp }) => {
-    const elapsed = timestamp - start;
-    if (elapsed >= timeout) {
-      cancelFrame(checkElapsed);
-      callback(elapsed - timeout);
-    }
-  };
-  frame.setup(checkElapsed, true);
-  return () => cancelFrame(checkElapsed);
-}
-const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"];
-const numBorders = borders.length;
-const asNumber = (value) => typeof value === "string" ? parseFloat(value) : value;
-const isPx = (value) => typeof value === "number" || px.test(value);
-function mixValues(target, follow, lead, progress2, shouldCrossfadeOpacity, isOnlyMember) {
-  if (shouldCrossfadeOpacity) {
-    target.opacity = mixNumber$1(0, lead.opacity ?? 1, easeCrossfadeIn(progress2));
-    target.opacityExit = mixNumber$1(follow.opacity ?? 1, 0, easeCrossfadeOut(progress2));
-  } else if (isOnlyMember) {
-    target.opacity = mixNumber$1(follow.opacity ?? 1, lead.opacity ?? 1, progress2);
-  }
-  for (let i = 0; i < numBorders; i++) {
-    const borderLabel = `border${borders[i]}Radius`;
-    let followRadius = getRadius(follow, borderLabel);
-    let leadRadius = getRadius(lead, borderLabel);
-    if (followRadius === void 0 && leadRadius === void 0)
-      continue;
-    followRadius || (followRadius = 0);
-    leadRadius || (leadRadius = 0);
-    const canMix = followRadius === 0 || leadRadius === 0 || isPx(followRadius) === isPx(leadRadius);
-    if (canMix) {
-      target[borderLabel] = Math.max(mixNumber$1(asNumber(followRadius), asNumber(leadRadius), progress2), 0);
-      if (percent.test(leadRadius) || percent.test(followRadius)) {
-        target[borderLabel] += "%";
-      }
-    } else {
-      target[borderLabel] = leadRadius;
-    }
-  }
-  if (follow.rotate || lead.rotate) {
-    target.rotate = mixNumber$1(follow.rotate || 0, lead.rotate || 0, progress2);
-  }
-}
-function getRadius(values, radiusName) {
-  return values[radiusName] !== void 0 ? values[radiusName] : values.borderRadius;
-}
-const easeCrossfadeIn = /* @__PURE__ */ compress(0, 0.5, circOut);
-const easeCrossfadeOut = /* @__PURE__ */ compress(0.5, 0.95, noop);
-function compress(min, max, easing) {
-  return (p) => {
-    if (p < min)
-      return 0;
-    if (p > max)
-      return 1;
-    return easing(/* @__PURE__ */ progress(min, max, p));
-  };
-}
-function copyAxisInto(axis, originAxis) {
-  axis.min = originAxis.min;
-  axis.max = originAxis.max;
-}
-function copyBoxInto(box, originBox) {
-  copyAxisInto(box.x, originBox.x);
-  copyAxisInto(box.y, originBox.y);
-}
-function copyAxisDeltaInto(delta, originDelta) {
-  delta.translate = originDelta.translate;
-  delta.scale = originDelta.scale;
-  delta.originPoint = originDelta.originPoint;
-  delta.origin = originDelta.origin;
 }
 function removePointDelta(point, translate, scale2, originPoint, boxScale) {
   point -= translate;
@@ -21098,6 +20113,133 @@ function aspectRatio(box) {
 }
 function axisDeltaEquals(a, b) {
   return a.translate === b.translate && a.scale === b.scale && a.originPoint === b.originPoint;
+}
+function eachAxis(callback) {
+  return [callback("x"), callback("y")];
+}
+function buildProjectionTransform(delta, treeScale, latestTransform) {
+  let transform2 = "";
+  const xTranslate = delta.x.translate / treeScale.x;
+  const yTranslate = delta.y.translate / treeScale.y;
+  const zTranslate = latestTransform?.z || 0;
+  if (xTranslate || yTranslate || zTranslate) {
+    transform2 = `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) `;
+  }
+  if (treeScale.x !== 1 || treeScale.y !== 1) {
+    transform2 += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `;
+  }
+  if (latestTransform) {
+    const { transformPerspective, rotate: rotate2, rotateX, rotateY, skewX, skewY } = latestTransform;
+    if (transformPerspective)
+      transform2 = `perspective(${transformPerspective}px) ${transform2}`;
+    if (rotate2)
+      transform2 += `rotate(${rotate2}deg) `;
+    if (rotateX)
+      transform2 += `rotateX(${rotateX}deg) `;
+    if (rotateY)
+      transform2 += `rotateY(${rotateY}deg) `;
+    if (skewX)
+      transform2 += `skewX(${skewX}deg) `;
+    if (skewY)
+      transform2 += `skewY(${skewY}deg) `;
+  }
+  const elementScaleX = delta.x.scale * treeScale.x;
+  const elementScaleY = delta.y.scale * treeScale.y;
+  if (elementScaleX !== 1 || elementScaleY !== 1) {
+    transform2 += `scale(${elementScaleX}, ${elementScaleY})`;
+  }
+  return transform2 || "none";
+}
+const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"];
+const numBorders = borders.length;
+const asNumber = (value) => typeof value === "string" ? parseFloat(value) : value;
+const isPx = (value) => typeof value === "number" || px.test(value);
+function mixValues(target, follow, lead, progress2, shouldCrossfadeOpacity, isOnlyMember) {
+  if (shouldCrossfadeOpacity) {
+    target.opacity = mixNumber$1(0, lead.opacity ?? 1, easeCrossfadeIn(progress2));
+    target.opacityExit = mixNumber$1(follow.opacity ?? 1, 0, easeCrossfadeOut(progress2));
+  } else if (isOnlyMember) {
+    target.opacity = mixNumber$1(follow.opacity ?? 1, lead.opacity ?? 1, progress2);
+  }
+  for (let i = 0; i < numBorders; i++) {
+    const borderLabel = `border${borders[i]}Radius`;
+    let followRadius = getRadius(follow, borderLabel);
+    let leadRadius = getRadius(lead, borderLabel);
+    if (followRadius === void 0 && leadRadius === void 0)
+      continue;
+    followRadius || (followRadius = 0);
+    leadRadius || (leadRadius = 0);
+    const canMix = followRadius === 0 || leadRadius === 0 || isPx(followRadius) === isPx(leadRadius);
+    if (canMix) {
+      target[borderLabel] = Math.max(mixNumber$1(asNumber(followRadius), asNumber(leadRadius), progress2), 0);
+      if (percent.test(leadRadius) || percent.test(followRadius)) {
+        target[borderLabel] += "%";
+      }
+    } else {
+      target[borderLabel] = leadRadius;
+    }
+  }
+  if (follow.rotate || lead.rotate) {
+    target.rotate = mixNumber$1(follow.rotate || 0, lead.rotate || 0, progress2);
+  }
+}
+function getRadius(values, radiusName) {
+  return values[radiusName] !== void 0 ? values[radiusName] : values.borderRadius;
+}
+const easeCrossfadeIn = /* @__PURE__ */ compress(0, 0.5, circOut);
+const easeCrossfadeOut = /* @__PURE__ */ compress(0.5, 0.95, noop);
+function compress(min, max, easing) {
+  return (p) => {
+    if (p < min)
+      return 0;
+    if (p > max)
+      return 1;
+    return easing(/* @__PURE__ */ progress(min, max, p));
+  };
+}
+function animateSingleValue(value, keyframes2, options) {
+  const motionValue$1 = isMotionValue(value) ? value : motionValue(value);
+  motionValue$1.start(animateMotionValue("", motionValue$1, keyframes2, options));
+  return motionValue$1.animation;
+}
+function addDomEvent(target, eventName, handler, options = { passive: true }) {
+  target.addEventListener(eventName, handler, options);
+  return () => target.removeEventListener(eventName, handler);
+}
+const compareByDepth = (a, b) => a.depth - b.depth;
+class FlatTree {
+  constructor() {
+    this.children = [];
+    this.isDirty = false;
+  }
+  add(child) {
+    addUniqueItem(this.children, child);
+    this.isDirty = true;
+  }
+  remove(child) {
+    removeItem(this.children, child);
+    this.isDirty = true;
+  }
+  forEach(callback) {
+    this.isDirty && this.children.sort(compareByDepth);
+    this.isDirty = false;
+    this.children.forEach(callback);
+  }
+}
+function delay(callback, timeout) {
+  const start = time.now();
+  const checkElapsed = ({ timestamp }) => {
+    const elapsed = timestamp - start;
+    if (elapsed >= timeout) {
+      cancelFrame(checkElapsed);
+      callback(elapsed - timeout);
+    }
+  };
+  frame.setup(checkElapsed, true);
+  return () => cancelFrame(checkElapsed);
+}
+function resolveMotionValue(value) {
+  return isMotionValue(value) ? value.get() : value;
 }
 class NodeStack {
   constructor() {
@@ -21189,43 +20331,21 @@ class NodeStack {
     }
   }
 }
-function buildProjectionTransform(delta, treeScale, latestTransform) {
-  let transform2 = "";
-  const xTranslate = delta.x.translate / treeScale.x;
-  const yTranslate = delta.y.translate / treeScale.y;
-  const zTranslate = latestTransform?.z || 0;
-  if (xTranslate || yTranslate || zTranslate) {
-    transform2 = `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) `;
-  }
-  if (treeScale.x !== 1 || treeScale.y !== 1) {
-    transform2 += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `;
-  }
-  if (latestTransform) {
-    const { transformPerspective, rotate: rotate2, rotateX, rotateY, skewX, skewY } = latestTransform;
-    if (transformPerspective)
-      transform2 = `perspective(${transformPerspective}px) ${transform2}`;
-    if (rotate2)
-      transform2 += `rotate(${rotate2}deg) `;
-    if (rotateX)
-      transform2 += `rotateX(${rotateX}deg) `;
-    if (rotateY)
-      transform2 += `rotateY(${rotateY}deg) `;
-    if (skewX)
-      transform2 += `skewX(${skewX}deg) `;
-    if (skewY)
-      transform2 += `skewY(${skewY}deg) `;
-  }
-  const elementScaleX = delta.x.scale * treeScale.x;
-  const elementScaleY = delta.y.scale * treeScale.y;
-  if (elementScaleX !== 1 || elementScaleY !== 1) {
-    transform2 += `scale(${elementScaleX}, ${elementScaleY})`;
-  }
-  return transform2 || "none";
-}
+const globalProjectionState = {
+  /**
+   * Global flag as to whether the tree has animated since the last time
+   * we resized the window
+   */
+  hasAnimatedSinceResize: true,
+  /**
+   * We set this to true once, on the first update. Any nodes added to the tree beyond that
+   * update will be given a `data-projection-id` attribute.
+   */
+  hasEverUpdated: false
+};
 const transformAxes = ["", "X", "Y", "Z"];
-const hiddenVisibility = { visibility: "hidden" };
 const animationTarget = 1e3;
-let id = 0;
+let id$1 = 0;
 function resetDistortingTransform(key, visualElement, values, sharedAnimationValues) {
   const { latestValues } = visualElement;
   if (latestValues[key]) {
@@ -21253,11 +20373,12 @@ function cancelTreeOptimisedTransformAnimations(projectionNode) {
     cancelTreeOptimisedTransformAnimations(parent);
   }
 }
-function createProjectionNode({ attachResizeListener, defaultParent, measureScroll, checkIsScrollRoot, resetTransform }) {
+function createProjectionNode$1({ attachResizeListener, defaultParent, measureScroll, checkIsScrollRoot, resetTransform }) {
   return class ProjectionNode {
     constructor(latestValues = {}, parent = defaultParent?.()) {
-      this.id = id++;
+      this.id = id$1++;
       this.animationId = 0;
+      this.animationCommitId = 0;
       this.children = /* @__PURE__ */ new Set();
       this.options = {};
       this.isTreeAnimating = false;
@@ -21276,6 +20397,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       this.treeScale = { x: 1, y: 1 };
       this.eventHandlers = /* @__PURE__ */ new Map();
       this.hasTreeAnimated = false;
+      this.layoutVersion = 0;
       this.updateScheduled = false;
       this.scheduleUpdate = () => this.update();
       this.projectionUpdateScheduled = false;
@@ -21293,6 +20415,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
         this.nodes.forEach(cleanDirtyNodes);
       };
       this.resolvedRelativeTargetAt = 0;
+      this.linkedParentVersion = 0;
       this.hasProjected = false;
       this.isVisible = true;
       this.animationProgress = 0;
@@ -21327,7 +20450,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     mount(instance) {
       if (this.instance)
         return;
-      this.isSVG = isSVGElement(instance);
+      this.isSVG = isSVGElement(instance) && !isSVGSVGElement(instance);
       this.instance = instance;
       const { layoutId, layout: layout2, visualElement } = this.options;
       if (visualElement && !visualElement.current) {
@@ -21340,8 +20463,16 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
       if (attachResizeListener) {
         let cancelDelay;
+        let innerWidth = 0;
         const resizeUnblockUpdate = () => this.root.updateBlockedByResize = false;
+        frame.read(() => {
+          innerWidth = window.innerWidth;
+        });
         attachResizeListener(instance, () => {
+          const newInnerWidth = window.innerWidth;
+          if (newInnerWidth === innerWidth)
+            return;
+          innerWidth = newInnerWidth;
           this.root.updateBlockedByResize = true;
           cancelDelay && cancelDelay();
           cancelDelay = delay(resizeUnblockUpdate, 250);
@@ -21370,7 +20501,6 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
               this.resumingFrom = this.resumeFrom;
               this.resumingFrom.resumingFrom = void 0;
             }
-            this.setAnimationOrigin(delta, hasOnlyRelativeTargetChanged);
             const animationOptions = {
               ...getValueTransition(layoutTransition, "layout"),
               onPlay: onLayoutAnimationStart,
@@ -21381,6 +20511,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
               animationOptions.type = false;
             }
             this.startAnimation(animationOptions);
+            this.setAnimationOrigin(delta, hasOnlyRelativeTargetChanged);
           } else {
             if (!hasLayoutChanged) {
               finishAnimation(this);
@@ -21466,13 +20597,19 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
         this.nodes.forEach(clearMeasurements);
         return;
       }
+      if (this.animationId <= this.animationCommitId) {
+        this.nodes.forEach(clearIsLayoutDirty);
+        return;
+      }
+      this.animationCommitId = this.animationId;
       if (!this.isUpdating) {
         this.nodes.forEach(clearIsLayoutDirty);
+      } else {
+        this.isUpdating = false;
+        this.nodes.forEach(resetTransformStyle);
+        this.nodes.forEach(updateLayout);
+        this.nodes.forEach(notifyLayoutUpdate);
       }
-      this.isUpdating = false;
-      this.nodes.forEach(resetTransformStyle);
-      this.nodes.forEach(updateLayout);
-      this.nodes.forEach(notifyLayoutUpdate);
       this.clearAllSnapshots();
       const now2 = time.now();
       frameData.delta = clamp(0, 1e3 / 60, now2 - frameData.timestamp);
@@ -21534,6 +20671,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
       const prevLayout = this.layout;
       this.layout = this.measure(false);
+      this.layoutVersion++;
       this.layoutCorrected = createBox();
       this.isLayoutDirty = false;
       this.projectionDelta = void 0;
@@ -21701,17 +20839,15 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       if (!this.layout || !(layout2 || layoutId))
         return;
       this.resolvedRelativeTargetAt = frameData.timestamp;
+      const relativeParent = this.getClosestProjectingParent();
+      if (relativeParent && this.linkedParentVersion !== relativeParent.layoutVersion && !relativeParent.options.layoutRoot) {
+        this.removeRelativeTarget();
+      }
       if (!this.targetDelta && !this.relativeTarget) {
-        const relativeParent = this.getClosestProjectingParent();
-        if (relativeParent && relativeParent.layout && this.animationProgress !== 1) {
-          this.relativeParent = relativeParent;
-          this.forceRelativeParentToResolveTarget();
-          this.relativeTarget = createBox();
-          this.relativeTargetOrigin = createBox();
-          calcRelativePosition(this.relativeTargetOrigin, this.layout.layoutBox, relativeParent.layout.layoutBox);
-          copyBoxInto(this.relativeTarget, this.relativeTargetOrigin);
+        if (relativeParent && relativeParent.layout) {
+          this.createRelativeTarget(relativeParent, this.layout.layoutBox, relativeParent.layout.layoutBox);
         } else {
-          this.relativeParent = this.relativeTarget = void 0;
+          this.removeRelativeTarget();
         }
       }
       if (!this.relativeTarget && !this.targetDelta)
@@ -21735,14 +20871,8 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
       if (this.attemptToResolveRelativeTarget) {
         this.attemptToResolveRelativeTarget = false;
-        const relativeParent = this.getClosestProjectingParent();
         if (relativeParent && Boolean(relativeParent.resumingFrom) === Boolean(this.resumingFrom) && !relativeParent.options.layoutScroll && relativeParent.target && this.animationProgress !== 1) {
-          this.relativeParent = relativeParent;
-          this.forceRelativeParentToResolveTarget();
-          this.relativeTarget = createBox();
-          this.relativeTargetOrigin = createBox();
-          calcRelativePosition(this.relativeTargetOrigin, this.target, relativeParent.target);
-          copyBoxInto(this.relativeTarget, this.relativeTargetOrigin);
+          this.createRelativeTarget(relativeParent, this.target, relativeParent.target);
         } else {
           this.relativeParent = this.relativeTarget = void 0;
         }
@@ -21760,6 +20890,18 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     }
     isProjecting() {
       return Boolean((this.relativeTarget || this.targetDelta || this.options.layoutRoot) && this.layout);
+    }
+    createRelativeTarget(relativeParent, layout2, parentLayout) {
+      this.relativeParent = relativeParent;
+      this.linkedParentVersion = relativeParent.layoutVersion;
+      this.forceRelativeParentToResolveTarget();
+      this.relativeTarget = createBox();
+      this.relativeTargetOrigin = createBox();
+      calcRelativePosition(this.relativeTargetOrigin, layout2, parentLayout);
+      copyBoxInto(this.relativeTarget, this.relativeTargetOrigin);
+    }
+    removeRelativeTarget() {
+      this.relativeParent = this.relativeTarget = void 0;
     }
     calcProjection() {
       const lead = this.getLead();
@@ -21878,8 +21020,8 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     }
     startAnimation(options) {
       this.notifyListeners("animationStart");
-      this.currentAnimation?.stop(false);
-      this.resumingFrom?.currentAnimation?.stop(false);
+      this.currentAnimation?.stop();
+      this.resumingFrom?.currentAnimation?.stop();
       if (this.pendingAnimation) {
         cancelFrame(this.pendingAnimation);
         this.pendingAnimation = void 0;
@@ -21889,6 +21031,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
         this.motionValue || (this.motionValue = motionValue(0));
         this.currentAnimation = animateSingleValue(this.motionValue, [0, 1e3], {
           ...options,
+          velocity: 0,
           isSync: true,
           onUpdate: (latest) => {
             this.mixTargetDelta(latest);
@@ -21920,7 +21063,7 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
     finishAnimation() {
       if (this.currentAnimation) {
         this.mixTargetDelta && this.mixTargetDelta(animationTarget);
-        this.currentAnimation.stop(false);
+        this.currentAnimation.stop();
       }
       this.completeAnimation();
     }
@@ -22018,78 +21161,77 @@ function createProjectionNode({ attachResizeListener, defaultParent, measureScro
       }
       visualElement.scheduleRender();
     }
-    getProjectionStyles(styleProp) {
+    applyProjectionStyles(targetStyle, styleProp) {
       if (!this.instance || this.isSVG)
-        return void 0;
+        return;
       if (!this.isVisible) {
-        return hiddenVisibility;
+        targetStyle.visibility = "hidden";
+        return;
       }
-      const styles2 = {
-        visibility: ""
-      };
       const transformTemplate2 = this.getTransformTemplate();
       if (this.needsReset) {
         this.needsReset = false;
-        styles2.opacity = "";
-        styles2.pointerEvents = resolveMotionValue(styleProp?.pointerEvents) || "";
-        styles2.transform = transformTemplate2 ? transformTemplate2(this.latestValues, "") : "none";
-        return styles2;
+        targetStyle.visibility = "";
+        targetStyle.opacity = "";
+        targetStyle.pointerEvents = resolveMotionValue(styleProp?.pointerEvents) || "";
+        targetStyle.transform = transformTemplate2 ? transformTemplate2(this.latestValues, "") : "none";
+        return;
       }
       const lead = this.getLead();
       if (!this.projectionDelta || !this.layout || !lead.target) {
-        const emptyStyles = {};
         if (this.options.layoutId) {
-          emptyStyles.opacity = this.latestValues.opacity !== void 0 ? this.latestValues.opacity : 1;
-          emptyStyles.pointerEvents = resolveMotionValue(styleProp?.pointerEvents) || "";
+          targetStyle.opacity = this.latestValues.opacity !== void 0 ? this.latestValues.opacity : 1;
+          targetStyle.pointerEvents = resolveMotionValue(styleProp?.pointerEvents) || "";
         }
         if (this.hasProjected && !hasTransform(this.latestValues)) {
-          emptyStyles.transform = transformTemplate2 ? transformTemplate2({}, "") : "none";
+          targetStyle.transform = transformTemplate2 ? transformTemplate2({}, "") : "none";
           this.hasProjected = false;
         }
-        return emptyStyles;
+        return;
       }
+      targetStyle.visibility = "";
       const valuesToRender = lead.animationValues || lead.latestValues;
       this.applyTransformsToTarget();
-      styles2.transform = buildProjectionTransform(this.projectionDeltaWithTransform, this.treeScale, valuesToRender);
+      let transform2 = buildProjectionTransform(this.projectionDeltaWithTransform, this.treeScale, valuesToRender);
       if (transformTemplate2) {
-        styles2.transform = transformTemplate2(valuesToRender, styles2.transform);
+        transform2 = transformTemplate2(valuesToRender, transform2);
       }
+      targetStyle.transform = transform2;
       const { x, y } = this.projectionDelta;
-      styles2.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`;
+      targetStyle.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`;
       if (lead.animationValues) {
-        styles2.opacity = lead === this ? valuesToRender.opacity ?? this.latestValues.opacity ?? 1 : this.preserveOpacity ? this.latestValues.opacity : valuesToRender.opacityExit;
+        targetStyle.opacity = lead === this ? valuesToRender.opacity ?? this.latestValues.opacity ?? 1 : this.preserveOpacity ? this.latestValues.opacity : valuesToRender.opacityExit;
       } else {
-        styles2.opacity = lead === this ? valuesToRender.opacity !== void 0 ? valuesToRender.opacity : "" : valuesToRender.opacityExit !== void 0 ? valuesToRender.opacityExit : 0;
+        targetStyle.opacity = lead === this ? valuesToRender.opacity !== void 0 ? valuesToRender.opacity : "" : valuesToRender.opacityExit !== void 0 ? valuesToRender.opacityExit : 0;
       }
       for (const key in scaleCorrectors) {
         if (valuesToRender[key] === void 0)
           continue;
         const { correct, applyTo, isCSSVariable } = scaleCorrectors[key];
-        const corrected = styles2.transform === "none" ? valuesToRender[key] : correct(valuesToRender[key], lead);
+        const corrected = transform2 === "none" ? valuesToRender[key] : correct(valuesToRender[key], lead);
         if (applyTo) {
           const num = applyTo.length;
           for (let i = 0; i < num; i++) {
-            styles2[applyTo[i]] = corrected;
+            targetStyle[applyTo[i]] = corrected;
           }
         } else {
           if (isCSSVariable) {
             this.options.visualElement.renderState.vars[key] = corrected;
           } else {
-            styles2[key] = corrected;
+            targetStyle[key] = corrected;
           }
         }
       }
       if (this.options.layoutId) {
-        styles2.pointerEvents = lead === this ? resolveMotionValue(styleProp?.pointerEvents) || "" : "none";
+        targetStyle.pointerEvents = lead === this ? resolveMotionValue(styleProp?.pointerEvents) || "" : "none";
       }
-      return styles2;
     }
     clearSnapshot() {
       this.resumeFrom = this.snapshot = void 0;
     }
     // Only run on root
     resetTree() {
-      this.root.nodes.forEach((node2) => node2.currentAnimation?.stop(false));
+      this.root.nodes.forEach((node2) => node2.currentAnimation?.stop());
       this.root.nodes.forEach(clearMeasurements);
       this.root.sharedNodes.clear();
     }
@@ -22248,18 +21390,18 @@ function shouldAnimatePositionOnly(animationType, snapshot, layout2) {
 function checkNodeWasScrollRoot(node2) {
   return node2 !== node2.root && node2.scroll?.wasRoot;
 }
-const DocumentProjectionNode = createProjectionNode({
+const DocumentProjectionNode = createProjectionNode$1({
   attachResizeListener: (ref, notify) => addDomEvent(ref, "resize", notify),
   measureScroll: () => ({
-    x: document.documentElement.scrollLeft || document.body.scrollLeft,
-    y: document.documentElement.scrollTop || document.body.scrollTop
+    x: document.documentElement.scrollLeft || document.body?.scrollLeft || 0,
+    y: document.documentElement.scrollTop || document.body?.scrollTop || 0
   }),
   checkIsScrollRoot: () => true
 });
 const rootProjectionNode = {
   current: void 0
 };
-const HTMLProjectionNode = createProjectionNode({
+const HTMLProjectionNode = createProjectionNode$1({
   measureScroll: (instance) => ({
     x: instance.scrollLeft,
     y: instance.scrollTop
@@ -22278,6 +21420,1684 @@ const HTMLProjectionNode = createProjectionNode({
   },
   checkIsScrollRoot: (instance) => Boolean(window.getComputedStyle(instance).position === "fixed")
 });
+const MotionConfigContext = reactExports.createContext({
+  transformPagePoint: (p) => p,
+  isStatic: false,
+  reducedMotion: "never"
+});
+function setRef(ref, value) {
+  if (typeof ref === "function") {
+    return ref(value);
+  } else if (ref !== null && ref !== void 0) {
+    ref.current = value;
+  }
+}
+function composeRefs(...refs) {
+  return (node2) => {
+    let hasCleanup = false;
+    const cleanups = refs.map((ref) => {
+      const cleanup = setRef(ref, node2);
+      if (!hasCleanup && typeof cleanup === "function") {
+        hasCleanup = true;
+      }
+      return cleanup;
+    });
+    if (hasCleanup) {
+      return () => {
+        for (let i = 0; i < cleanups.length; i++) {
+          const cleanup = cleanups[i];
+          if (typeof cleanup === "function") {
+            cleanup();
+          } else {
+            setRef(refs[i], null);
+          }
+        }
+      };
+    }
+  };
+}
+function useComposedRefs(...refs) {
+  return reactExports.useCallback(composeRefs(...refs), refs);
+}
+class PopChildMeasure extends reactExports.Component {
+  getSnapshotBeforeUpdate(prevProps) {
+    const element = this.props.childRef.current;
+    if (element && prevProps.isPresent && !this.props.isPresent) {
+      const parent = element.offsetParent;
+      const parentWidth = isHTMLElement(parent) ? parent.offsetWidth || 0 : 0;
+      const parentHeight = isHTMLElement(parent) ? parent.offsetHeight || 0 : 0;
+      const size2 = this.props.sizeRef.current;
+      size2.height = element.offsetHeight || 0;
+      size2.width = element.offsetWidth || 0;
+      size2.top = element.offsetTop;
+      size2.left = element.offsetLeft;
+      size2.right = parentWidth - size2.width - size2.left;
+      size2.bottom = parentHeight - size2.height - size2.top;
+    }
+    return null;
+  }
+  /**
+   * Required with getSnapshotBeforeUpdate to stop React complaining.
+   */
+  componentDidUpdate() {
+  }
+  render() {
+    return this.props.children;
+  }
+}
+function PopChild({ children, isPresent: isPresent2, anchorX, anchorY, root }) {
+  const id2 = reactExports.useId();
+  const ref = reactExports.useRef(null);
+  const size2 = reactExports.useRef({
+    width: 0,
+    height: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  });
+  const { nonce } = reactExports.useContext(MotionConfigContext);
+  const childRef = children.props?.ref ?? children?.ref;
+  const composedRef = useComposedRefs(ref, childRef);
+  reactExports.useInsertionEffect(() => {
+    const { width, height, top, left, right, bottom } = size2.current;
+    if (isPresent2 || !ref.current || !width || !height)
+      return;
+    const x = anchorX === "left" ? `left: ${left}` : `right: ${right}`;
+    const y = anchorY === "bottom" ? `bottom: ${bottom}` : `top: ${top}`;
+    ref.current.dataset.motionPopId = id2;
+    const style = document.createElement("style");
+    if (nonce)
+      style.nonce = nonce;
+    const parent = root ?? document.head;
+    parent.appendChild(style);
+    if (style.sheet) {
+      style.sheet.insertRule(`
+          [data-motion-pop-id="${id2}"] {
+            position: absolute !important;
+            width: ${width}px !important;
+            height: ${height}px !important;
+            ${x}px !important;
+            ${y}px !important;
+          }
+        `);
+    }
+    return () => {
+      if (parent.contains(style)) {
+        parent.removeChild(style);
+      }
+    };
+  }, [isPresent2]);
+  return jsxRuntimeExports.jsx(PopChildMeasure, { isPresent: isPresent2, childRef: ref, sizeRef: size2, children: reactExports.cloneElement(children, { ref: composedRef }) });
+}
+const PresenceChild = ({ children, initial, isPresent: isPresent2, onExitComplete, custom, presenceAffectsLayout, mode: mode2, anchorX, anchorY, root }) => {
+  const presenceChildren = useConstant(newChildrenMap);
+  const id2 = reactExports.useId();
+  let isReusedContext = true;
+  let context = reactExports.useMemo(() => {
+    isReusedContext = false;
+    return {
+      id: id2,
+      initial,
+      isPresent: isPresent2,
+      custom,
+      onExitComplete: (childId) => {
+        presenceChildren.set(childId, true);
+        for (const isComplete of presenceChildren.values()) {
+          if (!isComplete)
+            return;
+        }
+        onExitComplete && onExitComplete();
+      },
+      register: (childId) => {
+        presenceChildren.set(childId, false);
+        return () => presenceChildren.delete(childId);
+      }
+    };
+  }, [isPresent2, presenceChildren, onExitComplete]);
+  if (presenceAffectsLayout && isReusedContext) {
+    context = { ...context };
+  }
+  reactExports.useMemo(() => {
+    presenceChildren.forEach((_, key) => presenceChildren.set(key, false));
+  }, [isPresent2]);
+  reactExports.useEffect(() => {
+    !isPresent2 && !presenceChildren.size && onExitComplete && onExitComplete();
+  }, [isPresent2]);
+  if (mode2 === "popLayout") {
+    children = jsxRuntimeExports.jsx(PopChild, { isPresent: isPresent2, anchorX, anchorY, root, children });
+  }
+  return jsxRuntimeExports.jsx(PresenceContext.Provider, { value: context, children });
+};
+function newChildrenMap() {
+  return /* @__PURE__ */ new Map();
+}
+function usePresence(subscribe = true) {
+  const context = reactExports.useContext(PresenceContext);
+  if (context === null)
+    return [true, null];
+  const { isPresent: isPresent2, onExitComplete, register } = context;
+  const id2 = reactExports.useId();
+  reactExports.useEffect(() => {
+    if (subscribe) {
+      return register(id2);
+    }
+  }, [subscribe]);
+  const safeToRemove = reactExports.useCallback(() => subscribe && onExitComplete && onExitComplete(id2), [id2, onExitComplete, subscribe]);
+  return !isPresent2 && onExitComplete ? [false, safeToRemove] : [true];
+}
+function useIsPresent() {
+  return isPresent(reactExports.useContext(PresenceContext));
+}
+function isPresent(context) {
+  return context === null ? true : context.isPresent;
+}
+const getChildKey = (child) => child.key || "";
+function onlyElements(children) {
+  const filtered = [];
+  reactExports.Children.forEach(children, (child) => {
+    if (reactExports.isValidElement(child))
+      filtered.push(child);
+  });
+  return filtered;
+}
+const AnimatePresence = ({ children, custom, initial = true, onExitComplete, presenceAffectsLayout = true, mode: mode2 = "sync", propagate = false, anchorX = "left", anchorY = "top", root }) => {
+  const [isParentPresent, safeToRemove] = usePresence(propagate);
+  const presentChildren = reactExports.useMemo(() => onlyElements(children), [children]);
+  const presentKeys = propagate && !isParentPresent ? [] : presentChildren.map(getChildKey);
+  const isInitialRender = reactExports.useRef(true);
+  const pendingPresentChildren = reactExports.useRef(presentChildren);
+  const exitComplete = useConstant(() => /* @__PURE__ */ new Map());
+  const exitingComponents = reactExports.useRef(/* @__PURE__ */ new Set());
+  const [diffedChildren, setDiffedChildren] = reactExports.useState(presentChildren);
+  const [renderedChildren, setRenderedChildren] = reactExports.useState(presentChildren);
+  useIsomorphicLayoutEffect(() => {
+    isInitialRender.current = false;
+    pendingPresentChildren.current = presentChildren;
+    for (let i = 0; i < renderedChildren.length; i++) {
+      const key = getChildKey(renderedChildren[i]);
+      if (!presentKeys.includes(key)) {
+        if (exitComplete.get(key) !== true) {
+          exitComplete.set(key, false);
+        }
+      } else {
+        exitComplete.delete(key);
+        exitingComponents.current.delete(key);
+      }
+    }
+  }, [renderedChildren, presentKeys.length, presentKeys.join("-")]);
+  const exitingChildren = [];
+  if (presentChildren !== diffedChildren) {
+    let nextChildren = [...presentChildren];
+    for (let i = 0; i < renderedChildren.length; i++) {
+      const child = renderedChildren[i];
+      const key = getChildKey(child);
+      if (!presentKeys.includes(key)) {
+        nextChildren.splice(i, 0, child);
+        exitingChildren.push(child);
+      }
+    }
+    if (mode2 === "wait" && exitingChildren.length) {
+      nextChildren = exitingChildren;
+    }
+    setRenderedChildren(onlyElements(nextChildren));
+    setDiffedChildren(presentChildren);
+    return null;
+  }
+  const { forceRender } = reactExports.useContext(LayoutGroupContext);
+  return jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: renderedChildren.map((child) => {
+    const key = getChildKey(child);
+    const isPresent2 = propagate && !isParentPresent ? false : presentChildren === renderedChildren || presentKeys.includes(key);
+    const onExit = () => {
+      if (exitingComponents.current.has(key)) {
+        return;
+      }
+      exitingComponents.current.add(key);
+      if (exitComplete.has(key)) {
+        exitComplete.set(key, true);
+      } else {
+        return;
+      }
+      let isEveryExitComplete = true;
+      exitComplete.forEach((isExitComplete) => {
+        if (!isExitComplete)
+          isEveryExitComplete = false;
+      });
+      if (isEveryExitComplete) {
+        forceRender?.();
+        setRenderedChildren(pendingPresentChildren.current);
+        propagate && safeToRemove?.();
+        onExitComplete && onExitComplete();
+      }
+    };
+    return jsxRuntimeExports.jsx(PresenceChild, { isPresent: isPresent2, initial: !isInitialRender.current || initial ? void 0 : false, custom, presenceAffectsLayout, mode: mode2, root, onExitComplete: isPresent2 ? void 0 : onExit, anchorX, anchorY, children: child }, key);
+  }) });
+};
+const LazyContext = reactExports.createContext({ strict: false });
+const featureProps = {
+  animation: [
+    "animate",
+    "variants",
+    "whileHover",
+    "whileTap",
+    "exit",
+    "whileInView",
+    "whileFocus",
+    "whileDrag"
+  ],
+  exit: ["exit"],
+  drag: ["drag", "dragControls"],
+  focus: ["whileFocus"],
+  hover: ["whileHover", "onHoverStart", "onHoverEnd"],
+  tap: ["whileTap", "onTap", "onTapStart", "onTapCancel"],
+  pan: ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"],
+  inView: ["whileInView", "onViewportEnter", "onViewportLeave"],
+  layout: ["layout", "layoutId"]
+};
+let isInitialized = false;
+function initFeatureDefinitions() {
+  if (isInitialized)
+    return;
+  const initialFeatureDefinitions = {};
+  for (const key in featureProps) {
+    initialFeatureDefinitions[key] = {
+      isEnabled: (props) => featureProps[key].some((name) => !!props[name])
+    };
+  }
+  setFeatureDefinitions(initialFeatureDefinitions);
+  isInitialized = true;
+}
+function getInitializedFeatureDefinitions() {
+  initFeatureDefinitions();
+  return getFeatureDefinitions();
+}
+function loadFeatures(features) {
+  const featureDefinitions2 = getInitializedFeatureDefinitions();
+  for (const key in features) {
+    featureDefinitions2[key] = {
+      ...featureDefinitions2[key],
+      ...features[key]
+    };
+  }
+  setFeatureDefinitions(featureDefinitions2);
+}
+const validMotionProps = /* @__PURE__ */ new Set([
+  "animate",
+  "exit",
+  "variants",
+  "initial",
+  "style",
+  "values",
+  "variants",
+  "transition",
+  "transformTemplate",
+  "custom",
+  "inherit",
+  "onBeforeLayoutMeasure",
+  "onAnimationStart",
+  "onAnimationComplete",
+  "onUpdate",
+  "onDragStart",
+  "onDrag",
+  "onDragEnd",
+  "onMeasureDragConstraints",
+  "onDirectionLock",
+  "onDragTransitionEnd",
+  "_dragX",
+  "_dragY",
+  "onHoverStart",
+  "onHoverEnd",
+  "onViewportEnter",
+  "onViewportLeave",
+  "globalTapTarget",
+  "ignoreStrict",
+  "viewport"
+]);
+function isValidMotionProp(key) {
+  return key.startsWith("while") || key.startsWith("drag") && key !== "draggable" || key.startsWith("layout") || key.startsWith("onTap") || key.startsWith("onPan") || key.startsWith("onLayout") || validMotionProps.has(key);
+}
+let shouldForward = (key) => !isValidMotionProp(key);
+function loadExternalIsValidProp(isValidProp) {
+  if (typeof isValidProp !== "function")
+    return;
+  shouldForward = (key) => key.startsWith("on") ? !isValidMotionProp(key) : isValidProp(key);
+}
+try {
+  loadExternalIsValidProp(require("@emotion/is-prop-valid").default);
+} catch {
+}
+function filterProps(props, isDom, forwardMotionProps) {
+  const filteredProps = {};
+  for (const key in props) {
+    if (key === "values" && typeof props.values === "object")
+      continue;
+    if (shouldForward(key) || forwardMotionProps === true && isValidMotionProp(key) || !isDom && !isValidMotionProp(key) || // If trying to use native HTML drag events, forward drag listeners
+    props["draggable"] && key.startsWith("onDrag")) {
+      filteredProps[key] = props[key];
+    }
+  }
+  return filteredProps;
+}
+const MotionContext = /* @__PURE__ */ reactExports.createContext({});
+function getCurrentTreeVariants(props, context) {
+  if (isControllingVariants(props)) {
+    const { initial, animate } = props;
+    return {
+      initial: initial === false || isVariantLabel(initial) ? initial : void 0,
+      animate: isVariantLabel(animate) ? animate : void 0
+    };
+  }
+  return props.inherit !== false ? context : {};
+}
+function useCreateMotionContext(props) {
+  const { initial, animate } = getCurrentTreeVariants(props, reactExports.useContext(MotionContext));
+  return reactExports.useMemo(() => ({ initial, animate }), [variantLabelsAsDependency(initial), variantLabelsAsDependency(animate)]);
+}
+function variantLabelsAsDependency(prop) {
+  return Array.isArray(prop) ? prop.join(" ") : prop;
+}
+const createHtmlRenderState = () => ({
+  style: {},
+  transform: {},
+  transformOrigin: {},
+  vars: {}
+});
+function copyRawValuesOnly(target, source, props) {
+  for (const key in source) {
+    if (!isMotionValue(source[key]) && !isForcedMotionValue(key, props)) {
+      target[key] = source[key];
+    }
+  }
+}
+function useInitialMotionValues({ transformTemplate: transformTemplate2 }, visualState) {
+  return reactExports.useMemo(() => {
+    const state2 = createHtmlRenderState();
+    buildHTMLStyles(state2, visualState, transformTemplate2);
+    return Object.assign({}, state2.vars, state2.style);
+  }, [visualState]);
+}
+function useStyle(props, visualState) {
+  const styleProp = props.style || {};
+  const style = {};
+  copyRawValuesOnly(style, styleProp, props);
+  Object.assign(style, useInitialMotionValues(props, visualState));
+  return style;
+}
+function useHTMLProps(props, visualState) {
+  const htmlProps = {};
+  const style = useStyle(props, visualState);
+  if (props.drag && props.dragListener !== false) {
+    htmlProps.draggable = false;
+    style.userSelect = style.WebkitUserSelect = style.WebkitTouchCallout = "none";
+    style.touchAction = props.drag === true ? "none" : `pan-${props.drag === "x" ? "y" : "x"}`;
+  }
+  if (props.tabIndex === void 0 && (props.onTap || props.onTapStart || props.whileTap)) {
+    htmlProps.tabIndex = 0;
+  }
+  htmlProps.style = style;
+  return htmlProps;
+}
+const createSvgRenderState = () => ({
+  ...createHtmlRenderState(),
+  attrs: {}
+});
+function useSVGProps(props, visualState, _isStatic, Component) {
+  const visualProps = reactExports.useMemo(() => {
+    const state2 = createSvgRenderState();
+    buildSVGAttrs(state2, visualState, isSVGTag(Component), props.transformTemplate, props.style);
+    return {
+      ...state2.attrs,
+      style: { ...state2.style }
+    };
+  }, [visualState]);
+  if (props.style) {
+    const rawStyles = {};
+    copyRawValuesOnly(rawStyles, props.style, props);
+    visualProps.style = { ...rawStyles, ...visualProps.style };
+  }
+  return visualProps;
+}
+const lowercaseSVGElements = [
+  "animate",
+  "circle",
+  "defs",
+  "desc",
+  "ellipse",
+  "g",
+  "image",
+  "line",
+  "filter",
+  "marker",
+  "mask",
+  "metadata",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "rect",
+  "stop",
+  "switch",
+  "symbol",
+  "svg",
+  "text",
+  "tspan",
+  "use",
+  "view"
+];
+function isSVGComponent(Component) {
+  if (
+    /**
+     * If it's not a string, it's a custom React component. Currently we only support
+     * HTML custom React components.
+     */
+    typeof Component !== "string" || /**
+     * If it contains a dash, the element is a custom HTML webcomponent.
+     */
+    Component.includes("-")
+  ) {
+    return false;
+  } else if (
+    /**
+     * If it's in our list of lowercase SVG tags, it's an SVG component
+     */
+    lowercaseSVGElements.indexOf(Component) > -1 || /**
+     * If it contains a capital letter, it's an SVG component
+     */
+    /[A-Z]/u.test(Component)
+  ) {
+    return true;
+  }
+  return false;
+}
+function useRender(Component, props, ref, { latestValues }, isStatic, forwardMotionProps = false, isSVG) {
+  const useVisualProps = isSVG ?? isSVGComponent(Component) ? useSVGProps : useHTMLProps;
+  const visualProps = useVisualProps(props, latestValues, isStatic, Component);
+  const filteredProps = filterProps(props, typeof Component === "string", forwardMotionProps);
+  const elementProps = Component !== reactExports.Fragment ? { ...filteredProps, ...visualProps, ref } : {};
+  const { children } = props;
+  const renderedChildren = reactExports.useMemo(() => isMotionValue(children) ? children.get() : children, [children]);
+  return reactExports.createElement(Component, {
+    ...elementProps,
+    children: renderedChildren
+  });
+}
+function makeState({ scrapeMotionValuesFromProps: scrapeMotionValuesFromProps2, createRenderState }, props, context, presenceContext) {
+  const state2 = {
+    latestValues: makeLatestValues(props, context, presenceContext, scrapeMotionValuesFromProps2),
+    renderState: createRenderState()
+  };
+  return state2;
+}
+function makeLatestValues(props, context, presenceContext, scrapeMotionValues) {
+  const values = {};
+  const motionValues = scrapeMotionValues(props, {});
+  for (const key in motionValues) {
+    values[key] = resolveMotionValue(motionValues[key]);
+  }
+  let { initial, animate } = props;
+  const isControllingVariants$1 = isControllingVariants(props);
+  const isVariantNode$1 = isVariantNode(props);
+  if (context && isVariantNode$1 && !isControllingVariants$1 && props.inherit !== false) {
+    if (initial === void 0)
+      initial = context.initial;
+    if (animate === void 0)
+      animate = context.animate;
+  }
+  let isInitialAnimationBlocked = presenceContext ? presenceContext.initial === false : false;
+  isInitialAnimationBlocked = isInitialAnimationBlocked || initial === false;
+  const variantToSet = isInitialAnimationBlocked ? animate : initial;
+  if (variantToSet && typeof variantToSet !== "boolean" && !isAnimationControls(variantToSet)) {
+    const list2 = Array.isArray(variantToSet) ? variantToSet : [variantToSet];
+    for (let i = 0; i < list2.length; i++) {
+      const resolved = resolveVariantFromProps(props, list2[i]);
+      if (resolved) {
+        const { transitionEnd, transition: transition2, ...target } = resolved;
+        for (const key in target) {
+          let valueTarget = target[key];
+          if (Array.isArray(valueTarget)) {
+            const index = isInitialAnimationBlocked ? valueTarget.length - 1 : 0;
+            valueTarget = valueTarget[index];
+          }
+          if (valueTarget !== null) {
+            values[key] = valueTarget;
+          }
+        }
+        for (const key in transitionEnd) {
+          values[key] = transitionEnd[key];
+        }
+      }
+    }
+  }
+  return values;
+}
+const makeUseVisualState = (config2) => (props, isStatic) => {
+  const context = reactExports.useContext(MotionContext);
+  const presenceContext = reactExports.useContext(PresenceContext);
+  const make = () => makeState(config2, props, context, presenceContext);
+  return isStatic ? make() : useConstant(make);
+};
+const useHTMLVisualState = /* @__PURE__ */ makeUseVisualState({
+  scrapeMotionValuesFromProps: scrapeMotionValuesFromProps$1,
+  createRenderState: createHtmlRenderState
+});
+const useSVGVisualState = /* @__PURE__ */ makeUseVisualState({
+  scrapeMotionValuesFromProps,
+  createRenderState: createSvgRenderState
+});
+const motionComponentSymbol = Symbol.for("motionComponentSymbol");
+function useMotionRef(visualState, visualElement, externalRef) {
+  const externalRefContainer = reactExports.useRef(externalRef);
+  reactExports.useInsertionEffect(() => {
+    externalRefContainer.current = externalRef;
+  });
+  const refCleanup = reactExports.useRef(null);
+  return reactExports.useCallback((instance) => {
+    if (instance) {
+      visualState.onMount?.(instance);
+    }
+    if (visualElement) {
+      instance ? visualElement.mount(instance) : visualElement.unmount();
+    }
+    const ref = externalRefContainer.current;
+    if (typeof ref === "function") {
+      if (instance) {
+        const cleanup = ref(instance);
+        if (typeof cleanup === "function") {
+          refCleanup.current = cleanup;
+        }
+      } else if (refCleanup.current) {
+        refCleanup.current();
+        refCleanup.current = null;
+      } else {
+        ref(instance);
+      }
+    } else if (ref) {
+      ref.current = instance;
+    }
+  }, [visualElement]);
+}
+const SwitchLayoutGroupContext = reactExports.createContext({});
+function isRefObject(ref) {
+  return ref && typeof ref === "object" && Object.prototype.hasOwnProperty.call(ref, "current");
+}
+function useVisualElement(Component, visualState, props, createVisualElement, ProjectionNodeConstructor, isSVG) {
+  const { visualElement: parent } = reactExports.useContext(MotionContext);
+  const lazyContext = reactExports.useContext(LazyContext);
+  const presenceContext = reactExports.useContext(PresenceContext);
+  const reducedMotionConfig = reactExports.useContext(MotionConfigContext).reducedMotion;
+  const visualElementRef = reactExports.useRef(null);
+  createVisualElement = createVisualElement || lazyContext.renderer;
+  if (!visualElementRef.current && createVisualElement) {
+    visualElementRef.current = createVisualElement(Component, {
+      visualState,
+      parent,
+      props,
+      presenceContext,
+      blockInitialAnimation: presenceContext ? presenceContext.initial === false : false,
+      reducedMotionConfig,
+      isSVG
+    });
+  }
+  const visualElement = visualElementRef.current;
+  const initialLayoutGroupConfig = reactExports.useContext(SwitchLayoutGroupContext);
+  if (visualElement && !visualElement.projection && ProjectionNodeConstructor && (visualElement.type === "html" || visualElement.type === "svg")) {
+    createProjectionNode(visualElementRef.current, props, ProjectionNodeConstructor, initialLayoutGroupConfig);
+  }
+  const isMounted = reactExports.useRef(false);
+  reactExports.useInsertionEffect(() => {
+    if (visualElement && isMounted.current) {
+      visualElement.update(props, presenceContext);
+    }
+  });
+  const optimisedAppearId = props[optimizedAppearDataAttribute];
+  const wantsHandoff = reactExports.useRef(Boolean(optimisedAppearId) && !window.MotionHandoffIsComplete?.(optimisedAppearId) && window.MotionHasOptimisedAnimation?.(optimisedAppearId));
+  useIsomorphicLayoutEffect(() => {
+    if (!visualElement)
+      return;
+    isMounted.current = true;
+    window.MotionIsMounted = true;
+    visualElement.updateFeatures();
+    visualElement.scheduleRenderMicrotask();
+    if (wantsHandoff.current && visualElement.animationState) {
+      visualElement.animationState.animateChanges();
+    }
+  });
+  reactExports.useEffect(() => {
+    if (!visualElement)
+      return;
+    if (!wantsHandoff.current && visualElement.animationState) {
+      visualElement.animationState.animateChanges();
+    }
+    if (wantsHandoff.current) {
+      queueMicrotask(() => {
+        window.MotionHandoffMarkAsComplete?.(optimisedAppearId);
+      });
+      wantsHandoff.current = false;
+    }
+    visualElement.enteringChildren = void 0;
+  });
+  return visualElement;
+}
+function createProjectionNode(visualElement, props, ProjectionNodeConstructor, initialPromotionConfig) {
+  const { layoutId, layout: layout2, drag: drag2, dragConstraints, layoutScroll, layoutRoot, layoutCrossfade } = props;
+  visualElement.projection = new ProjectionNodeConstructor(visualElement.latestValues, props["data-framer-portal-id"] ? void 0 : getClosestProjectingNode(visualElement.parent));
+  visualElement.projection.setOptions({
+    layoutId,
+    layout: layout2,
+    alwaysMeasureLayout: Boolean(drag2) || dragConstraints && isRefObject(dragConstraints),
+    visualElement,
+    /**
+     * TODO: Update options in an effect. This could be tricky as it'll be too late
+     * to update by the time layout animations run.
+     * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
+     * ensuring it gets called if there's no potential layout animations.
+     *
+     */
+    animationType: typeof layout2 === "string" ? layout2 : "both",
+    initialPromotionConfig,
+    crossfade: layoutCrossfade,
+    layoutScroll,
+    layoutRoot
+  });
+}
+function getClosestProjectingNode(visualElement) {
+  if (!visualElement)
+    return void 0;
+  return visualElement.options.allowProjection !== false ? visualElement.projection : getClosestProjectingNode(visualElement.parent);
+}
+function createMotionComponent(Component, { forwardMotionProps = false, type } = {}, preloadedFeatures, createVisualElement) {
+  preloadedFeatures && loadFeatures(preloadedFeatures);
+  const isSVG = type ? type === "svg" : isSVGComponent(Component);
+  const useVisualState = isSVG ? useSVGVisualState : useHTMLVisualState;
+  function MotionDOMComponent(props, externalRef) {
+    let MeasureLayout2;
+    const configAndProps = {
+      ...reactExports.useContext(MotionConfigContext),
+      ...props,
+      layoutId: useLayoutId(props)
+    };
+    const { isStatic } = configAndProps;
+    const context = useCreateMotionContext(props);
+    const visualState = useVisualState(props, isStatic);
+    if (!isStatic && isBrowser$1) {
+      useStrictMode();
+      const layoutProjection = getProjectionFunctionality(configAndProps);
+      MeasureLayout2 = layoutProjection.MeasureLayout;
+      context.visualElement = useVisualElement(Component, visualState, configAndProps, createVisualElement, layoutProjection.ProjectionNode, isSVG);
+    }
+    return jsxRuntimeExports.jsxs(MotionContext.Provider, { value: context, children: [MeasureLayout2 && context.visualElement ? jsxRuntimeExports.jsx(MeasureLayout2, { visualElement: context.visualElement, ...configAndProps }) : null, useRender(Component, props, useMotionRef(visualState, context.visualElement, externalRef), visualState, isStatic, forwardMotionProps, isSVG)] });
+  }
+  MotionDOMComponent.displayName = `motion.${typeof Component === "string" ? Component : `create(${Component.displayName ?? Component.name ?? ""})`}`;
+  const ForwardRefMotionComponent = reactExports.forwardRef(MotionDOMComponent);
+  ForwardRefMotionComponent[motionComponentSymbol] = Component;
+  return ForwardRefMotionComponent;
+}
+function useLayoutId({ layoutId }) {
+  const layoutGroupId = reactExports.useContext(LayoutGroupContext).id;
+  return layoutGroupId && layoutId !== void 0 ? layoutGroupId + "-" + layoutId : layoutId;
+}
+function useStrictMode(configAndProps, preloadedFeatures) {
+  reactExports.useContext(LazyContext).strict;
+}
+function getProjectionFunctionality(props) {
+  const featureDefinitions2 = getInitializedFeatureDefinitions();
+  const { drag: drag2, layout: layout2 } = featureDefinitions2;
+  if (!drag2 && !layout2)
+    return {};
+  const combined = { ...drag2, ...layout2 };
+  return {
+    MeasureLayout: drag2?.isEnabled(props) || layout2?.isEnabled(props) ? combined.MeasureLayout : void 0,
+    ProjectionNode: combined.ProjectionNode
+  };
+}
+function createMotionProxy(preloadedFeatures, createVisualElement) {
+  if (typeof Proxy === "undefined") {
+    return createMotionComponent;
+  }
+  const componentCache = /* @__PURE__ */ new Map();
+  const factory2 = (Component, options) => {
+    return createMotionComponent(Component, options, preloadedFeatures, createVisualElement);
+  };
+  const deprecatedFactoryFunction = (Component, options) => {
+    return factory2(Component, options);
+  };
+  return new Proxy(deprecatedFactoryFunction, {
+    /**
+     * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
+     * The prop name is passed through as `key` and we can use that to generate a `motion`
+     * DOM component with that name.
+     */
+    get: (_target, key) => {
+      if (key === "create")
+        return factory2;
+      if (!componentCache.has(key)) {
+        componentCache.set(key, createMotionComponent(key, void 0, preloadedFeatures, createVisualElement));
+      }
+      return componentCache.get(key);
+    }
+  });
+}
+const createDomVisualElement = (Component, options) => {
+  const isSVG = options.isSVG ?? isSVGComponent(Component);
+  return isSVG ? new SVGVisualElement(options) : new HTMLVisualElement(options, {
+    allowProjection: Component !== reactExports.Fragment
+  });
+};
+class AnimationFeature extends Feature {
+  /**
+   * We dynamically generate the AnimationState manager as it contains a reference
+   * to the underlying animation library. We only want to load that if we load this,
+   * so people can optionally code split it out using the `m` component.
+   */
+  constructor(node2) {
+    super(node2);
+    node2.animationState || (node2.animationState = createAnimationState(node2));
+  }
+  updateAnimationControlsSubscription() {
+    const { animate } = this.node.getProps();
+    if (isAnimationControls(animate)) {
+      this.unmountControls = animate.subscribe(this.node);
+    }
+  }
+  /**
+   * Subscribe any provided AnimationControls to the component's VisualElement
+   */
+  mount() {
+    this.updateAnimationControlsSubscription();
+  }
+  update() {
+    const { animate } = this.node.getProps();
+    const { animate: prevAnimate } = this.node.prevProps || {};
+    if (animate !== prevAnimate) {
+      this.updateAnimationControlsSubscription();
+    }
+  }
+  unmount() {
+    this.node.animationState.reset();
+    this.unmountControls?.();
+  }
+}
+let id = 0;
+class ExitAnimationFeature extends Feature {
+  constructor() {
+    super(...arguments);
+    this.id = id++;
+  }
+  update() {
+    if (!this.node.presenceContext)
+      return;
+    const { isPresent: isPresent2, onExitComplete } = this.node.presenceContext;
+    const { isPresent: prevIsPresent } = this.node.prevPresenceContext || {};
+    if (!this.node.animationState || isPresent2 === prevIsPresent) {
+      return;
+    }
+    const exitAnimation = this.node.animationState.setActive("exit", !isPresent2);
+    if (onExitComplete && !isPresent2) {
+      exitAnimation.then(() => {
+        onExitComplete(this.id);
+      });
+    }
+  }
+  mount() {
+    const { register, onExitComplete } = this.node.presenceContext || {};
+    if (onExitComplete) {
+      onExitComplete(this.id);
+    }
+    if (register) {
+      this.unmount = register(this.id);
+    }
+  }
+  unmount() {
+  }
+}
+const animations = {
+  animation: {
+    Feature: AnimationFeature
+  },
+  exit: {
+    Feature: ExitAnimationFeature
+  }
+};
+function extractEventInfo(event) {
+  return {
+    point: {
+      x: event.pageX,
+      y: event.pageY
+    }
+  };
+}
+const addPointerInfo = (handler) => {
+  return (event) => isPrimaryPointer(event) && handler(event, extractEventInfo(event));
+};
+function addPointerEvent(target, eventName, handler, options) {
+  return addDomEvent(target, eventName, addPointerInfo(handler), options);
+}
+const getContextWindow = ({ current }) => {
+  return current ? current.ownerDocument.defaultView : null;
+};
+const distance = (a, b) => Math.abs(a - b);
+function distance2D(a, b) {
+  const xDelta = distance(a.x, b.x);
+  const yDelta = distance(a.y, b.y);
+  return Math.sqrt(xDelta ** 2 + yDelta ** 2);
+}
+const overflowStyles = /* @__PURE__ */ new Set(["auto", "scroll"]);
+class PanSession {
+  constructor(event, handlers, { transformPagePoint, contextWindow = window, dragSnapToOrigin = false, distanceThreshold = 3, element } = {}) {
+    this.startEvent = null;
+    this.lastMoveEvent = null;
+    this.lastMoveEventInfo = null;
+    this.handlers = {};
+    this.contextWindow = window;
+    this.scrollPositions = /* @__PURE__ */ new Map();
+    this.removeScrollListeners = null;
+    this.onElementScroll = (event2) => {
+      this.handleScroll(event2.target);
+    };
+    this.onWindowScroll = () => {
+      this.handleScroll(window);
+    };
+    this.updatePoint = () => {
+      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
+        return;
+      const info2 = getPanInfo(this.lastMoveEventInfo, this.history);
+      const isPanStarted = this.startEvent !== null;
+      const isDistancePastThreshold = distance2D(info2.offset, { x: 0, y: 0 }) >= this.distanceThreshold;
+      if (!isPanStarted && !isDistancePastThreshold)
+        return;
+      const { point: point2 } = info2;
+      const { timestamp: timestamp2 } = frameData;
+      this.history.push({ ...point2, timestamp: timestamp2 });
+      const { onStart, onMove } = this.handlers;
+      if (!isPanStarted) {
+        onStart && onStart(this.lastMoveEvent, info2);
+        this.startEvent = this.lastMoveEvent;
+      }
+      onMove && onMove(this.lastMoveEvent, info2);
+    };
+    this.handlePointerMove = (event2, info2) => {
+      this.lastMoveEvent = event2;
+      this.lastMoveEventInfo = transformPoint(info2, this.transformPagePoint);
+      frame.update(this.updatePoint, true);
+    };
+    this.handlePointerUp = (event2, info2) => {
+      this.end();
+      const { onEnd, onSessionEnd, resumeAnimation } = this.handlers;
+      if (this.dragSnapToOrigin || !this.startEvent) {
+        resumeAnimation && resumeAnimation();
+      }
+      if (!(this.lastMoveEvent && this.lastMoveEventInfo))
+        return;
+      const panInfo = getPanInfo(event2.type === "pointercancel" ? this.lastMoveEventInfo : transformPoint(info2, this.transformPagePoint), this.history);
+      if (this.startEvent && onEnd) {
+        onEnd(event2, panInfo);
+      }
+      onSessionEnd && onSessionEnd(event2, panInfo);
+    };
+    if (!isPrimaryPointer(event))
+      return;
+    this.dragSnapToOrigin = dragSnapToOrigin;
+    this.handlers = handlers;
+    this.transformPagePoint = transformPagePoint;
+    this.distanceThreshold = distanceThreshold;
+    this.contextWindow = contextWindow || window;
+    const info = extractEventInfo(event);
+    const initialInfo = transformPoint(info, this.transformPagePoint);
+    const { point } = initialInfo;
+    const { timestamp } = frameData;
+    this.history = [{ ...point, timestamp }];
+    const { onSessionStart } = handlers;
+    onSessionStart && onSessionStart(event, getPanInfo(initialInfo, this.history));
+    this.removeListeners = pipe$1(addPointerEvent(this.contextWindow, "pointermove", this.handlePointerMove), addPointerEvent(this.contextWindow, "pointerup", this.handlePointerUp), addPointerEvent(this.contextWindow, "pointercancel", this.handlePointerUp));
+    if (element) {
+      this.startScrollTracking(element);
+    }
+  }
+  /**
+   * Start tracking scroll on ancestors and window.
+   */
+  startScrollTracking(element) {
+    let current = element.parentElement;
+    while (current) {
+      const style = getComputedStyle(current);
+      if (overflowStyles.has(style.overflowX) || overflowStyles.has(style.overflowY)) {
+        this.scrollPositions.set(current, {
+          x: current.scrollLeft,
+          y: current.scrollTop
+        });
+      }
+      current = current.parentElement;
+    }
+    this.scrollPositions.set(window, {
+      x: window.scrollX,
+      y: window.scrollY
+    });
+    window.addEventListener("scroll", this.onElementScroll, {
+      capture: true,
+      passive: true
+    });
+    window.addEventListener("scroll", this.onWindowScroll, {
+      passive: true
+    });
+    this.removeScrollListeners = () => {
+      window.removeEventListener("scroll", this.onElementScroll, {
+        capture: true
+      });
+      window.removeEventListener("scroll", this.onWindowScroll);
+    };
+  }
+  /**
+   * Handle scroll compensation during drag.
+   *
+   * For element scroll: adjusts history origin since pageX/pageY doesn't change.
+   * For window scroll: adjusts lastMoveEventInfo since pageX/pageY would change.
+   */
+  handleScroll(target) {
+    const initial = this.scrollPositions.get(target);
+    if (!initial)
+      return;
+    const isWindow = target === window;
+    const current = isWindow ? { x: window.scrollX, y: window.scrollY } : {
+      x: target.scrollLeft,
+      y: target.scrollTop
+    };
+    const delta = { x: current.x - initial.x, y: current.y - initial.y };
+    if (delta.x === 0 && delta.y === 0)
+      return;
+    if (isWindow) {
+      if (this.lastMoveEventInfo) {
+        this.lastMoveEventInfo.point.x += delta.x;
+        this.lastMoveEventInfo.point.y += delta.y;
+      }
+    } else {
+      if (this.history.length > 0) {
+        this.history[0].x -= delta.x;
+        this.history[0].y -= delta.y;
+      }
+    }
+    this.scrollPositions.set(target, current);
+    frame.update(this.updatePoint, true);
+  }
+  updateHandlers(handlers) {
+    this.handlers = handlers;
+  }
+  end() {
+    this.removeListeners && this.removeListeners();
+    this.removeScrollListeners && this.removeScrollListeners();
+    this.scrollPositions.clear();
+    cancelFrame(this.updatePoint);
+  }
+}
+function transformPoint(info, transformPagePoint) {
+  return transformPagePoint ? { point: transformPagePoint(info.point) } : info;
+}
+function subtractPoint(a, b) {
+  return { x: a.x - b.x, y: a.y - b.y };
+}
+function getPanInfo({ point }, history) {
+  return {
+    point,
+    delta: subtractPoint(point, lastDevicePoint(history)),
+    offset: subtractPoint(point, startDevicePoint(history)),
+    velocity: getVelocity(history, 0.1)
+  };
+}
+function startDevicePoint(history) {
+  return history[0];
+}
+function lastDevicePoint(history) {
+  return history[history.length - 1];
+}
+function getVelocity(history, timeDelta) {
+  if (history.length < 2) {
+    return { x: 0, y: 0 };
+  }
+  let i = history.length - 1;
+  let timestampedPoint = null;
+  const lastPoint = lastDevicePoint(history);
+  while (i >= 0) {
+    timestampedPoint = history[i];
+    if (lastPoint.timestamp - timestampedPoint.timestamp > /* @__PURE__ */ secondsToMilliseconds(timeDelta)) {
+      break;
+    }
+    i--;
+  }
+  if (!timestampedPoint) {
+    return { x: 0, y: 0 };
+  }
+  const time2 = /* @__PURE__ */ millisecondsToSeconds(lastPoint.timestamp - timestampedPoint.timestamp);
+  if (time2 === 0) {
+    return { x: 0, y: 0 };
+  }
+  const currentVelocity = {
+    x: (lastPoint.x - timestampedPoint.x) / time2,
+    y: (lastPoint.y - timestampedPoint.y) / time2
+  };
+  if (currentVelocity.x === Infinity) {
+    currentVelocity.x = 0;
+  }
+  if (currentVelocity.y === Infinity) {
+    currentVelocity.y = 0;
+  }
+  return currentVelocity;
+}
+function applyConstraints(point, { min, max }, elastic) {
+  if (min !== void 0 && point < min) {
+    point = elastic ? mixNumber$1(min, point, elastic.min) : Math.max(point, min);
+  } else if (max !== void 0 && point > max) {
+    point = elastic ? mixNumber$1(max, point, elastic.max) : Math.min(point, max);
+  }
+  return point;
+}
+function calcRelativeAxisConstraints(axis, min, max) {
+  return {
+    min: min !== void 0 ? axis.min + min : void 0,
+    max: max !== void 0 ? axis.max + max - (axis.max - axis.min) : void 0
+  };
+}
+function calcRelativeConstraints(layoutBox, { top, left, bottom, right }) {
+  return {
+    x: calcRelativeAxisConstraints(layoutBox.x, left, right),
+    y: calcRelativeAxisConstraints(layoutBox.y, top, bottom)
+  };
+}
+function calcViewportAxisConstraints(layoutAxis, constraintsAxis) {
+  let min = constraintsAxis.min - layoutAxis.min;
+  let max = constraintsAxis.max - layoutAxis.max;
+  if (constraintsAxis.max - constraintsAxis.min < layoutAxis.max - layoutAxis.min) {
+    [min, max] = [max, min];
+  }
+  return { min, max };
+}
+function calcViewportConstraints(layoutBox, constraintsBox) {
+  return {
+    x: calcViewportAxisConstraints(layoutBox.x, constraintsBox.x),
+    y: calcViewportAxisConstraints(layoutBox.y, constraintsBox.y)
+  };
+}
+function calcOrigin(source, target) {
+  let origin = 0.5;
+  const sourceLength = calcLength(source);
+  const targetLength = calcLength(target);
+  if (targetLength > sourceLength) {
+    origin = /* @__PURE__ */ progress(target.min, target.max - sourceLength, source.min);
+  } else if (sourceLength > targetLength) {
+    origin = /* @__PURE__ */ progress(source.min, source.max - targetLength, target.min);
+  }
+  return clamp(0, 1, origin);
+}
+function rebaseAxisConstraints(layout2, constraints) {
+  const relativeConstraints = {};
+  if (constraints.min !== void 0) {
+    relativeConstraints.min = constraints.min - layout2.min;
+  }
+  if (constraints.max !== void 0) {
+    relativeConstraints.max = constraints.max - layout2.min;
+  }
+  return relativeConstraints;
+}
+const defaultElastic = 0.35;
+function resolveDragElastic(dragElastic = defaultElastic) {
+  if (dragElastic === false) {
+    dragElastic = 0;
+  } else if (dragElastic === true) {
+    dragElastic = defaultElastic;
+  }
+  return {
+    x: resolveAxisElastic(dragElastic, "left", "right"),
+    y: resolveAxisElastic(dragElastic, "top", "bottom")
+  };
+}
+function resolveAxisElastic(dragElastic, minLabel, maxLabel) {
+  return {
+    min: resolvePointElastic(dragElastic, minLabel),
+    max: resolvePointElastic(dragElastic, maxLabel)
+  };
+}
+function resolvePointElastic(dragElastic, label) {
+  return typeof dragElastic === "number" ? dragElastic : dragElastic[label] || 0;
+}
+const elementDragControls = /* @__PURE__ */ new WeakMap();
+class VisualElementDragControls {
+  constructor(visualElement) {
+    this.openDragLock = null;
+    this.isDragging = false;
+    this.currentDirection = null;
+    this.originPoint = { x: 0, y: 0 };
+    this.constraints = false;
+    this.hasMutatedConstraints = false;
+    this.elastic = createBox();
+    this.latestPointerEvent = null;
+    this.latestPanInfo = null;
+    this.visualElement = visualElement;
+  }
+  start(originEvent, { snapToCursor = false, distanceThreshold } = {}) {
+    const { presenceContext } = this.visualElement;
+    if (presenceContext && presenceContext.isPresent === false)
+      return;
+    const onSessionStart = (event) => {
+      if (snapToCursor) {
+        this.stopAnimation();
+        this.snapToCursor(extractEventInfo(event).point);
+      } else {
+        this.pauseAnimation();
+      }
+    };
+    const onStart = (event, info) => {
+      this.stopAnimation();
+      const { drag: drag2, dragPropagation, onDragStart } = this.getProps();
+      if (drag2 && !dragPropagation) {
+        if (this.openDragLock)
+          this.openDragLock();
+        this.openDragLock = setDragLock(drag2);
+        if (!this.openDragLock)
+          return;
+      }
+      this.latestPointerEvent = event;
+      this.latestPanInfo = info;
+      this.isDragging = true;
+      this.currentDirection = null;
+      this.resolveConstraints();
+      if (this.visualElement.projection) {
+        this.visualElement.projection.isAnimationBlocked = true;
+        this.visualElement.projection.target = void 0;
+      }
+      eachAxis((axis) => {
+        let current = this.getAxisMotionValue(axis).get() || 0;
+        if (percent.test(current)) {
+          const { projection } = this.visualElement;
+          if (projection && projection.layout) {
+            const measuredAxis = projection.layout.layoutBox[axis];
+            if (measuredAxis) {
+              const length2 = calcLength(measuredAxis);
+              current = length2 * (parseFloat(current) / 100);
+            }
+          }
+        }
+        this.originPoint[axis] = current;
+      });
+      if (onDragStart) {
+        frame.postRender(() => onDragStart(event, info));
+      }
+      addValueToWillChange(this.visualElement, "transform");
+      const { animationState } = this.visualElement;
+      animationState && animationState.setActive("whileDrag", true);
+    };
+    const onMove = (event, info) => {
+      this.latestPointerEvent = event;
+      this.latestPanInfo = info;
+      const { dragPropagation, dragDirectionLock, onDirectionLock, onDrag } = this.getProps();
+      if (!dragPropagation && !this.openDragLock)
+        return;
+      const { offset } = info;
+      if (dragDirectionLock && this.currentDirection === null) {
+        this.currentDirection = getCurrentDirection(offset);
+        if (this.currentDirection !== null) {
+          onDirectionLock && onDirectionLock(this.currentDirection);
+        }
+        return;
+      }
+      this.updateAxis("x", info.point, offset);
+      this.updateAxis("y", info.point, offset);
+      this.visualElement.render();
+      onDrag && onDrag(event, info);
+    };
+    const onSessionEnd = (event, info) => {
+      this.latestPointerEvent = event;
+      this.latestPanInfo = info;
+      this.stop(event, info);
+      this.latestPointerEvent = null;
+      this.latestPanInfo = null;
+    };
+    const resumeAnimation = () => eachAxis((axis) => this.getAnimationState(axis) === "paused" && this.getAxisMotionValue(axis).animation?.play());
+    const { dragSnapToOrigin } = this.getProps();
+    this.panSession = new PanSession(originEvent, {
+      onSessionStart,
+      onStart,
+      onMove,
+      onSessionEnd,
+      resumeAnimation
+    }, {
+      transformPagePoint: this.visualElement.getTransformPagePoint(),
+      dragSnapToOrigin,
+      distanceThreshold,
+      contextWindow: getContextWindow(this.visualElement),
+      element: this.visualElement.current
+    });
+  }
+  /**
+   * @internal
+   */
+  stop(event, panInfo) {
+    const finalEvent = event || this.latestPointerEvent;
+    const finalPanInfo = panInfo || this.latestPanInfo;
+    const isDragging2 = this.isDragging;
+    this.cancel();
+    if (!isDragging2 || !finalPanInfo || !finalEvent)
+      return;
+    const { velocity } = finalPanInfo;
+    this.startAnimation(velocity);
+    const { onDragEnd } = this.getProps();
+    if (onDragEnd) {
+      frame.postRender(() => onDragEnd(finalEvent, finalPanInfo));
+    }
+  }
+  /**
+   * @internal
+   */
+  cancel() {
+    this.isDragging = false;
+    const { projection, animationState } = this.visualElement;
+    if (projection) {
+      projection.isAnimationBlocked = false;
+    }
+    this.endPanSession();
+    const { dragPropagation } = this.getProps();
+    if (!dragPropagation && this.openDragLock) {
+      this.openDragLock();
+      this.openDragLock = null;
+    }
+    animationState && animationState.setActive("whileDrag", false);
+  }
+  /**
+   * Clean up the pan session without modifying other drag state.
+   * This is used during unmount to ensure event listeners are removed
+   * without affecting projection animations or drag locks.
+   * @internal
+   */
+  endPanSession() {
+    this.panSession && this.panSession.end();
+    this.panSession = void 0;
+  }
+  updateAxis(axis, _point, offset) {
+    const { drag: drag2 } = this.getProps();
+    if (!offset || !shouldDrag(axis, drag2, this.currentDirection))
+      return;
+    const axisValue = this.getAxisMotionValue(axis);
+    let next2 = this.originPoint[axis] + offset[axis];
+    if (this.constraints && this.constraints[axis]) {
+      next2 = applyConstraints(next2, this.constraints[axis], this.elastic[axis]);
+    }
+    axisValue.set(next2);
+  }
+  resolveConstraints() {
+    const { dragConstraints, dragElastic } = this.getProps();
+    const layout2 = this.visualElement.projection && !this.visualElement.projection.layout ? this.visualElement.projection.measure(false) : this.visualElement.projection?.layout;
+    const prevConstraints = this.constraints;
+    if (dragConstraints && isRefObject(dragConstraints)) {
+      if (!this.constraints) {
+        this.constraints = this.resolveRefConstraints();
+      }
+    } else {
+      if (dragConstraints && layout2) {
+        this.constraints = calcRelativeConstraints(layout2.layoutBox, dragConstraints);
+      } else {
+        this.constraints = false;
+      }
+    }
+    this.elastic = resolveDragElastic(dragElastic);
+    if (prevConstraints !== this.constraints && layout2 && this.constraints && !this.hasMutatedConstraints) {
+      eachAxis((axis) => {
+        if (this.constraints !== false && this.getAxisMotionValue(axis)) {
+          this.constraints[axis] = rebaseAxisConstraints(layout2.layoutBox[axis], this.constraints[axis]);
+        }
+      });
+    }
+  }
+  resolveRefConstraints() {
+    const { dragConstraints: constraints, onMeasureDragConstraints } = this.getProps();
+    if (!constraints || !isRefObject(constraints))
+      return false;
+    const constraintsElement = constraints.current;
+    const { projection } = this.visualElement;
+    if (!projection || !projection.layout)
+      return false;
+    const constraintsBox = measurePageBox(constraintsElement, projection.root, this.visualElement.getTransformPagePoint());
+    let measuredConstraints = calcViewportConstraints(projection.layout.layoutBox, constraintsBox);
+    if (onMeasureDragConstraints) {
+      const userConstraints = onMeasureDragConstraints(convertBoxToBoundingBox(measuredConstraints));
+      this.hasMutatedConstraints = !!userConstraints;
+      if (userConstraints) {
+        measuredConstraints = convertBoundingBoxToBox(userConstraints);
+      }
+    }
+    return measuredConstraints;
+  }
+  startAnimation(velocity) {
+    const { drag: drag2, dragMomentum, dragElastic, dragTransition, dragSnapToOrigin, onDragTransitionEnd } = this.getProps();
+    const constraints = this.constraints || {};
+    const momentumAnimations = eachAxis((axis) => {
+      if (!shouldDrag(axis, drag2, this.currentDirection)) {
+        return;
+      }
+      let transition2 = constraints && constraints[axis] || {};
+      if (dragSnapToOrigin)
+        transition2 = { min: 0, max: 0 };
+      const bounceStiffness = dragElastic ? 200 : 1e6;
+      const bounceDamping = dragElastic ? 40 : 1e7;
+      const inertia2 = {
+        type: "inertia",
+        velocity: dragMomentum ? velocity[axis] : 0,
+        bounceStiffness,
+        bounceDamping,
+        timeConstant: 750,
+        restDelta: 1,
+        restSpeed: 10,
+        ...dragTransition,
+        ...transition2
+      };
+      return this.startAxisValueAnimation(axis, inertia2);
+    });
+    return Promise.all(momentumAnimations).then(onDragTransitionEnd);
+  }
+  startAxisValueAnimation(axis, transition2) {
+    const axisValue = this.getAxisMotionValue(axis);
+    addValueToWillChange(this.visualElement, axis);
+    return axisValue.start(animateMotionValue(axis, axisValue, 0, transition2, this.visualElement, false));
+  }
+  stopAnimation() {
+    eachAxis((axis) => this.getAxisMotionValue(axis).stop());
+  }
+  pauseAnimation() {
+    eachAxis((axis) => this.getAxisMotionValue(axis).animation?.pause());
+  }
+  getAnimationState(axis) {
+    return this.getAxisMotionValue(axis).animation?.state;
+  }
+  /**
+   * Drag works differently depending on which props are provided.
+   *
+   * - If _dragX and _dragY are provided, we output the gesture delta directly to those motion values.
+   * - Otherwise, we apply the delta to the x/y motion values.
+   */
+  getAxisMotionValue(axis) {
+    const dragKey = `_drag${axis.toUpperCase()}`;
+    const props = this.visualElement.getProps();
+    const externalMotionValue = props[dragKey];
+    return externalMotionValue ? externalMotionValue : this.visualElement.getValue(axis, (props.initial ? props.initial[axis] : void 0) || 0);
+  }
+  snapToCursor(point) {
+    eachAxis((axis) => {
+      const { drag: drag2 } = this.getProps();
+      if (!shouldDrag(axis, drag2, this.currentDirection))
+        return;
+      const { projection } = this.visualElement;
+      const axisValue = this.getAxisMotionValue(axis);
+      if (projection && projection.layout) {
+        const { min, max } = projection.layout.layoutBox[axis];
+        const current = axisValue.get() || 0;
+        axisValue.set(point[axis] - mixNumber$1(min, max, 0.5) + current);
+      }
+    });
+  }
+  /**
+   * When the viewport resizes we want to check if the measured constraints
+   * have changed and, if so, reposition the element within those new constraints
+   * relative to where it was before the resize.
+   */
+  scalePositionWithinConstraints() {
+    if (!this.visualElement.current)
+      return;
+    const { drag: drag2, dragConstraints } = this.getProps();
+    const { projection } = this.visualElement;
+    if (!isRefObject(dragConstraints) || !projection || !this.constraints)
+      return;
+    this.stopAnimation();
+    const boxProgress = { x: 0, y: 0 };
+    eachAxis((axis) => {
+      const axisValue = this.getAxisMotionValue(axis);
+      if (axisValue && this.constraints !== false) {
+        const latest = axisValue.get();
+        boxProgress[axis] = calcOrigin({ min: latest, max: latest }, this.constraints[axis]);
+      }
+    });
+    const { transformTemplate: transformTemplate2 } = this.visualElement.getProps();
+    this.visualElement.current.style.transform = transformTemplate2 ? transformTemplate2({}, "") : "none";
+    projection.root && projection.root.updateScroll();
+    projection.updateLayout();
+    this.resolveConstraints();
+    eachAxis((axis) => {
+      if (!shouldDrag(axis, drag2, null))
+        return;
+      const axisValue = this.getAxisMotionValue(axis);
+      const { min, max } = this.constraints[axis];
+      axisValue.set(mixNumber$1(min, max, boxProgress[axis]));
+    });
+  }
+  addListeners() {
+    if (!this.visualElement.current)
+      return;
+    elementDragControls.set(this.visualElement, this);
+    const element = this.visualElement.current;
+    const stopPointerListener = addPointerEvent(element, "pointerdown", (event) => {
+      const { drag: drag2, dragListener = true } = this.getProps();
+      const target = event.target;
+      const isClickingKeyboardAccessibleChild = target !== element && isElementKeyboardAccessible(target);
+      if (drag2 && dragListener && !isClickingKeyboardAccessibleChild) {
+        this.start(event);
+      }
+    });
+    const measureDragConstraints = () => {
+      const { dragConstraints } = this.getProps();
+      if (isRefObject(dragConstraints) && dragConstraints.current) {
+        this.constraints = this.resolveRefConstraints();
+      }
+    };
+    const { projection } = this.visualElement;
+    const stopMeasureLayoutListener = projection.addEventListener("measure", measureDragConstraints);
+    if (projection && !projection.layout) {
+      projection.root && projection.root.updateScroll();
+      projection.updateLayout();
+    }
+    frame.read(measureDragConstraints);
+    const stopResizeListener = addDomEvent(window, "resize", () => this.scalePositionWithinConstraints());
+    const stopLayoutUpdateListener = projection.addEventListener("didUpdate", (({ delta, hasLayoutChanged }) => {
+      if (this.isDragging && hasLayoutChanged) {
+        eachAxis((axis) => {
+          const motionValue2 = this.getAxisMotionValue(axis);
+          if (!motionValue2)
+            return;
+          this.originPoint[axis] += delta[axis].translate;
+          motionValue2.set(motionValue2.get() + delta[axis].translate);
+        });
+        this.visualElement.render();
+      }
+    }));
+    return () => {
+      stopResizeListener();
+      stopPointerListener();
+      stopMeasureLayoutListener();
+      stopLayoutUpdateListener && stopLayoutUpdateListener();
+    };
+  }
+  getProps() {
+    const props = this.visualElement.getProps();
+    const { drag: drag2 = false, dragDirectionLock = false, dragPropagation = false, dragConstraints = false, dragElastic = defaultElastic, dragMomentum = true } = props;
+    return {
+      ...props,
+      drag: drag2,
+      dragDirectionLock,
+      dragPropagation,
+      dragConstraints,
+      dragElastic,
+      dragMomentum
+    };
+  }
+}
+function shouldDrag(direction2, drag2, currentDirection) {
+  return (drag2 === true || drag2 === direction2) && (currentDirection === null || currentDirection === direction2);
+}
+function getCurrentDirection(offset, lockThreshold = 10) {
+  let direction2 = null;
+  if (Math.abs(offset.y) > lockThreshold) {
+    direction2 = "y";
+  } else if (Math.abs(offset.x) > lockThreshold) {
+    direction2 = "x";
+  }
+  return direction2;
+}
+class DragGesture extends Feature {
+  constructor(node2) {
+    super(node2);
+    this.removeGroupControls = noop;
+    this.removeListeners = noop;
+    this.controls = new VisualElementDragControls(node2);
+  }
+  mount() {
+    const { dragControls } = this.node.getProps();
+    if (dragControls) {
+      this.removeGroupControls = dragControls.subscribe(this.controls);
+    }
+    this.removeListeners = this.controls.addListeners() || noop;
+  }
+  update() {
+    const { dragControls } = this.node.getProps();
+    const { dragControls: prevDragControls } = this.node.prevProps || {};
+    if (dragControls !== prevDragControls) {
+      this.removeGroupControls();
+      if (dragControls) {
+        this.removeGroupControls = dragControls.subscribe(this.controls);
+      }
+    }
+  }
+  unmount() {
+    this.removeGroupControls();
+    this.removeListeners();
+    this.controls.endPanSession();
+  }
+}
+const asyncHandler = (handler) => (event, info) => {
+  if (handler) {
+    frame.postRender(() => handler(event, info));
+  }
+};
+class PanGesture extends Feature {
+  constructor() {
+    super(...arguments);
+    this.removePointerDownListener = noop;
+  }
+  onPointerDown(pointerDownEvent) {
+    this.session = new PanSession(pointerDownEvent, this.createPanHandlers(), {
+      transformPagePoint: this.node.getTransformPagePoint(),
+      contextWindow: getContextWindow(this.node)
+    });
+  }
+  createPanHandlers() {
+    const { onPanSessionStart, onPanStart, onPan, onPanEnd } = this.node.getProps();
+    return {
+      onSessionStart: asyncHandler(onPanSessionStart),
+      onStart: asyncHandler(onPanStart),
+      onMove: onPan,
+      onEnd: (event, info) => {
+        delete this.session;
+        if (onPanEnd) {
+          frame.postRender(() => onPanEnd(event, info));
+        }
+      }
+    };
+  }
+  mount() {
+    this.removePointerDownListener = addPointerEvent(this.node.current, "pointerdown", (event) => this.onPointerDown(event));
+  }
+  update() {
+    this.session && this.session.updateHandlers(this.createPanHandlers());
+  }
+  unmount() {
+    this.removePointerDownListener();
+    this.session && this.session.end();
+  }
+}
+let hasTakenAnySnapshot = false;
+class MeasureLayoutWithContext extends reactExports.Component {
+  /**
+   * This only mounts projection nodes for components that
+   * need measuring, we might want to do it for all components
+   * in order to incorporate transforms
+   */
+  componentDidMount() {
+    const { visualElement, layoutGroup, switchLayoutGroup, layoutId } = this.props;
+    const { projection } = visualElement;
+    if (projection) {
+      if (layoutGroup.group)
+        layoutGroup.group.add(projection);
+      if (switchLayoutGroup && switchLayoutGroup.register && layoutId) {
+        switchLayoutGroup.register(projection);
+      }
+      if (hasTakenAnySnapshot) {
+        projection.root.didUpdate();
+      }
+      projection.addEventListener("animationComplete", () => {
+        this.safeToRemove();
+      });
+      projection.setOptions({
+        ...projection.options,
+        onExitComplete: () => this.safeToRemove()
+      });
+    }
+    globalProjectionState.hasEverUpdated = true;
+  }
+  getSnapshotBeforeUpdate(prevProps) {
+    const { layoutDependency, visualElement, drag: drag2, isPresent: isPresent2 } = this.props;
+    const { projection } = visualElement;
+    if (!projection)
+      return null;
+    projection.isPresent = isPresent2;
+    hasTakenAnySnapshot = true;
+    if (drag2 || prevProps.layoutDependency !== layoutDependency || layoutDependency === void 0 || prevProps.isPresent !== isPresent2) {
+      projection.willUpdate();
+    } else {
+      this.safeToRemove();
+    }
+    if (prevProps.isPresent !== isPresent2) {
+      if (isPresent2) {
+        projection.promote();
+      } else if (!projection.relegate()) {
+        frame.postRender(() => {
+          const stack = projection.getStack();
+          if (!stack || !stack.members.length) {
+            this.safeToRemove();
+          }
+        });
+      }
+    }
+    return null;
+  }
+  componentDidUpdate() {
+    const { projection } = this.props.visualElement;
+    if (projection) {
+      projection.root.didUpdate();
+      microtask.postRender(() => {
+        if (!projection.currentAnimation && projection.isLead()) {
+          this.safeToRemove();
+        }
+      });
+    }
+  }
+  componentWillUnmount() {
+    const { visualElement, layoutGroup, switchLayoutGroup: promoteContext } = this.props;
+    const { projection } = visualElement;
+    hasTakenAnySnapshot = true;
+    if (projection) {
+      projection.scheduleCheckAfterUnmount();
+      if (layoutGroup && layoutGroup.group)
+        layoutGroup.group.remove(projection);
+      if (promoteContext && promoteContext.deregister)
+        promoteContext.deregister(projection);
+    }
+  }
+  safeToRemove() {
+    const { safeToRemove } = this.props;
+    safeToRemove && safeToRemove();
+  }
+  render() {
+    return null;
+  }
+}
+function MeasureLayout(props) {
+  const [isPresent2, safeToRemove] = usePresence();
+  const layoutGroup = reactExports.useContext(LayoutGroupContext);
+  return jsxRuntimeExports.jsx(MeasureLayoutWithContext, { ...props, layoutGroup, switchLayoutGroup: reactExports.useContext(SwitchLayoutGroupContext), isPresent: isPresent2, safeToRemove });
+}
 const drag = {
   pan: {
     Feature: PanGesture
@@ -22474,534 +23294,13 @@ const layout = {
     MeasureLayout
   }
 };
-const prefersReducedMotion = { current: null };
-const hasReducedMotionListener = { current: false };
-function initPrefersReducedMotion() {
-  hasReducedMotionListener.current = true;
-  if (!isBrowser)
-    return;
-  if (window.matchMedia) {
-    const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)");
-    const setReducedMotionPreferences = () => prefersReducedMotion.current = motionMediaQuery.matches;
-    motionMediaQuery.addListener(setReducedMotionPreferences);
-    setReducedMotionPreferences();
-  } else {
-    prefersReducedMotion.current = false;
-  }
-}
-const visualElementStore = /* @__PURE__ */ new WeakMap();
-function updateMotionValuesFromProps(element, next2, prev2) {
-  for (const key in next2) {
-    const nextValue = next2[key];
-    const prevValue = prev2[key];
-    if (isMotionValue(nextValue)) {
-      element.addValue(key, nextValue);
-    } else if (isMotionValue(prevValue)) {
-      element.addValue(key, motionValue(nextValue, { owner: element }));
-    } else if (prevValue !== nextValue) {
-      if (element.hasValue(key)) {
-        const existingValue = element.getValue(key);
-        if (existingValue.liveStyle === true) {
-          existingValue.jump(nextValue);
-        } else if (!existingValue.hasAnimated) {
-          existingValue.set(nextValue);
-        }
-      } else {
-        const latestValue = element.getStaticValue(key);
-        element.addValue(key, motionValue(latestValue !== void 0 ? latestValue : nextValue, { owner: element }));
-      }
-    }
-  }
-  for (const key in prev2) {
-    if (next2[key] === void 0)
-      element.removeValue(key);
-  }
-  return next2;
-}
-const propEventHandlers = [
-  "AnimationStart",
-  "AnimationComplete",
-  "Update",
-  "BeforeLayoutMeasure",
-  "LayoutMeasure",
-  "LayoutAnimationStart",
-  "LayoutAnimationComplete"
-];
-class VisualElement {
-  /**
-   * This method takes React props and returns found MotionValues. For example, HTML
-   * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
-   *
-   * This isn't an abstract method as it needs calling in the constructor, but it is
-   * intended to be one.
-   */
-  scrapeMotionValuesFromProps(_props, _prevProps, _visualElement) {
-    return {};
-  }
-  constructor({ parent, props, presenceContext, reducedMotionConfig, blockInitialAnimation, visualState }, options = {}) {
-    this.current = null;
-    this.children = /* @__PURE__ */ new Set();
-    this.isVariantNode = false;
-    this.isControllingVariants = false;
-    this.shouldReduceMotion = null;
-    this.values = /* @__PURE__ */ new Map();
-    this.KeyframeResolver = KeyframeResolver;
-    this.features = {};
-    this.valueSubscriptions = /* @__PURE__ */ new Map();
-    this.prevMotionValues = {};
-    this.events = {};
-    this.propEventSubscriptions = {};
-    this.notifyUpdate = () => this.notify("Update", this.latestValues);
-    this.render = () => {
-      if (!this.current)
-        return;
-      this.triggerBuild();
-      this.renderInstance(this.current, this.renderState, this.props.style, this.projection);
-    };
-    this.renderScheduledAt = 0;
-    this.scheduleRender = () => {
-      const now2 = time.now();
-      if (this.renderScheduledAt < now2) {
-        this.renderScheduledAt = now2;
-        frame.render(this.render, false, true);
-      }
-    };
-    const { latestValues, renderState } = visualState;
-    this.latestValues = latestValues;
-    this.baseTarget = { ...latestValues };
-    this.initialValues = props.initial ? { ...latestValues } : {};
-    this.renderState = renderState;
-    this.parent = parent;
-    this.props = props;
-    this.presenceContext = presenceContext;
-    this.depth = parent ? parent.depth + 1 : 0;
-    this.reducedMotionConfig = reducedMotionConfig;
-    this.options = options;
-    this.blockInitialAnimation = Boolean(blockInitialAnimation);
-    this.isControllingVariants = isControllingVariants(props);
-    this.isVariantNode = isVariantNode(props);
-    if (this.isVariantNode) {
-      this.variantChildren = /* @__PURE__ */ new Set();
-    }
-    this.manuallyAnimateOnMount = Boolean(parent && parent.current);
-    const { willChange, ...initialMotionValues } = this.scrapeMotionValuesFromProps(props, {}, this);
-    for (const key in initialMotionValues) {
-      const value = initialMotionValues[key];
-      if (latestValues[key] !== void 0 && isMotionValue(value)) {
-        value.set(latestValues[key], false);
-      }
-    }
-  }
-  mount(instance) {
-    this.current = instance;
-    visualElementStore.set(instance, this);
-    if (this.projection && !this.projection.instance) {
-      this.projection.mount(instance);
-    }
-    if (this.parent && this.isVariantNode && !this.isControllingVariants) {
-      this.removeFromVariantTree = this.parent.addVariantChild(this);
-    }
-    this.values.forEach((value, key) => this.bindToMotionValue(key, value));
-    if (!hasReducedMotionListener.current) {
-      initPrefersReducedMotion();
-    }
-    this.shouldReduceMotion = this.reducedMotionConfig === "never" ? false : this.reducedMotionConfig === "always" ? true : prefersReducedMotion.current;
-    if (this.parent)
-      this.parent.children.add(this);
-    this.update(this.props, this.presenceContext);
-  }
-  unmount() {
-    this.projection && this.projection.unmount();
-    cancelFrame(this.notifyUpdate);
-    cancelFrame(this.render);
-    this.valueSubscriptions.forEach((remove) => remove());
-    this.valueSubscriptions.clear();
-    this.removeFromVariantTree && this.removeFromVariantTree();
-    this.parent && this.parent.children.delete(this);
-    for (const key in this.events) {
-      this.events[key].clear();
-    }
-    for (const key in this.features) {
-      const feature = this.features[key];
-      if (feature) {
-        feature.unmount();
-        feature.isMounted = false;
-      }
-    }
-    this.current = null;
-  }
-  bindToMotionValue(key, value) {
-    if (this.valueSubscriptions.has(key)) {
-      this.valueSubscriptions.get(key)();
-    }
-    const valueIsTransform = transformProps.has(key);
-    if (valueIsTransform && this.onBindTransform) {
-      this.onBindTransform();
-    }
-    const removeOnChange = value.on("change", (latestValue) => {
-      this.latestValues[key] = latestValue;
-      this.props.onUpdate && frame.preRender(this.notifyUpdate);
-      if (valueIsTransform && this.projection) {
-        this.projection.isTransformDirty = true;
-      }
-    });
-    const removeOnRenderRequest = value.on("renderRequest", this.scheduleRender);
-    let removeSyncCheck;
-    if (window.MotionCheckAppearSync) {
-      removeSyncCheck = window.MotionCheckAppearSync(this, key, value);
-    }
-    this.valueSubscriptions.set(key, () => {
-      removeOnChange();
-      removeOnRenderRequest();
-      if (removeSyncCheck)
-        removeSyncCheck();
-      if (value.owner)
-        value.stop();
-    });
-  }
-  sortNodePosition(other) {
-    if (!this.current || !this.sortInstanceNodePosition || this.type !== other.type) {
-      return 0;
-    }
-    return this.sortInstanceNodePosition(this.current, other.current);
-  }
-  updateFeatures() {
-    let key = "animation";
-    for (key in featureDefinitions) {
-      const featureDefinition = featureDefinitions[key];
-      if (!featureDefinition)
-        continue;
-      const { isEnabled, Feature: FeatureConstructor } = featureDefinition;
-      if (!this.features[key] && FeatureConstructor && isEnabled(this.props)) {
-        this.features[key] = new FeatureConstructor(this);
-      }
-      if (this.features[key]) {
-        const feature = this.features[key];
-        if (feature.isMounted) {
-          feature.update();
-        } else {
-          feature.mount();
-          feature.isMounted = true;
-        }
-      }
-    }
-  }
-  triggerBuild() {
-    this.build(this.renderState, this.latestValues, this.props);
-  }
-  /**
-   * Measure the current viewport box with or without transforms.
-   * Only measures axis-aligned boxes, rotate and skew must be manually
-   * removed with a re-render to work.
-   */
-  measureViewportBox() {
-    return this.current ? this.measureInstanceViewportBox(this.current, this.props) : createBox();
-  }
-  getStaticValue(key) {
-    return this.latestValues[key];
-  }
-  setStaticValue(key, value) {
-    this.latestValues[key] = value;
-  }
-  /**
-   * Update the provided props. Ensure any newly-added motion values are
-   * added to our map, old ones removed, and listeners updated.
-   */
-  update(props, presenceContext) {
-    if (props.transformTemplate || this.props.transformTemplate) {
-      this.scheduleRender();
-    }
-    this.prevProps = this.props;
-    this.props = props;
-    this.prevPresenceContext = this.presenceContext;
-    this.presenceContext = presenceContext;
-    for (let i = 0; i < propEventHandlers.length; i++) {
-      const key = propEventHandlers[i];
-      if (this.propEventSubscriptions[key]) {
-        this.propEventSubscriptions[key]();
-        delete this.propEventSubscriptions[key];
-      }
-      const listenerName = "on" + key;
-      const listener = props[listenerName];
-      if (listener) {
-        this.propEventSubscriptions[key] = this.on(key, listener);
-      }
-    }
-    this.prevMotionValues = updateMotionValuesFromProps(this, this.scrapeMotionValuesFromProps(props, this.prevProps, this), this.prevMotionValues);
-    if (this.handleChildMotionValue) {
-      this.handleChildMotionValue();
-    }
-  }
-  getProps() {
-    return this.props;
-  }
-  /**
-   * Returns the variant definition with a given name.
-   */
-  getVariant(name) {
-    return this.props.variants ? this.props.variants[name] : void 0;
-  }
-  /**
-   * Returns the defined default transition on this component.
-   */
-  getDefaultTransition() {
-    return this.props.transition;
-  }
-  getTransformPagePoint() {
-    return this.props.transformPagePoint;
-  }
-  getClosestVariantNode() {
-    return this.isVariantNode ? this : this.parent ? this.parent.getClosestVariantNode() : void 0;
-  }
-  /**
-   * Add a child visual element to our set of children.
-   */
-  addVariantChild(child) {
-    const closestVariantNode = this.getClosestVariantNode();
-    if (closestVariantNode) {
-      closestVariantNode.variantChildren && closestVariantNode.variantChildren.add(child);
-      return () => closestVariantNode.variantChildren.delete(child);
-    }
-  }
-  /**
-   * Add a motion value and bind it to this visual element.
-   */
-  addValue(key, value) {
-    const existingValue = this.values.get(key);
-    if (value !== existingValue) {
-      if (existingValue)
-        this.removeValue(key);
-      this.bindToMotionValue(key, value);
-      this.values.set(key, value);
-      this.latestValues[key] = value.get();
-    }
-  }
-  /**
-   * Remove a motion value and unbind any active subscriptions.
-   */
-  removeValue(key) {
-    this.values.delete(key);
-    const unsubscribe = this.valueSubscriptions.get(key);
-    if (unsubscribe) {
-      unsubscribe();
-      this.valueSubscriptions.delete(key);
-    }
-    delete this.latestValues[key];
-    this.removeValueFromRenderState(key, this.renderState);
-  }
-  /**
-   * Check whether we have a motion value for this key
-   */
-  hasValue(key) {
-    return this.values.has(key);
-  }
-  getValue(key, defaultValue) {
-    if (this.props.values && this.props.values[key]) {
-      return this.props.values[key];
-    }
-    let value = this.values.get(key);
-    if (value === void 0 && defaultValue !== void 0) {
-      value = motionValue(defaultValue === null ? void 0 : defaultValue, { owner: this });
-      this.addValue(key, value);
-    }
-    return value;
-  }
-  /**
-   * If we're trying to animate to a previously unencountered value,
-   * we need to check for it in our state and as a last resort read it
-   * directly from the instance (which might have performance implications).
-   */
-  readValue(key, target) {
-    let value = this.latestValues[key] !== void 0 || !this.current ? this.latestValues[key] : this.getBaseTargetFromProps(this.props, key) ?? this.readValueFromInstance(this.current, key, this.options);
-    if (value !== void 0 && value !== null) {
-      if (typeof value === "string" && (isNumericalString(value) || isZeroValueString(value))) {
-        value = parseFloat(value);
-      } else if (!findValueType(value) && complex.test(target)) {
-        value = getAnimatableNone(key, target);
-      }
-      this.setBaseTarget(key, isMotionValue(value) ? value.get() : value);
-    }
-    return isMotionValue(value) ? value.get() : value;
-  }
-  /**
-   * Set the base target to later animate back to. This is currently
-   * only hydrated on creation and when we first read a value.
-   */
-  setBaseTarget(key, value) {
-    this.baseTarget[key] = value;
-  }
-  /**
-   * Find the base target for a value thats been removed from all animation
-   * props.
-   */
-  getBaseTarget(key) {
-    const { initial } = this.props;
-    let valueFromInitial;
-    if (typeof initial === "string" || typeof initial === "object") {
-      const variant = resolveVariantFromProps(this.props, initial, this.presenceContext?.custom);
-      if (variant) {
-        valueFromInitial = variant[key];
-      }
-    }
-    if (initial && valueFromInitial !== void 0) {
-      return valueFromInitial;
-    }
-    const target = this.getBaseTargetFromProps(this.props, key);
-    if (target !== void 0 && !isMotionValue(target))
-      return target;
-    return this.initialValues[key] !== void 0 && valueFromInitial === void 0 ? void 0 : this.baseTarget[key];
-  }
-  on(eventName, callback) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = new SubscriptionManager();
-    }
-    return this.events[eventName].add(callback);
-  }
-  notify(eventName, ...args) {
-    if (this.events[eventName]) {
-      this.events[eventName].notify(...args);
-    }
-  }
-}
-class DOMVisualElement extends VisualElement {
-  constructor() {
-    super(...arguments);
-    this.KeyframeResolver = DOMKeyframesResolver;
-  }
-  sortInstanceNodePosition(a, b) {
-    return a.compareDocumentPosition(b) & 2 ? 1 : -1;
-  }
-  getBaseTargetFromProps(props, key) {
-    return props.style ? props.style[key] : void 0;
-  }
-  removeValueFromRenderState(key, { vars: vars2, style }) {
-    delete vars2[key];
-    delete style[key];
-  }
-  handleChildMotionValue() {
-    if (this.childSubscription) {
-      this.childSubscription();
-      delete this.childSubscription;
-    }
-    const { children } = this.props;
-    if (isMotionValue(children)) {
-      this.childSubscription = children.on("change", (latest) => {
-        if (this.current) {
-          this.current.textContent = `${latest}`;
-        }
-      });
-    }
-  }
-}
-function renderHTML(element, { style, vars: vars2 }, styleProp, projection) {
-  Object.assign(element.style, style, projection && projection.getProjectionStyles(styleProp));
-  for (const key in vars2) {
-    element.style.setProperty(key, vars2[key]);
-  }
-}
-function getComputedStyle$1(element) {
-  return window.getComputedStyle(element);
-}
-class HTMLVisualElement extends DOMVisualElement {
-  constructor() {
-    super(...arguments);
-    this.type = "html";
-    this.renderInstance = renderHTML;
-  }
-  readValueFromInstance(instance, key) {
-    if (transformProps.has(key)) {
-      return readTransformValue(instance, key);
-    } else {
-      const computedStyle = getComputedStyle$1(instance);
-      const value = (isCSSVariableName(key) ? computedStyle.getPropertyValue(key) : computedStyle[key]) || 0;
-      return typeof value === "string" ? value.trim() : value;
-    }
-  }
-  measureInstanceViewportBox(instance, { transformPagePoint }) {
-    return measureViewportBox(instance, transformPagePoint);
-  }
-  build(renderState, latestValues, props) {
-    buildHTMLStyles(renderState, latestValues, props.transformTemplate);
-  }
-  scrapeMotionValuesFromProps(props, prevProps, visualElement) {
-    return scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
-  }
-}
-const camelCaseAttributes = /* @__PURE__ */ new Set([
-  "baseFrequency",
-  "diffuseConstant",
-  "kernelMatrix",
-  "kernelUnitLength",
-  "keySplines",
-  "keyTimes",
-  "limitingConeAngle",
-  "markerHeight",
-  "markerWidth",
-  "numOctaves",
-  "targetX",
-  "targetY",
-  "surfaceScale",
-  "specularConstant",
-  "specularExponent",
-  "stdDeviation",
-  "tableValues",
-  "viewBox",
-  "gradientTransform",
-  "pathLength",
-  "startOffset",
-  "textLength",
-  "lengthAdjust"
-]);
-function renderSVG(element, renderState, _styleProp, projection) {
-  renderHTML(element, renderState, void 0, projection);
-  for (const key in renderState.attrs) {
-    element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
-  }
-}
-class SVGVisualElement extends DOMVisualElement {
-  constructor() {
-    super(...arguments);
-    this.type = "svg";
-    this.isSVGTag = false;
-    this.measureInstanceViewportBox = createBox;
-  }
-  getBaseTargetFromProps(props, key) {
-    return props[key];
-  }
-  readValueFromInstance(instance, key) {
-    if (transformProps.has(key)) {
-      const defaultType = getDefaultValueType(key);
-      return defaultType ? defaultType.default || 0 : 0;
-    }
-    key = !camelCaseAttributes.has(key) ? camelToDash(key) : key;
-    return instance.getAttribute(key);
-  }
-  scrapeMotionValuesFromProps(props, prevProps, visualElement) {
-    return scrapeMotionValuesFromProps(props, prevProps, visualElement);
-  }
-  build(renderState, latestValues, props) {
-    buildSVGAttrs(renderState, latestValues, this.isSVGTag, props.transformTemplate, props.style);
-  }
-  renderInstance(instance, renderState, styleProp, projection) {
-    renderSVG(instance, renderState, styleProp, projection);
-  }
-  mount(instance) {
-    this.isSVGTag = isSVGTag(instance.tagName);
-    super.mount(instance);
-  }
-}
-const createDomVisualElement = (Component, options) => {
-  return isSVGComponent(Component) ? new SVGVisualElement(options) : new HTMLVisualElement(options, {
-    allowProjection: Component !== reactExports.Fragment
-  });
-};
-const createMotionComponent = /* @__PURE__ */ createMotionComponentFactory({
+const featureBundle = {
   ...animations,
   ...gestureAnimations,
   ...drag,
   ...layout
-}, createDomVisualElement);
-const motion = /* @__PURE__ */ createDOMMotionComponentProxy(createMotionComponent);
+};
+const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualElement);
 const findById = (arr, id2) => arr.find((toast) => toast.id === id2);
 function findToast(toasts, id2) {
   const position2 = getToastPosition(toasts, id2);
@@ -23052,7 +23351,7 @@ function getToastListStyle(position2) {
     left
   };
 }
-var reactPropsRegex = /^((children|dangerouslySetInnerHTML|key|ref|autoFocus|defaultValue|defaultChecked|innerHTML|suppressContentEditableWarning|suppressHydrationWarning|valueLink|abbr|accept|acceptCharset|accessKey|action|allow|allowUserMedia|allowPaymentRequest|allowFullScreen|allowTransparency|alt|async|autoComplete|autoPlay|capture|cellPadding|cellSpacing|challenge|charSet|checked|cite|classID|className|cols|colSpan|content|contentEditable|contextMenu|controls|controlsList|coords|crossOrigin|data|dateTime|decoding|default|defer|dir|disabled|disablePictureInPicture|disableRemotePlayback|download|draggable|encType|enterKeyHint|fetchpriority|fetchPriority|form|formAction|formEncType|formMethod|formNoValidate|formTarget|frameBorder|headers|height|hidden|high|href|hrefLang|htmlFor|httpEquiv|id|inputMode|integrity|is|keyParams|keyType|kind|label|lang|list|loading|loop|low|marginHeight|marginWidth|max|maxLength|media|mediaGroup|method|min|minLength|multiple|muted|name|nonce|noValidate|open|optimum|pattern|placeholder|playsInline|poster|preload|profile|radioGroup|readOnly|referrerPolicy|rel|required|reversed|role|rows|rowSpan|sandbox|scope|scoped|scrolling|seamless|selected|shape|size|sizes|slot|span|spellCheck|src|srcDoc|srcLang|srcSet|start|step|style|summary|tabIndex|target|title|translate|type|useMap|value|width|wmode|wrap|about|datatype|inlist|prefix|property|resource|typeof|vocab|autoCapitalize|autoCorrect|autoSave|color|incremental|fallback|inert|itemProp|itemScope|itemType|itemID|itemRef|on|option|results|security|unselectable|accentHeight|accumulate|additive|alignmentBaseline|allowReorder|alphabetic|amplitude|arabicForm|ascent|attributeName|attributeType|autoReverse|azimuth|baseFrequency|baselineShift|baseProfile|bbox|begin|bias|by|calcMode|capHeight|clip|clipPathUnits|clipPath|clipRule|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|contentScriptType|contentStyleType|cursor|cx|cy|d|decelerate|descent|diffuseConstant|direction|display|divisor|dominantBaseline|dur|dx|dy|edgeMode|elevation|enableBackground|end|exponent|externalResourcesRequired|fill|fillOpacity|fillRule|filter|filterRes|filterUnits|floodColor|floodOpacity|focusable|fontFamily|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontVariant|fontWeight|format|from|fr|fx|fy|g1|g2|glyphName|glyphOrientationHorizontal|glyphOrientationVertical|glyphRef|gradientTransform|gradientUnits|hanging|horizAdvX|horizOriginX|ideographic|imageRendering|in|in2|intercept|k|k1|k2|k3|k4|kernelMatrix|kernelUnitLength|kerning|keyPoints|keySplines|keyTimes|lengthAdjust|letterSpacing|lightingColor|limitingConeAngle|local|markerEnd|markerMid|markerStart|markerHeight|markerUnits|markerWidth|mask|maskContentUnits|maskUnits|mathematical|mode|numOctaves|offset|opacity|operator|order|orient|orientation|origin|overflow|overlinePosition|overlineThickness|panose1|paintOrder|pathLength|patternContentUnits|patternTransform|patternUnits|pointerEvents|points|pointsAtX|pointsAtY|pointsAtZ|preserveAlpha|preserveAspectRatio|primitiveUnits|r|radius|refX|refY|renderingIntent|repeatCount|repeatDur|requiredExtensions|requiredFeatures|restart|result|rotate|rx|ry|scale|seed|shapeRendering|slope|spacing|specularConstant|specularExponent|speed|spreadMethod|startOffset|stdDeviation|stemh|stemv|stitchTiles|stopColor|stopOpacity|strikethroughPosition|strikethroughThickness|string|stroke|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|surfaceScale|systemLanguage|tableValues|targetX|targetY|textAnchor|textDecoration|textRendering|textLength|to|transform|u1|u2|underlinePosition|underlineThickness|unicode|unicodeBidi|unicodeRange|unitsPerEm|vAlphabetic|vHanging|vIdeographic|vMathematical|values|vectorEffect|version|vertAdvY|vertOriginX|vertOriginY|viewBox|viewTarget|visibility|widths|wordSpacing|writingMode|x|xHeight|x1|x2|xChannelSelector|xlinkActuate|xlinkArcrole|xlinkHref|xlinkRole|xlinkShow|xlinkTitle|xlinkType|xmlBase|xmlns|xmlnsXlink|xmlLang|xmlSpace|y|y1|y2|yChannelSelector|z|zoomAndPan|for|class|autofocus)|(([Dd][Aa][Tt][Aa]|[Aa][Rr][Ii][Aa]|x)-.*))$/;
+var reactPropsRegex = /^((children|dangerouslySetInnerHTML|key|ref|autoFocus|defaultValue|defaultChecked|innerHTML|suppressContentEditableWarning|suppressHydrationWarning|valueLink|abbr|accept|acceptCharset|accessKey|action|allow|allowUserMedia|allowPaymentRequest|allowFullScreen|allowTransparency|alt|async|autoComplete|autoPlay|capture|cellPadding|cellSpacing|challenge|charSet|checked|cite|classID|className|cols|colSpan|content|contentEditable|contextMenu|controls|controlsList|coords|crossOrigin|data|dateTime|decoding|default|defer|dir|disabled|disablePictureInPicture|disableRemotePlayback|download|draggable|encType|enterKeyHint|fetchpriority|fetchPriority|form|formAction|formEncType|formMethod|formNoValidate|formTarget|frameBorder|headers|height|hidden|high|href|hrefLang|htmlFor|httpEquiv|id|inputMode|integrity|is|keyParams|keyType|kind|label|lang|list|loading|loop|low|marginHeight|marginWidth|max|maxLength|media|mediaGroup|method|min|minLength|multiple|muted|name|nonce|noValidate|open|optimum|pattern|placeholder|playsInline|popover|popoverTarget|popoverTargetAction|poster|preload|profile|radioGroup|readOnly|referrerPolicy|rel|required|reversed|role|rows|rowSpan|sandbox|scope|scoped|scrolling|seamless|selected|shape|size|sizes|slot|span|spellCheck|src|srcDoc|srcLang|srcSet|start|step|style|summary|tabIndex|target|title|translate|type|useMap|value|width|wmode|wrap|about|datatype|inlist|prefix|property|resource|typeof|vocab|autoCapitalize|autoCorrect|autoSave|color|incremental|fallback|inert|itemProp|itemScope|itemType|itemID|itemRef|on|option|results|security|unselectable|accentHeight|accumulate|additive|alignmentBaseline|allowReorder|alphabetic|amplitude|arabicForm|ascent|attributeName|attributeType|autoReverse|azimuth|baseFrequency|baselineShift|baseProfile|bbox|begin|bias|by|calcMode|capHeight|clip|clipPathUnits|clipPath|clipRule|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|contentScriptType|contentStyleType|cursor|cx|cy|d|decelerate|descent|diffuseConstant|direction|display|divisor|dominantBaseline|dur|dx|dy|edgeMode|elevation|enableBackground|end|exponent|externalResourcesRequired|fill|fillOpacity|fillRule|filter|filterRes|filterUnits|floodColor|floodOpacity|focusable|fontFamily|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontVariant|fontWeight|format|from|fr|fx|fy|g1|g2|glyphName|glyphOrientationHorizontal|glyphOrientationVertical|glyphRef|gradientTransform|gradientUnits|hanging|horizAdvX|horizOriginX|ideographic|imageRendering|in|in2|intercept|k|k1|k2|k3|k4|kernelMatrix|kernelUnitLength|kerning|keyPoints|keySplines|keyTimes|lengthAdjust|letterSpacing|lightingColor|limitingConeAngle|local|markerEnd|markerMid|markerStart|markerHeight|markerUnits|markerWidth|mask|maskContentUnits|maskUnits|mathematical|mode|numOctaves|offset|opacity|operator|order|orient|orientation|origin|overflow|overlinePosition|overlineThickness|panose1|paintOrder|pathLength|patternContentUnits|patternTransform|patternUnits|pointerEvents|points|pointsAtX|pointsAtY|pointsAtZ|preserveAlpha|preserveAspectRatio|primitiveUnits|r|radius|refX|refY|renderingIntent|repeatCount|repeatDur|requiredExtensions|requiredFeatures|restart|result|rotate|rx|ry|scale|seed|shapeRendering|slope|spacing|specularConstant|specularExponent|speed|spreadMethod|startOffset|stdDeviation|stemh|stemv|stitchTiles|stopColor|stopOpacity|strikethroughPosition|strikethroughThickness|string|stroke|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|surfaceScale|systemLanguage|tableValues|targetX|targetY|textAnchor|textDecoration|textRendering|textLength|to|transform|u1|u2|underlinePosition|underlineThickness|unicode|unicodeBidi|unicodeRange|unitsPerEm|vAlphabetic|vHanging|vIdeographic|vMathematical|values|vectorEffect|version|vertAdvY|vertOriginX|vertOriginY|viewBox|viewTarget|visibility|widths|wordSpacing|writingMode|x|xHeight|x1|x2|xChannelSelector|xlinkActuate|xlinkArcrole|xlinkHref|xlinkRole|xlinkShow|xlinkTitle|xlinkType|xmlBase|xmlns|xmlnsXlink|xmlLang|xmlSpace|y|y1|y2|yChannelSelector|z|zoomAndPan|for|class|autofocus)|(([Dd][Aa][Tt][Aa]|[Aa][Rr][Ii][Aa]|x)-.*))$/;
 var isPropValid = /* @__PURE__ */ memoize(
   function(prop) {
     return reactPropsRegex.test(prop) || prop.charCodeAt(0) === 111 && prop.charCodeAt(1) === 110 && prop.charCodeAt(2) < 91;
@@ -23171,10 +23470,10 @@ var createStyled = function createStyled2(tag, options) {
       }
     });
     Styled.withComponent = function(nextTag, nextOptions) {
-      var newStyled2 = createStyled2(nextTag, _extends({}, options, nextOptions, {
+      var newStyled = createStyled2(nextTag, _extends({}, options, nextOptions, {
         shouldForwardProp: composeShouldForwardProps(Styled, nextOptions, true)
       }));
-      return newStyled2.apply(void 0, styles2);
+      return newStyled.apply(void 0, styles2);
     };
     return Styled;
   };
@@ -23316,9 +23615,9 @@ var tags = [
   "text",
   "tspan"
 ];
-var newStyled = createStyled.bind(null);
+var styled$1 = createStyled.bind(null);
 tags.forEach(function(tagName) {
-  newStyled[tagName] = newStyled(tagName);
+  styled$1[tagName] = styled$1(tagName);
 });
 const allPropNames = /* @__PURE__ */ new Set([
   ...propNames,
@@ -23342,7 +23641,7 @@ const validHTMLProps = /* @__PURE__ */ new Set([
 function shouldForwardProp(prop) {
   return (validHTMLProps.has(prop) || !allPropNames.has(prop)) && prop[0] !== "_";
 }
-const emotion_styled = interopDefault(newStyled);
+const emotion_styled = interopDefault(styled$1);
 const toCSSObject = ({ baseStyle: baseStyle2 }) => (props) => {
   const { theme: theme2, css: cssProp, __css, sx, ...restProps } = props;
   const [styleProps2] = splitProps(restProps, isStyleProp);
@@ -23608,6 +23907,13 @@ function useChakra() {
   const theme2 = useTheme();
   return { ...colorModeResult, theme: theme2 };
 }
+function omitReactElements(props) {
+  return Object.fromEntries(
+    Object.entries(props).filter(([key, value]) => {
+      return value !== void 0 && key !== "children" && !reactExports.isValidElement(value);
+    })
+  );
+}
 function useStyleConfigImpl(themeKey, props = {}) {
   const { styleConfig: styleConfigProp, ...rest } = props;
   const { theme: theme2, colorMode } = useChakra();
@@ -23616,7 +23922,7 @@ function useStyleConfigImpl(themeKey, props = {}) {
   const mergedProps = mergeWith(
     { theme: theme2, colorMode },
     styleConfig?.defaultProps ?? {},
-    compact(omit(rest, ["children"])),
+    omitReactElements(rest),
     (obj, src) => !obj ? src : void 0
   );
   const stylesRef = reactExports.useRef({});
@@ -24197,7 +24503,7 @@ function Portal(props) {
 Portal.className = PORTAL_CLASSNAME;
 Portal.selector = PORTAL_SELECTOR;
 Portal.displayName = "Portal";
-const [ToastOptionProvider, useToastOptionContext] = createContext({
+const [ToastOptionProvider] = createContext({
   name: `ToastOptionsContext`,
   strict: false
 });
@@ -24650,10 +24956,10 @@ function mergeThemeCustomizer(source, override, key, object) {
       return mergeWith({}, sourceValue, overrideValue, mergeThemeCustomizer);
     };
   }
-  if (isObject(source) && isArray(override)) {
+  if (isObject$1(source) && isArray(override)) {
     return override;
   }
-  if (isArray(source) && isObject(override)) {
+  if (isArray(source) && isObject$1(override)) {
     return override;
   }
   return void 0;
@@ -25062,6 +25368,8 @@ const colorStyles = {
   }
 };
 ControlPanel.propTypes = {
+  VertScoreType: PropTypes.string.isRequired,
+  setVertScoreType: PropTypes.func.isRequired,
   teamAName: PropTypes.string,
   setTeamAName: PropTypes.func,
   spielName: PropTypes.string,
@@ -25096,13 +25404,15 @@ ControlPanel.propTypes = {
   ).isRequired,
   setTeamScores: PropTypes.func.isRequired
 };
-const getColorStyles$1 = (color2) => {
+const getColorStyles$2 = (color2) => {
   return colorStyles[color2] || {
     color: "#d1d2d3",
     bgGradient: `linear(to-b,#FFF, #333)`
   };
 };
 function ControlPanel({
+  VertScoreType,
+  setVertScoreType,
   teamAName,
   setTeamAName,
   teamBName,
@@ -25130,8 +25440,8 @@ function ControlPanel({
   gameRockCountState,
   setGameRockCountState
 }) {
-  const teamAStyles = getColorStyles$1(teamAColor);
-  const teamBStyles = getColorStyles$1(teamBColor);
+  const teamAStyles = getColorStyles$2(teamAColor);
+  const teamBStyles = getColorStyles$2(teamBColor);
   const hoverStyle = { color: "white", bg: "black" };
   const nonTeamButtons = { color: "white", bg: "#3c4142", _hover: hoverStyle };
   const handleTeamANameChange = (event) => {
@@ -25749,44 +26059,62 @@ function ControlPanel({
     ] }),
     renderEndScores(),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Flex, { direction: "row", justify: "center", gap: 5, w: "100%", align: "center", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { children: " End :" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Button,
-        {
-          color: nonTeamButtons.color,
-          bg: nonTeamButtons.bg,
-          _hover: nonTeamButtons._hover,
-          onClick: handleDecreaseEnd,
-          isDisabled: end === 1,
-          children: "-"
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(Text, { children: [
-        " ",
-        end
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(HStack, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Scoreboard type:" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Select,
+          {
+            w: "100px",
+            bg: "white",
+            value: VertScoreType,
+            onChange: (e) => setVertScoreType(e.target.value),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "1", children: "Full" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "2", children: "Names" })
+            ]
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Button,
-        {
-          color: nonTeamButtons.color,
-          bg: nonTeamButtons.bg,
-          _hover: nonTeamButtons._hover,
-          onClick: handleIncreaseEnd,
-          isDisabled: end === 10,
-          children: "+"
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Button,
-        {
-          color: nonTeamButtons.color,
-          bg: nonTeamButtons.bg,
-          _hover: nonTeamButtons._hover,
-          onClick: handleResetEnd,
-          isDisabled: end === 1 && teamARockCountState === gameRockCountState && teamBRockCountState === gameRockCountState,
-          children: "Reset"
-        }
-      )
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(HStack, { gap: 5, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { children: " End :" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Button,
+          {
+            color: nonTeamButtons.color,
+            bg: nonTeamButtons.bg,
+            _hover: nonTeamButtons._hover,
+            onClick: handleDecreaseEnd,
+            isDisabled: end === 1,
+            children: "-"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Text, { children: [
+          " ",
+          end
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Button,
+          {
+            color: nonTeamButtons.color,
+            bg: nonTeamButtons.bg,
+            _hover: nonTeamButtons._hover,
+            onClick: handleIncreaseEnd,
+            isDisabled: end === 10,
+            children: "+"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Button,
+          {
+            color: nonTeamButtons.color,
+            bg: nonTeamButtons.bg,
+            _hover: nonTeamButtons._hover,
+            onClick: handleResetEnd,
+            isDisabled: end === 1 && teamARockCountState === gameRockCountState && teamBRockCountState === gameRockCountState,
+            children: "Reset"
+          }
+        )
+      ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Flex, { direction: "row", justify: "space-evenly", w: "100%", align: "center", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -26100,13 +26428,13 @@ const HammerIcon = ({ flip, color: color2, ...props }) => /* @__PURE__ */ jsxRun
     fill: color2
   }
 ) });
-const getColorStyles = (color2) => {
+const getColorStyles$1 = (color2) => {
   return colorStyles[color2] || {
     color: "#d1d2d3",
     bgGradient: `linear(to-b,#FFF, #333)`
   };
 };
-const TeamComponent = ({
+const TeamComponent$1 = ({
   teamLetter,
   teamName,
   teamColor,
@@ -26206,7 +26534,7 @@ VerticalScoreboard.propTypes = {
     color: PropTypes.string.isRequired
   }).isRequired
 };
-TeamComponent.propTypes = {
+TeamComponent$1.propTypes = {
   teamLetter: PropTypes.string.isRequired,
   teamName: PropTypes.string,
   teamColor: PropTypes.string.isRequired,
@@ -26235,8 +26563,8 @@ function VerticalScoreboard({
   gameRockCountState
 }) {
   const Background = "#f1f2f3";
-  const teamAStyles = getColorStyles(teamAColor);
-  const teamBStyles = getColorStyles(teamBColor);
+  const teamAStyles = getColorStyles$1(teamAColor);
+  const teamBStyles = getColorStyles$1(teamBColor);
   const getOrdinalSuffix = (num) => {
     const lastDigit = num % 10;
     if (num === 11 || num === 12 || num === 13) {
@@ -26307,7 +26635,7 @@ function VerticalScoreboard({
             )
           ] }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TeamComponent,
+            TeamComponent$1,
             {
               teamLetter: "A",
               teamName: teamAName,
@@ -26320,7 +26648,7 @@ function VerticalScoreboard({
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TeamComponent,
+            TeamComponent$1,
             {
               teamLetter: "B",
               teamName: teamBName,
@@ -26649,6 +26977,193 @@ BoxScore.propTypes = {
   spielGameType: PropTypes.string.isRequired,
   spielName: PropTypes.string.isRequired
 };
+const getColorStyles = (color2) => {
+  return colorStyles[color2] || {
+    color: "#d1d2d3",
+    bgGradient: `linear(to-b,#FFF, #333)`
+  };
+};
+const TeamComponent = ({
+  teamLetter,
+  teamName,
+  teamColor,
+  teamStyles,
+  teamScore,
+  hammerState,
+  Background,
+  /* eslint-disable */
+  gameRockCountState
+  /* eslint-enable */
+}) => {
+  const textShadowValue = teamColor !== "yellow" ? "1px 1px 2px rgba(0, 0, 0, 0.8)" : "1px 1px 2px rgba(255, 255, 255, 0.8)";
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Flex, { w: "full", bg: Background, bgGradient: teamStyles.bgGradient, h: "50px", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Text,
+      {
+        w: "290px",
+        className: `team${teamLetter}Name`,
+        textAlign: "left",
+        fontSize: "2xl",
+        textShadow: textShadowValue,
+        color: teamStyles.color,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        ml: "10px",
+        alignContent: "center",
+        children: teamName || `Team ${teamLetter}`
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Flex,
+      {
+        w: "40px",
+        mx: "3px",
+        align: "center",
+        justify: "center",
+        className: `team${teamLetter}HammerState`,
+        children: hammerState === teamLetter ? /* @__PURE__ */ jsxRuntimeExports.jsx(HammerIcon, { h: "36px", w: "32px", color: teamColor !== "yellow" ? "white" : "black" }) : null
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Text,
+      {
+        textAlign: "center",
+        alignContent: "center",
+        color: teamStyles.color,
+        className: `team${teamLetter}Score`,
+        w: "40px",
+        textShadow: textShadowValue,
+        mx: "5px",
+        children: teamScore
+      }
+    )
+  ] });
+};
+VertScoreNoRocks.propTypes = {
+  teamAName: PropTypes.string,
+  setTeamAName: PropTypes.func,
+  spielName: PropTypes.string,
+  setSpielName: PropTypes.func,
+  spielGameType: PropTypes.string,
+  setSpielGameType: PropTypes.func,
+  teamBName: PropTypes.string,
+  setTeamBName: PropTypes.func,
+  hammerState: PropTypes.string,
+  setHammerState: PropTypes.func,
+  teamAScore: PropTypes.number,
+  setTeamAScore: PropTypes.func,
+  teamAColor: PropTypes.string,
+  setTeamAColor: PropTypes.func,
+  teamARockCountState: PropTypes.number,
+  setTeamARockCountState: PropTypes.func,
+  teamBScore: PropTypes.number,
+  setTeamBScore: PropTypes.func,
+  teamBColor: PropTypes.string,
+  setTeamBColor: PropTypes.func,
+  teamBRockCountState: PropTypes.number,
+  setTeamBRockCountState: PropTypes.func,
+  gameRockCountState: PropTypes.func,
+  setGameRockCountState: PropTypes.func,
+  end: PropTypes.number,
+  setEnd: PropTypes.func,
+  teamScores: PropTypes.arrayOf(
+    PropTypes.shape({
+      score1: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      score2: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    })
+  ).isRequired,
+  setTeamScores: PropTypes.func.isRequired,
+  teamAStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamBStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired
+};
+TeamComponent.propTypes = {
+  teamLetter: PropTypes.string.isRequired,
+  teamName: PropTypes.string,
+  teamColor: PropTypes.string.isRequired,
+  teamStyles: PropTypes.shape({
+    bgGradient: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
+  }).isRequired,
+  teamScore: PropTypes.number.isRequired,
+  hammerState: PropTypes.string.isRequired,
+  Background: PropTypes.string.isRequired,
+  gameRockCountState: PropTypes.number
+  // Define this if needed for prop validation
+};
+function VertScoreNoRocks({
+  teamAName,
+  teamAColor,
+  teamBName,
+  teamBColor,
+  spielGameType
+}) {
+  const Background = "#f1f2f3";
+  const teamAStyles = getColorStyles(teamAColor);
+  const teamBStyles = getColorStyles(teamBColor);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { bg: "transparent", h: "auto", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { w: "100%", justify: "center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    VStack,
+    {
+      fontSize: "3xl",
+      color: "#fefefe",
+      gap: "2px",
+      zIndex: 5,
+      w: "350px",
+      letterSpacing: "1.5px",
+      h: "130",
+      bg: "black",
+      p: "2px",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { justify: "center", w: "full", h: "30px", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { justify: "space-between", w: "full", h: "full", bg: "#fff", alignContent: "center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Text,
+          {
+            textAlign: "left",
+            w: "full",
+            h: "full",
+            alignContent: "center",
+            color: "#000",
+            letterSpacing: "2px",
+            fontSize: "md",
+            fontWeight: "bold",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            ml: "10px",
+            children: spielGameType || "Round Robin"
+          }
+        ) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          TeamComponent,
+          {
+            teamLetter: "A",
+            teamName: teamAName,
+            teamColor: teamAColor,
+            teamStyles: teamAStyles,
+            Background,
+            h: "60px"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          TeamComponent,
+          {
+            teamLetter: "B",
+            teamName: teamBName,
+            teamColor: teamBColor,
+            teamStyles: teamBStyles,
+            Background,
+            h: "60px"
+          }
+        )
+      ]
+    }
+  ) }) });
+}
 function App() {
   const [hammerState, setHammerState] = reactExports.useState("A");
   const [teamAName, setTeamAName] = reactExports.useState("Team B Name");
@@ -26663,6 +27178,7 @@ function App() {
   const [teamBRockCountState, setTeamBRockCountState] = reactExports.useState("");
   const [end, setEnd] = reactExports.useState(1);
   const [gameRockCountState, setGameRockCountState] = reactExports.useState("");
+  const [vertScoreType, setVertScoreType] = reactExports.useState("1");
   const [loadedFromStorage, setLoadedFromStorage] = reactExports.useState(false);
   reactExports.useEffect(() => {
     const storedTeamAName = localStorage.getItem("teamAName");
@@ -26676,6 +27192,7 @@ function App() {
     const storedTeamBRockCountState = localStorage.getItem("teamBRockCountState");
     const storedEnd = localStorage.getItem("end");
     const storedSpielName = localStorage.getItem("spielName");
+    const storedVertScoreType = localStorage.getItem("vertScoreType");
     if (storedTeamAName) setTeamAName(storedTeamAName);
     if (storedTeamBName) setTeamBName(storedTeamBName);
     if (storedHammerState) setHammerState(storedHammerState);
@@ -26687,6 +27204,7 @@ function App() {
     if (storedTeamBRockCountState) setTeamBRockCountState(Number(storedTeamBRockCountState));
     if (storedEnd) setEnd(Number(storedEnd));
     if (storedSpielName) setSpielName(storedSpielName);
+    if (storedVertScoreType) setVertScoreType(storedVertScoreType);
     setLoadedFromStorage(true);
   }, []);
   reactExports.useEffect(() => {
@@ -26739,8 +27257,27 @@ function App() {
     { score1: "X", score2: "X" }
   ]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Flex, { minH: "100vh", bg: "#00ff00", justifyContent: "center", fontFamily: "sans-serif", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { color: "white", p: 2, w: "full", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(HStack, { spacing: 50, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsx(HStack, { spacing: 50, children: vertScoreType === "1" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
       VerticalScoreboard,
+      {
+        teamAName,
+        teamAScore,
+        teamAColor,
+        teamARockCountState,
+        teamBName,
+        teamBScore,
+        teamBColor,
+        teamBRockCountState,
+        end,
+        hammerState,
+        spielGameType,
+        setSpielGameType,
+        setSpielName,
+        spielName,
+        gameRockCountState
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+      VertScoreNoRocks,
       {
         teamAName,
         teamAScore,
@@ -26813,7 +27350,9 @@ function App() {
         setSpielName,
         spielName,
         gameRockCountState,
-        setGameRockCountState
+        setGameRockCountState,
+        VertScoreType: vertScoreType,
+        setVertScoreType
       }
     )
   ] }) });
