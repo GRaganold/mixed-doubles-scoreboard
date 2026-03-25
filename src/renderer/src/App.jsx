@@ -3,6 +3,7 @@ import { Flex, Box, HStack } from '@chakra-ui/react'
 import ControlPanel from './ControlPanel'
 import VerticalScoreboard from './VerticalScoreboard'
 import BoxScore from './BoxScore'
+import VertScoreNoRocks from './VertScoreNoRocks'
 
 export default function App() {
   const [hammerState, setHammerState] = useState('A')
@@ -11,23 +12,22 @@ export default function App() {
   const [spielGameType, setSpielGameType] = useState('')
   const [teamAScore, setTeamAScore] = useState(0)
   const [teamAColor, setTeamAColor] = useState('red')
-  const [teamARockCountState, setTeamARockCountState] = useState("")
+  const [teamARockCountState, setTeamARockCountState] = useState('')
 
   const [teamBName, setTeamBName] = useState('Team B Name')
   const [teamBScore, setTeamBScore] = useState(0)
   const [teamBColor, setTeamBColor] = useState('yellow')
-  const [teamBRockCountState, setTeamBRockCountState] = useState("")
+  const [teamBRockCountState, setTeamBRockCountState] = useState('')
   const [end, setEnd] = useState(1)
-  const [gameRockCountState, setGameRockCountState] = useState("")
-
-  const [loadedFromStorage, setLoadedFromStorage] = useState(false) // 👈
+  const [gameRockCountState, setGameRockCountState] = useState('')
+  const [vertScoreType, setVertScoreType] = useState('1')
+  const [loadedFromStorage, setLoadedFromStorage] = useState(false) //
 
   // Load from localStorage
   useEffect(() => {
     const storedTeamAName = localStorage.getItem('teamAName')
     const storedTeamBName = localStorage.getItem('teamBName')
     const storedHammerState = localStorage.getItem('hammerState')
-
     const storedTeamAScore = localStorage.getItem('teamAScore')
     const storedTeamAColor = localStorage.getItem('teamAColor')
     const storedTeamARockCountState = localStorage.getItem('teamARockCountState')
@@ -39,7 +39,9 @@ export default function App() {
     const storedEnd = localStorage.getItem('end')
     const storedSpielName = localStorage.getItem('spielName')
 
+    const storedVertScoreType = localStorage.getItem('vertScoreType')
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (storedTeamAName) setTeamAName(storedTeamAName)
     if (storedTeamBName) setTeamBName(storedTeamBName)
     if (storedHammerState) setHammerState(storedHammerState)
@@ -55,7 +57,7 @@ export default function App() {
     if (storedEnd) setEnd(Number(storedEnd))
     if (storedSpielName) setSpielName(storedSpielName)
 
-    
+    if (storedVertScoreType) setVertScoreType(storedVertScoreType)
 
     setLoadedFromStorage(true) // ✅ localStorage is now safe to write
   }, [])
@@ -63,6 +65,7 @@ export default function App() {
   // Handle gameRockCountState adjustment after loading from storage
   useEffect(() => {
     if (loadedFromStorage && gameRockCountState !== '') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGameRockCountState((prevState) => {
         const temp = Number(prevState) - 1 // subtract 1
         return temp + 1 // add 1 back to reset
@@ -88,7 +91,6 @@ export default function App() {
 
     localStorage.setItem('end', String(end))
     localStorage.setItem('spielName', String(spielName))
-
   }, [
     teamAName,
     teamBName,
@@ -122,23 +124,43 @@ export default function App() {
     <Flex minH="100vh" bg="#00ff00" justifyContent="center" fontFamily={'sans-serif'}>
       <Box color="white" p={2} w="full">
         <HStack spacing={50}>
-          <VerticalScoreboard
-            teamAName={teamAName}
-            teamAScore={teamAScore}
-            teamAColor={teamAColor}
-            teamARockCountState={teamARockCountState}
-            teamBName={teamBName}
-            teamBScore={teamBScore}
-            teamBColor={teamBColor}
-            teamBRockCountState={teamBRockCountState}
-            end={end}
-            hammerState={hammerState}
-            spielGameType={spielGameType}
-            setSpielGameType={setSpielGameType}
-            setSpielName={setSpielName}
-            spielName={spielName}
-            gameRockCountState={gameRockCountState}
-          />
+          {vertScoreType === '1' ? (
+            <VerticalScoreboard
+              teamAName={teamAName}
+              teamAScore={teamAScore}
+              teamAColor={teamAColor}
+              teamARockCountState={teamARockCountState}
+              teamBName={teamBName}
+              teamBScore={teamBScore}
+              teamBColor={teamBColor}
+              teamBRockCountState={teamBRockCountState}
+              end={end}
+              hammerState={hammerState}
+              spielGameType={spielGameType}
+              setSpielGameType={setSpielGameType}
+              setSpielName={setSpielName}
+              spielName={spielName}
+              gameRockCountState={gameRockCountState}
+            />
+          ) : (
+            <VertScoreNoRocks
+              teamAName={teamAName}
+              teamAScore={teamAScore}
+              teamAColor={teamAColor}
+              teamARockCountState={teamARockCountState}
+              teamBName={teamBName}
+              teamBScore={teamBScore}
+              teamBColor={teamBColor}
+              teamBRockCountState={teamBRockCountState}
+              end={end}
+              hammerState={hammerState}
+              spielGameType={spielGameType}
+              setSpielGameType={setSpielGameType}
+              setSpielName={setSpielName}
+              spielName={spielName}
+              gameRockCountState={gameRockCountState}
+            />
+          )}
         </HStack>
 
         <br />
@@ -191,6 +213,8 @@ export default function App() {
           spielName={spielName}
           gameRockCountState={gameRockCountState}
           setGameRockCountState={setGameRockCountState}
+          VertScoreType={vertScoreType}
+          setVertScoreType={setVertScoreType}
         />
       </Box>
     </Flex>

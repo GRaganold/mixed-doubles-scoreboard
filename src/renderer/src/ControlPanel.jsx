@@ -5,6 +5,8 @@ import PropTypes from 'prop-types'
 import colorStyles from './components/ColorStyles'
 
 ControlPanel.propTypes = {
+  VertScoreType: PropTypes.string.isRequired,
+  setVertScoreType: PropTypes.func.isRequired,
   teamAName: PropTypes.string,
   setTeamAName: PropTypes.func,
   spielName: PropTypes.string,
@@ -50,6 +52,8 @@ const getColorStyles = (color) => {
 }
 
 export default function ControlPanel({
+  VertScoreType,
+  setVertScoreType,
   teamAName,
   setTeamAName,
   teamBName,
@@ -452,7 +456,7 @@ export default function ControlPanel({
             <Button
               key={index}
               onClick={(e) => {
-                handleScoreChange(index, 'score1', 'X'), handleScoreChange(index, 'score2', 'X')
+                ;(handleScoreChange(index, 'score1', 'X'), handleScoreChange(index, 'score2', 'X'))
               }}
               w="50px"
               h="32px"
@@ -475,27 +479,27 @@ export default function ControlPanel({
           <VStack color="black" m={1} w="650px">
             <Box w="full">
               <HStack>
-              <Select
-                value={gameRockCountState}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setGameRockCountState(value) // ✅ set main game-level rock count
-                  setTeamARockCountState(value) // optional: sync team A
-                  setTeamBRockCountState(value) // optional: sync team B
-                }}
-                bg="white"
-                w="250px"
-                _focus={{ bg: 'white' }}
-                size="sm"
-                borderRadius={5}
-              >
-                <option value="" disabled>
-                  - stages of competition -
-                </option>
-                <option value={8}>Four person</option>
-                <option value={5}>Mixed Doubles</option>
-                <option value={6}>Triples</option>
-              </Select>
+                <Select
+                  value={gameRockCountState}
+                  onChange={(e) => {
+                    const value = Number(e.target.value)
+                    setGameRockCountState(value) // ✅ set main game-level rock count
+                    setTeamARockCountState(value) // optional: sync team A
+                    setTeamBRockCountState(value) // optional: sync team B
+                  }}
+                  bg="white"
+                  w="250px"
+                  _focus={{ bg: 'white' }}
+                  size="sm"
+                  borderRadius={5}
+                >
+                  <option value="" disabled>
+                    - stages of competition -
+                  </option>
+                  <option value={8}>Four person</option>
+                  <option value={5}>Mixed Doubles</option>
+                  <option value={6}>Triples</option>
+                </Select>
 
                 <Button
                   h="8"
@@ -758,39 +762,53 @@ export default function ControlPanel({
             </Box>
             {renderEndScores()}
             <Flex direction="row" justify={'center'} gap={5} w="100%" align="center">
-              <Text> End :</Text>
-              <Button
-                color={nonTeamButtons.color}
-                bg={nonTeamButtons.bg}
-                _hover={nonTeamButtons._hover}
-                onClick={handleDecreaseEnd}
-                isDisabled={end === 1}
-              >
-                -
-              </Button>
-              <Text> {end}</Text>
-              <Button
-                color={nonTeamButtons.color}
-                bg={nonTeamButtons.bg}
-                _hover={nonTeamButtons._hover}
-                onClick={handleIncreaseEnd}
-                isDisabled={end === 10}
-              >
-                +
-              </Button>
-              <Button
-                color={nonTeamButtons.color}
-                bg={nonTeamButtons.bg}
-                _hover={nonTeamButtons._hover}
-                onClick={handleResetEnd}
-                isDisabled={
-                  end === 1 &&
-                  teamARockCountState === gameRockCountState &&
-                  teamBRockCountState === gameRockCountState
-                }
-              >
-                Reset
-              </Button>
+              <HStack>
+                <p>Scoreboard type:</p>
+                <Select
+                  w="100px"
+                  bg="white"
+                  value={VertScoreType}
+                  onChange={(e) => setVertScoreType(e.target.value)}
+                >
+                  <option value="1">Full</option>
+                  <option value="2">Names</option>
+                </Select>
+              </HStack>
+              <HStack gap={5}>
+                <Text> End :</Text>
+                <Button
+                  color={nonTeamButtons.color}
+                  bg={nonTeamButtons.bg}
+                  _hover={nonTeamButtons._hover}
+                  onClick={handleDecreaseEnd}
+                  isDisabled={end === 1}
+                >
+                  -
+                </Button>
+                <Text> {end}</Text>
+                <Button
+                  color={nonTeamButtons.color}
+                  bg={nonTeamButtons.bg}
+                  _hover={nonTeamButtons._hover}
+                  onClick={handleIncreaseEnd}
+                  isDisabled={end === 10}
+                >
+                  +
+                </Button>
+                <Button
+                  color={nonTeamButtons.color}
+                  bg={nonTeamButtons.bg}
+                  _hover={nonTeamButtons._hover}
+                  onClick={handleResetEnd}
+                  isDisabled={
+                    end === 1 &&
+                    teamARockCountState === gameRockCountState &&
+                    teamBRockCountState === gameRockCountState
+                  }
+                >
+                  Reset
+                </Button>
+              </HStack>
             </Flex>
 
             <Flex direction="row" justify="space-evenly" w="100%" align="center">
